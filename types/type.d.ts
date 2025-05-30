@@ -12,3 +12,12 @@ export interface User{
     username: string;
     email: string;
 }
+
+export interface Article {
+    id: number;
+    title:string;
+    user: User;
+    text: string;
+    answer:Article[]
+}
+
