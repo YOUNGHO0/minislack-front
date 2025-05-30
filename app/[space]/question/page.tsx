@@ -48,8 +48,8 @@ export default ()=>{
             <div className={"flex-3"}>
                 <div className={"p-5"}>
 
-                    {question?.answer.map((ans:Article)=>(
-                        <div className={"mt-5"}>
+                    {question?.answer.map((ans: Article) => (
+                        <div key={ans?.id} className={"mt-5"}>
                             <div>{ans?.user?.username}</div>
                             <div key={ans.id}>{ans?.text}</div>
                         </div>
