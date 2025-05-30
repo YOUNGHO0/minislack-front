@@ -4,6 +4,7 @@ import ChannelList from "@/app/component/channellist/ChannelList";
 
 import {PlusIcon} from "@heroicons/react/24/outline";
 import {Box} from "@radix-ui/themes";
+import ChannelAddDialog from "@/app/component/ChannelAddDialog";
 export default function RootLayout({
                                        children,
                                    }: Readonly<{
@@ -22,7 +23,7 @@ export default function RootLayout({
             <div className={"bg-neutral-300 h-full p-10 w-80"}>
                 <div className={"flex justify-between"}>
                     <div className={"text-lg font-extrabold"}>Channel List</div>
-                    <PlusIcon className={"w-6 "}></PlusIcon>
+                    <ChannelAddDialog/>
                 </div>
                 <div className={"py-6 px-1 "}>
                     <ChannelList data={data}></ChannelList>
