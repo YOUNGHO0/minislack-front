@@ -20,8 +20,8 @@ export default function NavBar(){
 
         <nav
             className="relative flex lg:flex-col items-center justify-between
-             p-3 bg-neutral-200  lg:order-first p-1 h-screen">
-            <div className={"flex w-100 lg:w-10  h-50 flex-row lg:flex-col items-center justify-evenly "}>
+             lg:p-3 bg-neutral-200  lg:order-first p-1">
+            <div className={"flex w-100 lg:w-10 lg:h-80  h-10 flex-row lg:flex-col items-center justify-evenly "}>
                 <MainButton></MainButton>
                 <QuestionButton></QuestionButton>
                 <SettingButton></SettingButton>
