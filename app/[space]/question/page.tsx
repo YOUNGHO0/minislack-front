@@ -58,6 +58,18 @@ export default ()=>{
                 </div>
             </div>
 
+            <div className={"flex-1 p-5 flex flex-col space-y-5 min-h-0 h-full"}>
+                <TextArea
+                    placeholder={"답글 작성"}
+                    size="3"
+                    className={"h-full"}
+                    rows={4}
+                />
+                <div className={"flex justify-end"}>
+                    <Button>작성</Button>
+                </div>
+            </div>
+
         </div>
     </div>
 }
