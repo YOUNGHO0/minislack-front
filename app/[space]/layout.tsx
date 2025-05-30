@@ -10,7 +10,7 @@ export default function RootLayout({
 }>) {
   return (
 
-          <div className={"flex lg:flex-row flex-col h-64  w-full h-full"}>
+          <div className={"flex lg:flex-row flex-col w-full h-full"}>
               {children}
               <NavBar ></NavBar>
           </div>
