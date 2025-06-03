@@ -1,10 +1,25 @@
-export interface Message {
+export interface ReceivedMessage {
     id: number;
     text: string;
-    user: User;
-    time: string; // ISO 8601 형식 문자열
-    comment: Message[];
+    user: User|null;
+    time: string |null; // ISO 8601 형식 문자열
+    comment: ReceivedMessage[]|null;
 }
+
+export interface SendChatMessage {
+    channelId: number;
+    parent:number|null
+    id: number;
+    text: string;
+}
+
+export interface SendChannelMessage {
+    parent:number|null
+    id: number;
+    text: string;
+}
+
+
 
 export interface User{
     id: number;
@@ -20,4 +35,5 @@ export interface Article {
     text: string;
     answer:Article[]
 }
+
 
