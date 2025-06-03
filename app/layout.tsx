@@ -32,9 +32,7 @@ export default function RootLayout({
       >
       <Theme>
           <div className={"w-screen h-screen"}>
-              <WebSocketProvider>
                   {children}
-              </WebSocketProvider>
           </div>
       </Theme>
       </body>
