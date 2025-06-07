@@ -1,16 +1,18 @@
 'use client'
 import {BeakerIcon} from "@heroicons/react/24/outline";
-import {redirect, usePathname} from "next/navigation";
+import {redirect, usePathname, useRouter} from "next/navigation";
+
 
 export default ()=>{
 
 
-    const pathname = usePathname(); // e.g., "/2/setting"
+    const router = useRouter();
+    const pathname = usePathname();
 
+    const segments = pathname.split("/");
+    const basePath = segments.length >= 3  ? `/${segments[1]}/${segments[2]}` : "/";
     const handleClick = () => {
-        const parts = pathname.split('/');
-        const base = parts[1]; // "2"
-        redirect(`/${base}/question`);
+        router.push(`${basePath}/question`);
     };
 
     return (

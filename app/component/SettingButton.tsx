@@ -1,15 +1,16 @@
 'use client'
-import {redirect, usePathname} from "next/navigation";
+import {redirect, usePathname, useRouter} from "next/navigation";
 import {Cog8ToothIcon} from "@heroicons/react/16/solid";
 
 export default ()=>{
 
-    const pathname = usePathname(); // e.g., "/2/setting"
+    const router = useRouter();
+    const pathname = usePathname();
 
+    const segments = pathname.split("/");
+    const basePath = segments.length >= 3  ? `/${segments[1]}/${segments[2]}` : "/";
     const handleClick = () => {
-        const parts = pathname.split('/');
-        const base = parts[1]; // "2"
-        redirect(`/${base}/setting`);
+        router.push(`${basePath}/setting`);
     };
 
     return(
