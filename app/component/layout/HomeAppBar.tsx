@@ -1,0 +1,46 @@
+"use client";
+
+import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import {usePathname, useRouter} from "next/navigation";
+
+export default function HomeAppBar() {
+    const pathname = usePathname();
+    const router = useRouter();
+    // 경로가 숨김 경로이거나 2단계 이상이면 AppBar 숨김
+    const pathSegments = pathname.split("/").filter(Boolean); // 빈 문자열 제거
+
+    const shouldHideAppBar = pathSegments.length >= 2;
+
+    if (shouldHideAppBar) {
+        return null;
+    }
+
+    return (
+        <Box sx={{ flexGrow: 1 }}>
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                        EChat
+                    </Typography>
+                    <Button onClick={()=>{router.push("/login")}} color="inherit">Login</Button>
+                </Toolbar>
+            </AppBar>
+        </Box>
+    );
+}
