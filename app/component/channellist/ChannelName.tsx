@@ -9,7 +9,13 @@ export default (props: { channel: Channel }) => {
     const router = useRouter();
     const pathname = usePathname(); // e.g., "/2/setting"
     const target = routeTo(2,pathname,`${channelInfo.id}`);
+    const segments = pathname.split("/");
+    const basePath = segments.length >= 3  ? `/${segments[1]}/${segments[2]}/${segments[3]}` : "/";
+    const handleClick = () => {
+        router.push(`${basePath}/${channelInfo.id}`);
+    };
 
-    return <div className={"font-bold"} onClick={()=>{router.push(target)}}>{channelInfo.channelName}</div>;
+
+    return <div className={"font-bold"} onClick={handleClick}>{channelInfo.name}</div>;
 
 };
