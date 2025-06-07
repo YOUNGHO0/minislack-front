@@ -5,16 +5,12 @@ import ChannelList from "@/app/component/channellist/ChannelList";
 import {PlusIcon} from "@heroicons/react/24/outline";
 import {Box} from "@radix-ui/themes";
 import ChannelAddDialog from "@/app/component/ChannelAddDialog";
-export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
-    children: React.ReactNode;
-}>) {
+export default function RootLayout({children,}: Readonly<{ children: React.ReactNode; }>) {
 
     let data: Channel[] = [
-        { id: 1, channelName: "hello talk" },
-        { id: 2, channelName: "hi good" },
-        { id: 3, channelName: "good better" }
+        { id: 1, name: "hello talk" },
+        { id: 2, name: "hi good" },
+        { id: 3, name: "good better" }
     ];
     return (
 
