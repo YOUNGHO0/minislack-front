@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type {Metadata} from "next";
+import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
-import NavBar from "@/app/component/NavBar";
 import {Theme} from "@radix-ui/themes";
-import  {WebSocketProvider} from "@/WebSocket/WebSocketProvider";
+import HomeAppBar from "@/app/component/layout/HomeAppBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +30,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
       <Theme>
+
           <div className={"w-screen h-screen"}>
+              <HomeAppBar></HomeAppBar>
                   {children}
           </div>
       </Theme>
