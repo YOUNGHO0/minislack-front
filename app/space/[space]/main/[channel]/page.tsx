@@ -237,10 +237,49 @@ export default ()=>{
             comment: []
         }
     ];
+    const params = useParams();
+    const channel = params.channel;
+    const [messages, changeMessage] = useState<ReceivedMessage[]>(temp);
 
 
 
-    return <div className={"flex flex-col w-full h-full"}>
+    //Todo : 코드 스타일 수정 필요
+    useEffect(() => {
+        const handler = (channelMessage: JsonReceivedMessageInfo) => {
+            if (channelMessage.channelId === Number(channel)) {
+                changeMessage((prevMessages) => {
+                    if (channelMessage.type === "create") {
+                        const newMsg: ReceivedMessage = channelMessage.message;
+                        return [...prevMessages, newMsg];
+
+                    } else if (channelMessage.type === "update") {
+                        return prevMessages.map(msg =>
+                            msg.id === channelMessage.message.id
+                                ? {
+                                    ...msg, // 기존 메시지 내용 유지
+                                    text: channelMessage.message.text, // text만 업데이트
+                                    // user, time, comment 등은 null이 들어와도 덮어쓰지 않음
+                                }
+                                : msg
+                        );
+
+                    } else if (channelMessage.type === "delete") {
+                        return prevMessages.filter(msg => msg.id !== channelMessage.message.id);
+                    } else {
+                        return prevMessages;
+                    }
+                });
+            }
+        };
+
+        emitter.on("channelMessage", handler);
+        return () => {
+            emitter.off("channelMessage", handler);
+        };
+    }, [channel]);
+
+
+    return <div className={"flex flex-col w-full h-full min-h-0"}>
 
         <div className="bg-nav p-4 text-white font-bold">
             Channel Name: {channel}
