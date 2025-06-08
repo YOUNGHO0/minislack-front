@@ -11,12 +11,14 @@ export default function RootLayout({ children, params }: Readonly<{ children: Re
     console.log(space)
   return (
 
-          <div className={"flex lg:flex-row flex-col w-full h-full"}>
-              <WebSocketProvider space={spaceNumber}>
-              {children}
-              <NavBar ></NavBar>
-              </WebSocketProvider>
-          </div>
+      <div className={"flex lg:flex-row flex-col w-full h-full"}>
+          <WebSocketProvider space={spaceNumber}>
+              <div className="flex-1 overflow-auto">
+                  {children}
+              </div>
+              <NavBar/>
+          </WebSocketProvider>
+      </div>
 
   );
 }
