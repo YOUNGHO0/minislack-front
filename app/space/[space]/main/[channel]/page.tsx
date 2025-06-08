@@ -247,15 +247,15 @@ export default ()=>{
         </div>
 
         {/* 메시지 영역 */}
-        <div className=" flex-1 overflow-y-auto p-4">
+        <div className=" flex-1 overflow-y-auto p-4 min-h-0">
             {messages.map((message) => (
                 <MessageCard key={message.id} data={message}/>
             ))}
         </div>
 
         {/* 입력창 영역 */}
-        <div className="p-4">
-            <Box className="flex flex-col w-full">
+        <div className="p-4 min-h-0">
+            <Box className="flex flex-col w-full h-full">
                 <TextArea
                     size="3"
                     placeholder=""
