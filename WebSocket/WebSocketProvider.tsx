@@ -14,7 +14,7 @@ const WebSocketContext = createContext<WebSocketContextType>({
 })
 
 // Provider 정의
-export const  WebSocketProvider = async ({ children, space }: { children: React.ReactNode,  space: string | number  }) => {
+export const  WebSocketProvider =({ children, space }: { children: React.ReactNode,  space: string | number  }) => {
     const socketRef = useRef<WebSocket | null>(null)
 
     useEffect(() => {
