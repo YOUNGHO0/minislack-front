@@ -1,8 +1,8 @@
 // WebSocketContext.tsx
 'use client'
 
-import { createContext, useContext, useEffect, useRef } from 'react'
-
+import {createContext, useContext, useEffect, useRef} from 'react'
+import emitter from '../WebSocket/Emitter'
 // WebSocket 타입 정의
 type WebSocketContextType = {
     sendMessage: (msg: string) => void
@@ -26,8 +26,20 @@ export const  WebSocketProvider =({ children, space }: { children: React.ReactNo
         }
 
         ws.onmessage = (event) => {
-            console.log('[WebSocket] Received:', event.data)
-        }
+            console.log(event.data);
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type) {
+                    console.log("emit");
+                    // type이 Events 타입에 포함되어 있으면 emit 가능
+                    emitter.emit(data.type, data);
+                    console.log('[WebSocket] Received message ', data.payload);
+
+                }
+            } catch (err) {
+                console.error('JSON 파싱 에러', err);
+            }
+        };
 
         ws.onclose = () => {
             console.log('[WebSocket] Closed')
