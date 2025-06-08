@@ -18,7 +18,7 @@ export const  WebSocketProvider =({ children, space }: { children: React.ReactNo
     const socketRef = useRef<WebSocket | null>(null)
 
     useEffect(() => {
-        const ws = new WebSocket(`ws://localhost:8080/ws?space=${space}`);
+        const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}?space=${space}`);
         socketRef.current = ws
 
         ws.onopen = () => {
