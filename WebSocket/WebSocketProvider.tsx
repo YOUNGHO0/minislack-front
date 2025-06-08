@@ -70,7 +70,4 @@ export const  WebSocketProvider =({ children, space }: { children: React.ReactNo
 }
 
 // custom hook
-export const useWebSocket = () => {
-    console.log("[useWebSocket] 훅 실행됨")
-    return useContext(WebSocketContext)
-}
+export const useWebSocket = ()=> useContext(WebSocketContext)
