@@ -1,6 +1,7 @@
 // emitter.ts
 import mitt from 'mitt'
 import {JsonReceivedChannelInfo, JsonReceivedMessageInfo} from "@/types/webSocketType";
+import {UserSpaceInEvent} from "@/types/events";
 const emitter = mitt<Events>()
 export default emitter
 
@@ -8,5 +9,6 @@ export default emitter
 type Events = {
     channel: JsonReceivedChannelInfo;
     channelMessage: JsonReceivedMessageInfo
+    spaceIn: UserSpaceInEvent
     // 다른 이벤트도 추가 가능
 };
