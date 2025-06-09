@@ -1,47 +1,22 @@
 'use client'
 import * as React from "react";
-import { Dialog } from "radix-ui";
-import { Cross2Icon } from "@radix-ui/react-icons";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { User } from "@/types/type";
+import {Dialog} from "radix-ui";
+import {Cross2Icon} from "@radix-ui/react-icons";
+import {PlusIcon, XMarkIcon} from "@heroicons/react/24/outline";
+import {User} from "@/types/type";
+import axios from "axios";
+import {useParams} from "next/navigation";
+import {useWebSocket} from "@/WebSocket/WebSocketProvider";
+import {ChannelCreateEvent} from "@/types/events";
 
 const ChannelAddDialog = () => {
     const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
     const [searchQuery, setSearchQuery] = React.useState("");
     const [userList, setUserList] = React.useState<User[]>([]);
 
-    const sampleUsers: User[] = [
-        {
-            id: 1,
-            profile: 101,
-            username: "김철수",
-            email: "chulsoo.kim@example.com"
-        },
-        {
-            id: 2,
-            profile: 102,
-            username: "이영희",
-            email: "younghee.lee@example.com"
-        },
-        {
-            id: 3,
-            profile: 103,
-            username: "박민수",
-            email: "minsu.park@example.com"
-        },
-        {
-            id: 4,
-            profile: 104,
-            username: "최지은",
-            email: "jieun.choi@example.com"
-        },
-        {
-            id: 5,
-            profile: 105,
-            username: "정우진",
-            email: "woojin.jung@example.com"
-        }
-    ];
+    const channelNameRef = React.useRef<HTMLInputElement>(null);
+    const {sendMessage} = useWebSocket();
+    const { space } = useParams();
 
     const fetchUsers = () => {
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, { withCredentials: true })
@@ -76,6 +51,25 @@ const ChannelAddDialog = () => {
         setSearchQuery("");
     };
 
+    const createChannel = ()=>{
+
+        const userIds:number[] = selectedUsers.map((user)=>(user.id));
+
+        if (channelNameRef.current && channelNameRef.current.value) {
+            const channelCreateEvent: ChannelCreateEvent = {
+                type: "channelCreate",
+                message: {
+                    name: channelNameRef.current.value,
+                    userList: userIds,
+                },
+            };
+            sendMessage(JSON.stringify(channelCreateEvent));
+            console.log("Creating channel:",channelCreateEvent);
+        } else {
+            console.error("채널 이름이 비어있거나 null입니다.");
+        }
+    }
+
     return (
         <Dialog.Root
             onOpenChange={(open) => {
@@ -104,6 +98,7 @@ const ChannelAddDialog = () => {
                             Channel
                         </label>
                         <input
+                            ref={channelNameRef}
                             className="inline-flex h-[35px] w-full items-center justify-center rounded px-2.5 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8"
                             placeholder="Channel Name"
 
@@ -183,7 +178,8 @@ const ChannelAddDialog = () => {
 
                     <div className="mt-[25px] flex justify-end">
                         <Dialog.Close asChild>
-                            <button className="inline-flex h-[35px] items-center justify-center rounded bg-green4 px-[15px] font-medium leading-none text-green11 outline-none outline-offset-1 hover:bg-green5 focus-visible:outline-2 focus-visible:outline-green6 select-none">
+                            <button onClick={createChannel}
+                                className="inline-flex h-[35px] items-center justify-center rounded bg-green4 px-[15px] font-medium leading-none text-green11 outline-none outline-offset-1 hover:bg-green5 focus-visible:outline-2 focus-visible:outline-green6 select-none">
                                 Create Channel
                             </button>
                         </Dialog.Close>
