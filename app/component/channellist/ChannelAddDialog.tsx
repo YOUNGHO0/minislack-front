@@ -44,7 +44,7 @@ const ChannelAddDialog = () => {
 
     // 검색어에 따라 사용자 필터링
     const filteredUsers = sampleUsers.filter(user =>
-        user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.nickName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -117,7 +117,7 @@ const ChannelAddDialog = () => {
                                         key={user.id}
                                         className="inline-flex items-center gap-1 px-2 py-1 bg-violet9 text-white text-sm rounded-full"
                                     >
-                                        {user.username}
+                                        {user.nickName}
                                         <button
                                             onClick={() => removeUser(user.id)}
                                             className="inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-violet10"
@@ -149,7 +149,7 @@ const ChannelAddDialog = () => {
                                         />
                                         <div className="flex-1">
                                             <div className="text-[15px] font-medium text-mauve12">
-                                                {user.username}
+                                                {user.nickName}
                                             </div>
                                             <div className="text-[13px] text-mauve11">
                                                 {user.email}
