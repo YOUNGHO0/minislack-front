@@ -19,12 +19,10 @@ export interface SendChannelMessage {
     text: string;
 }
 
-
-
 export interface User{
     id: number;
     profile:number;
-    username: string;
+    nickName: string;
     email: string;
 }
 
