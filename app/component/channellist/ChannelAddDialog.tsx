@@ -8,6 +8,7 @@ import { User } from "@/types/type";
 const ChannelAddDialog = () => {
     const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
     const [searchQuery, setSearchQuery] = React.useState("");
+    const [userList, setUserList] = React.useState<User[]>([]);
 
     const sampleUsers: User[] = [
         {
