@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Channel } from "@/types/channel";
 import ChannelList from "@/app/component/channellist/ChannelList";
-import ChannelAndAddButton from "@/app/component/ChannelAddDialog";
+import ChannelAndAddButton from "@/app/component/channellist/ChannelAddDialog";
 
 import {
     ChevronDoubleUpIcon,
