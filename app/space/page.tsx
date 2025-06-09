@@ -6,12 +6,12 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import {DotsVerticalIcon, Pencil1Icon, TrashIcon} from "@radix-ui/react-icons";
 import axios from "axios";
 
-import ChannelCreateButton from "@/app/component/space/ChannelCreateButton";
+import SpaceCreateButton from "@/app/component/space/SpaceCreateButton";
 import {Channel} from "@/types/channel";
 import {router} from "next/client";
 import {useRouter} from "next/navigation";
 import {SearchIcon} from "lucide-react";
-import ChannelUpdateButton from "@/app/component/space/ChannelUpdateButton";
+import SpaceUpdateButton from "@/app/component/space/SpaceUpdateButton";
 import * as React from "react";
 
 export default () => {
@@ -74,9 +74,9 @@ export default () => {
 
             {/* 채널 업데이트 팝업 뜨는 메뉴 */}
             {
-                updateShow && <ChannelUpdateButton channelInfo={channelList[activeChannelNumber]}
-                                                   fetchChannel={fetchChannels}
-                                                    hideUpdate={hideUpdate}></ChannelUpdateButton>
+                updateShow && <SpaceUpdateButton channelInfo={channelList[activeChannelNumber]}
+                                                 fetchChannel={fetchChannels}
+                                                 hideUpdate={hideUpdate}></SpaceUpdateButton>
             }
 
 
@@ -140,7 +140,7 @@ export default () => {
 
                 <div
                     className="bg-white rounded-lg border border-dashed border-gray-300 p-4 shadow-sm hover:shadow-md hover:border-gray-400 transition-all duration-200 flex items-center justify-center min-h-[80px]">
-                    <ChannelCreateButton fetchChannel={fetchChannels}/>
+                    <SpaceCreateButton fetchChannel={fetchChannels}/>
                 </div>
             </div>
         </div>
