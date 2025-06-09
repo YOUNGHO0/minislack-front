@@ -42,6 +42,12 @@ const ChannelAddDialog = () => {
         }
     ];
 
+    const fetchUsers = () => {
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, { withCredentials: true })
+            .then((res) => {
+                setSampleUsers(res.data);
+            });
+    };
     // 검색어에 따라 사용자 필터링
     const filteredUsers = sampleUsers.filter(user =>
         user.nickName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -70,7 +76,15 @@ const ChannelAddDialog = () => {
     };
 
     return (
-        <Dialog.Root onOpenChange={(open) => !open && resetDialog()}>
+        <Dialog.Root
+            onOpenChange={(open) => {
+                if (open) {
+                    fetchUsers(); // 다이얼로그 열릴 때 데이터 새로고침
+                } else {
+                    resetDialog(); // 닫힐 때 초기화
+                }
+            }}
+        >
             <Dialog.Trigger asChild>
                 <button className="inline-flex  items-center justify-center rounded font-medium leading-none  outline-none outline-offset-1 hover:bg-mauve3 focus-visible:outline-2 focus-visible:outline-violet6 select-none">
                     <PlusIcon className={"w-6 "} />
