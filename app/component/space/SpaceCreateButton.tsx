@@ -5,7 +5,7 @@ import axios from "axios";
 import {PlusCircleIcon} from "@heroicons/react/24/outline";
 import {Text} from "@radix-ui/themes";
 
-const ChannelCreateButton = ({fetchChannel}: { fetchChannel: () => void }) => {
+const SpaceCreateButton = ({fetchChannel}: { fetchChannel: () => void }) => {
     const [channelName, setChannelName] = React.useState(""); // 채널 이름 상태 추가
     const [hasError, setHasError] = React.useState(false);
     const [error, setError] = React.useState("");
@@ -109,4 +109,4 @@ const ChannelCreateButton = ({fetchChannel}: { fetchChannel: () => void }) => {
     )
 };
 
-export default ChannelCreateButton;
+export default SpaceCreateButton;
