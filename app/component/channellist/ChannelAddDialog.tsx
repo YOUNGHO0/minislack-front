@@ -46,11 +46,11 @@ const ChannelAddDialog = () => {
     const fetchUsers = () => {
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, { withCredentials: true })
             .then((res) => {
-                setSampleUsers(res.data);
+                setUserList(res.data);
             });
     };
     // 검색어에 따라 사용자 필터링
-    const filteredUsers = sampleUsers.filter(user =>
+    const filteredUsers = userList.filter(user =>
         user.nickName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
