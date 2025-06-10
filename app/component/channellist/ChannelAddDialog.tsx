@@ -7,7 +7,7 @@ import {User} from "@/types/type";
 import axios from "axios";
 import {useParams} from "next/navigation";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
-import {ChannelCreateEvent} from "@/types/events";
+import {ChannelCreateSendEvent} from "@/types/events";
 
 const ChannelAddDialog = () => {
     const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
@@ -56,7 +56,7 @@ const ChannelAddDialog = () => {
         const userIds:number[] = selectedUsers.map((user)=>(user.id));
 
         if (channelNameRef.current && channelNameRef.current.value) {
-            const channelCreateEvent: ChannelCreateEvent = {
+            const channelCreateEvent: ChannelCreateSendEvent = {
                 type: "channelCreate",
                 message: {
                     name: channelNameRef.current.value,
