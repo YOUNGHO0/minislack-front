@@ -3,10 +3,43 @@ export interface UserSpaceInEvent {
     spaceId:number
 }
 
-export interface ChannelCreateEvent {
+export interface ChannelCreateSendEvent {
     type:"channelCreate"
     message:{
         name : string
         userList : number[]
     }
+}
+
+export interface ChannelUpdateSendEvent {
+    type:"channelUpdate"
+    message:{
+        id:number
+        channelName:string
+    }
+}
+
+export interface ChannelDeleteSendEvent {
+    type:"channelDelete"
+    message:{
+        id:number
+}
+}
+
+export interface ChannelCreateReceiveEvent{
+    type:"channelCreate"
+    id :number
+    channelName : string
+
+}
+
+export interface ChannelUpdateReceiveEvent{
+    type : "channelUpdate"
+    id :number
+    channelName : string
+}
+
+export interface ChannelDeleteReceiveEvent {
+    type : "channelDelete"
+    id :number
 }
