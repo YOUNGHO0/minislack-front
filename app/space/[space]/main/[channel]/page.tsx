@@ -5,7 +5,11 @@ import {Box, Button, TextArea} from "@radix-ui/themes";
 import {useEffect, useState} from "react";
 import emitter from '@/WebSocket/Emitter'
 import {JsonReceivedMessageInfo} from "@/types/webSocketType";
-import {ReceivedMessage} from "@/types/type";
+import {ChannelInfo, ReceivedMessage} from "@/types/type";
+import axios from "axios";
+import ChannelSetting from "@/app/component/channel/ChannelSetting";
+import ChannelUpdateDialog from "@/app/component/channel/ChannelUpdateDialog";
+
 export default ()=>{
 
 
@@ -248,23 +252,23 @@ export default ()=>{
         const handler = (channelMessage: JsonReceivedMessageInfo) => {
             if (channelMessage.channelId === Number(channel)) {
                 changeMessage((prevMessages) => {
-                    if (channelMessage.type === "create") {
-                        const newMsg: ReceivedMessage = channelMessage.message;
+                    if (chattingMessage.type === "create") {
+                        const newMsg: ReceivedMessage = chattingMessage.message;
                         return [...prevMessages, newMsg];
 
-                    } else if (channelMessage.type === "update") {
+                    } else if (chattingMessage.type === "update") {
                         return prevMessages.map(msg =>
-                            msg.id === channelMessage.message.id
+                            msg.id === chattingMessage.message.id
                                 ? {
                                     ...msg, // 기존 메시지 내용 유지
-                                    text: channelMessage.message.text, // text만 업데이트
+                                    text: chattingMessage.message.text, // text만 업데이트
                                     // user, time, comment 등은 null이 들어와도 덮어쓰지 않음
                                 }
                                 : msg
                         );
 
-                    } else if (channelMessage.type === "delete") {
-                        return prevMessages.filter(msg => msg.id !== channelMessage.message.id);
+                    } else if (chattingMessage.type === "delete") {
+                        return prevMessages.filter(msg => msg.id !== chattingMessage.message.id);
                     } else {
                         return prevMessages;
                     }
@@ -276,7 +280,7 @@ export default ()=>{
         return () => {
             emitter.off("channelMessage", handler);
         };
-    }, [channel]);
+    }, [channelId]);
 
 
     return <div className={"flex flex-col w-full h-full min-h-0"}>
