@@ -34,4 +34,9 @@ export interface Article {
     answer:Article[]
 }
 
+export interface ChannelInfo{
+    id:number
+    channelName:string
+}
+
 
