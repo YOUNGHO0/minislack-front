@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Channel } from "@/types/channel";
 import ChannelList from "@/app/component/channellist/ChannelList";
 import ChannelAndAddButton from "@/app/component/channellist/ChannelAddDialog";
@@ -9,17 +9,53 @@ import {
     ChevronDoubleUpIcon,
     ChevronDoubleDownIcon,
 } from "@heroicons/react/24/outline";
+import axios from "axios";
+import emitter from "@/WebSocket/Emitter";
+import {ChannelCreateReceiveEvent, ChannelDeleteReceiveEvent, ChannelUpdateReceiveEvent} from "@/types/events";
+import {channel} from "node:diagnostics_channel";
+import {useParams} from "next/navigation";
 
 export default function RootLayout({
                                        children,
                                    }: Readonly<{ children: React.ReactNode }>) {
     const [showSidebar, setShowSidebar] = useState(true);
+    const [data, setData] = React.useState<Channel[]>([]);
+    const {space}= useParams()
+    useEffect(() => {
 
-    const data: Channel[] = [
-        { id: 1, name: "hello talk" },
-        { id: 2, name: "hi good" },
-        { id: 3, name: "good better" },
-    ];
+        emitter.on('channelCreate',(message : ChannelCreateReceiveEvent)=>{
+            let createdChannel:Channel = {id: message.id, name: message.channelName}
+            setData(prevData => [...prevData, createdChannel]);
+            console.log(createdChannel);
+            console.log("success");
+        })
+        emitter.on('channelUpdate', (message: ChannelUpdateReceiveEvent) => {
+            const updatedChannel: Channel = {id: message.id, name: message.channelName};
+            setData(prevData =>
+                prevData.map(channel =>
+                    channel.id === updatedChannel.id ? updatedChannel : channel
+                )
+            );
+        });
+        emitter.on('channelDelete', (message:ChannelDeleteReceiveEvent)=>{
+            setData(prev => prev.filter(channel => channel.id !== message.id));
+        })
+
+
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/channel?spaceId=${space}`, {withCredentials:true})
+            .then(response => {
+               if(response.status ===200){
+                   setData(response.data);
+               }
+            })
+
+        return ()=>{
+            emitter.off('channelCreate')
+            emitter.off('channelUpdate')
+            emitter.off('channelDelete')
+        }
+    }, []);
+
 
     // PC/모바일 구분 없이 위아래 화살표로 통일
     const renderToggleIcon = () => {
