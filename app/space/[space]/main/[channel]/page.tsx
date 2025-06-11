@@ -1,5 +1,5 @@
 'use client'
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import MessageCard from "@/app/component/message/MessageCard";
 import {Box, Button, TextArea} from "@radix-ui/themes";
 import {useEffect, useState} from "react";
@@ -9,6 +9,7 @@ import {ChannelInfo, ReceivedMessage} from "@/types/type";
 import axios from "axios";
 import ChannelSetting from "@/app/component/channel/ChannelSetting";
 import ChannelUpdateDialog from "@/app/component/channel/ChannelUpdateDialog";
+import {ChannelDeleteReceiveEvent, ChannelUpdateReceiveEvent} from "@/types/events";
 
 export default ()=>{
 
@@ -17,7 +18,30 @@ export default ()=>{
     const channelId = params.channel;
     const [messages, changeMessage] = useState<ReceivedMessage[]>([]);
     const [channelName, setChannelName] = useState("");
+    const router = useRouter();
+    // 채널 관련 UseEffect
+    useEffect(() => {
+        const handleChannelUpdate = (message: ChannelUpdateReceiveEvent) => {
+            if (message.id === Number(channelId)) {
+                setChannelName(message.channelName);  // 채널 이름 수정 반영
+            }
+        };
 
+        const handleChannelDelete = (message: ChannelDeleteReceiveEvent) => {
+            if (message.id === Number(channelId)) {
+                alert("이 채널은 삭제되었습니다.");
+                router.push(`/space/${params.space}/main`);
+            }
+        };
+
+        emitter.on("channelUpdate", handleChannelUpdate);
+        emitter.on("channelDelete", handleChannelDelete);
+
+        return () => {
+            emitter.off("channelUpdate", handleChannelUpdate);
+            emitter.off("channelDelete", handleChannelDelete);
+        };
+    }, [channelId]);
 
     //Todo : 코드 스타일 수정 필요
     useEffect(() => {
