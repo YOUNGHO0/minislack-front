@@ -8,6 +8,8 @@ export interface ChannelCreateSendEvent {
     message:{
         name : string
         userList : number[]
+        privateChannel: boolean
+        externalBlocked: boolean
     }
 }
 
@@ -16,6 +18,8 @@ export interface ChannelUpdateSendEvent {
     message:{
         id:number
         channelName:string
+        privateChannel: boolean
+        externalBlocked: boolean
     }
 }
 
@@ -37,6 +41,7 @@ export interface ChannelUpdateReceiveEvent{
     type : "channelUpdate"
     id :number
     channelName : string
+    privateChannel: boolean
 }
 
 export interface ChannelDeleteReceiveEvent {
