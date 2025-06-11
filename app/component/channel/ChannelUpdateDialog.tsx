@@ -2,17 +2,18 @@ import * as React from "react";
 import { Dialog } from "radix-ui";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
-import {ChannelDeleteSendEvent, ChannelUpdateSendEvent} from "@/types/events";
+import {ChannelUpdateSendEvent} from "@/types/events";
 
 const ChannelUpdateDialog = ({channelId,channelName,closeWindow} : {channelId :number,channelName:string ,closeWindow:()=>void}) => {
 
 
     const {sendMessage} = useWebSocket();
-
+    const [isPrivate, setIsPrivate] = React.useState(false);
+    const [isExternalBlocked, setIsExternalBlocked] = React.useState(false);
     const sendUpdateMessage = ()=>{
         const newName = inputRef.current?.value.trim();
-        if (newName && newName !== channelName) {
-            let channelUpdateSendEvent :ChannelUpdateSendEvent = {message: {id: channelId , channelName:newName}, type: "channelUpdate"}
+        if (newName) {
+            let channelUpdateSendEvent :ChannelUpdateSendEvent = {message: {id: channelId , channelName:newName,privateChannel:isPrivate,externalBlocked:isExternalBlocked}, type: "channelUpdate"}
             sendMessage(JSON.stringify(channelUpdateSendEvent))
             console.log(channelUpdateSendEvent)
         }
@@ -32,23 +33,55 @@ const ChannelUpdateDialog = ({channelId,channelName,closeWindow} : {channelId :n
                 <Dialog.Title className="m-0 text-[17px] font-medium text-mauve12">
                     채널 이름 변경
                 </Dialog.Title>
-                <Dialog.Description className="mb-5 mt-2.5 text-[15px] leading-normal text-mauve11">
-                    변경할 채널 이름을 입력하세요
-                </Dialog.Description>
-                <fieldset className="mb-[15px] flex items-center gap-5">
-                    <label
-                        className="w-[90px] text-right text-[15px] text-violet11"
-                        htmlFor="name"
-                    >
+                <fieldset className="mt-2 mb-[15px] flex flex-col gap-2">
+                    <label htmlFor="name" className="text-[15px] text-violet11">
                         Name
                     </label>
                     <input
                         ref={inputRef}
-                        className="inline-flex h-[35px] w-full flex-1 items-center justify-center rounded px-2.5 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8"
+                        className="inline-flex h-[35px] w-full items-center justify-center rounded px-2.5 text-[15px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8"
                         id="name"
                         defaultValue={channelName}
                     />
                 </fieldset>
+
+                {/* 채널 옵션 */}
+                <fieldset className="mb-[15px] flex flex-col gap-2">
+                    <label className="text-[15px] text-violet11">Channel Options</label>
+
+                    {/* 외부 참여 불가 */}
+                    <label className="inline-flex items-center gap-2 text-[14px] text-mauve12">
+                        <input
+                            type="checkbox"
+                            checked={isExternalBlocked}
+                            onChange={() => setIsExternalBlocked(!isExternalBlocked)}
+                            className="w-4 h-4 accent-violet9"
+                            disabled={isPrivate} // 비공개일 경우 비활성화
+                        />
+                        외부 참여 불가
+                        {isPrivate && (
+                            <span className="text-[12px] text-mauve10">(비공개 채널에서는 자동 적용됨)</span>
+                        )}
+                    </label>
+
+                    {/* 비공개 채널 */}
+                    <label className="inline-flex items-center gap-2 text-[14px] text-mauve12">
+                        <input
+                            type="checkbox"
+                            checked={isPrivate}
+                            onChange={() => {
+                                setIsPrivate(!isPrivate);
+                                if (!isPrivate) {
+                                    setIsExternalBlocked(true); // 비공개 선택 시 외부참여 자동 비활성화
+                                }
+                            }}
+                            className="w-4 h-4 accent-violet9"
+                        />
+                        비공개 채널
+                    </label>
+                </fieldset>
+
+
                 <div className="mt-[25px] flex justify-end">
                     <Dialog.Close asChild>
                         <button

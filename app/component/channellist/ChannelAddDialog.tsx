@@ -13,7 +13,8 @@ const ChannelAddDialog = () => {
     const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
     const [searchQuery, setSearchQuery] = React.useState("");
     const [userList, setUserList] = React.useState<User[]>([]);
-
+    const [isPrivate, setIsPrivate] = React.useState(false);
+    const [isExternalBlocked, setIsExternalBlocked] = React.useState(false);
     const channelNameRef = React.useRef<HTMLInputElement>(null);
     const {sendMessage} = useWebSocket();
     const { space } = useParams();
@@ -61,6 +62,8 @@ const ChannelAddDialog = () => {
                 message: {
                     name: channelNameRef.current.value,
                     userList: userIds,
+                    privateChannel: isPrivate,
+                    externalBlocked: isExternalBlocked
                 },
             };
             sendMessage(JSON.stringify(channelCreateEvent));
@@ -104,6 +107,43 @@ const ChannelAddDialog = () => {
 
                         />
                     </fieldset>
+
+                    {/* 채널 옵션 */}
+                    <fieldset className="mb-[15px] flex flex-col gap-2">
+                        <label className="text-[15px] text-violet11">Channel Options</label>
+
+                        {/* 외부 참여 불가 */}
+                        <label className="inline-flex items-center gap-2 text-[14px] text-mauve12">
+                            <input
+                                type="checkbox"
+                                checked={isExternalBlocked}
+                                onChange={() => setIsExternalBlocked(!isExternalBlocked)}
+                                className="w-4 h-4 accent-violet9"
+                                disabled={isPrivate} // 비공개일 경우 비활성화
+                            />
+                            외부 참여 불가
+                            {isPrivate && (
+                                <span className="text-[12px] text-mauve10">(비공개 채널에서는 자동 적용됨)</span>
+                            )}
+                        </label>
+
+                        {/* 비공개 채널 */}
+                        <label className="inline-flex items-center gap-2 text-[14px] text-mauve12">
+                            <input
+                                type="checkbox"
+                                checked={isPrivate}
+                                onChange={() => {
+                                    setIsPrivate(!isPrivate);
+                                    if (!isPrivate) {
+                                        setIsExternalBlocked(true); // 비공개 선택 시 외부참여 자동 비활성화
+                                    }
+                                }}
+                                className="w-4 h-4 accent-violet9"
+                            />
+                            비공개 채널
+                        </label>
+                    </fieldset>
+
 
                     {/* 사용자 추가 섹션 */}
                     <fieldset className="mb-[15px] flex flex-col gap-3">
