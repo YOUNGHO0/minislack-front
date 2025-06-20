@@ -2,23 +2,47 @@
 import {useParams, useRouter} from "next/navigation";
 import MessageCard from "@/app/component/message/MessageCard";
 import {Box, Button, TextArea} from "@radix-ui/themes";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import emitter from '@/WebSocket/Emitter'
 import {JsonReceivedMessageInfo} from "@/types/webSocketType";
 import {ChannelInfo, ReceivedMessage} from "@/types/type";
 import axios from "axios";
 import ChannelSetting from "@/app/component/channel/ChannelSetting";
 import ChannelUpdateDialog from "@/app/component/channel/ChannelUpdateDialog";
-import {ChannelDeleteReceiveEvent, ChannelUpdateReceiveEvent} from "@/types/events";
+import {
+    ChannelDeleteReceiveEvent,
+    ChannelUpdateReceiveEvent,
+    ChatCreateReceiveEvent,
+    ChatCreateSendEvent
+} from "@/types/events";
+import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 
 export default ()=>{
 
     const [isUpdateShow,setIsUpdateShow]=useState(false);
     const params = useParams();
     const channelId = params.channel;
-    const [messages, changeMessage] = useState<ReceivedMessage[]>([]);
+    const space = params.space;
+    console.log("space" + space);
+    const [messages, setMessages] = useState<ReceivedMessage[]>([]);
     const [channelName, setChannelName] = useState("");
     const router = useRouter();
+    const [messageInput, setMessageInput] = useState("");
+
+    const {sendMessage} = useWebSocket();
+    const createChat = ()=>{
+        if (messageInput ==="") return;
+
+        const chatCreateSendEvent: ChatCreateSendEvent = {
+            message: {channelId: Number(channelId), parent: 0, text:messageInput },
+            type: "chatCreate"
+        }
+
+        sendMessage(JSON.stringify(chatCreateSendEvent));
+        setMessageInput("");
+
+    }
+
     // 채널 관련 UseEffect
     useEffect(() => {
         const handleChannelUpdate = (message: ChannelUpdateReceiveEvent) => {
@@ -34,14 +58,34 @@ export default ()=>{
             }
         };
 
+        const handleChatCreate = (message : ChatCreateReceiveEvent) =>{
+            console.log("message111" + JSON.stringify(message));
+            if(Number(channelId) !== message.channelId) return;
+
+
+            const chatMessage: ReceivedMessage = {comment: [], id: message.id, text: message.chatMessage, createdDate: message.createdDate, user: message.user}
+            setMessages((prevData) => [...prevData, chatMessage]);
+
+        }
+
+        emitter.on("chatCreate", handleChatCreate);
         emitter.on("channelUpdate", handleChannelUpdate);
         emitter.on("channelDelete", handleChannelDelete);
 
         return () => {
+            emitter.off("chatCreate", handleChatCreate);
             emitter.off("channelUpdate", handleChannelUpdate);
             emitter.off("channelDelete", handleChannelDelete);
         };
     }, [channelId]);
+
+    //채팅 메세지 데이터 가져오기 useEffect
+    useEffect(() => {
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/message?spaceId=${space}&channelId=${channelId}&pageNumber=0`,{withCredentials:true})
+            .then(value => (setMessages(value.data)))
+            // setMessages(value.data));
+
+    }, []);
 
     //Todo : 코드 스타일 수정 필요
     useEffect(() => {
@@ -54,7 +98,7 @@ export default ()=>{
 
         const handler = (chattingMessage: JsonReceivedMessageInfo) => {
             if (chattingMessage.channelId === Number(channelId)) {
-                changeMessage((prevMessages) => {
+                setMessages((prevMessages) => {
                     if (chattingMessage.type === "create") {
                         const newMsg: ReceivedMessage = chattingMessage.message;
                         return [...prevMessages, newMsg];
@@ -107,8 +151,10 @@ export default ()=>{
                     size="3"
                     placeholder=""
                     className="w-full mb-2"
+                    value={messageInput}
+                    onChange={(event) => {setMessageInput(event.target.value);}}
                 />
-                <Button style={{"display" : "flex","marginLeft" : "auto"}}>Submit</Button>
+                <Button onClick={createChat} style={{"display" : "flex","marginLeft" : "auto"}}>Submit</Button>
             </Box>
         </div>
 
