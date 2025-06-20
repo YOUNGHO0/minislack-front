@@ -30,7 +30,7 @@ export const  WebSocketProvider =({ children, space }: { children: React.ReactNo
             try {
                 const data = JSON.parse(event.data);
                 if (data.type) {
-                    console.log("type :" + data.type + " data : " + data);
+                    console.log("type :" + data.type + " data : " + JSON.stringify(data));
                     // type이 Events 타입에 포함되어 있으면 emit 가능
                     emitter.emit(data.type, data);
                     console.log('[WebSocket] Received message ', data.payload);
