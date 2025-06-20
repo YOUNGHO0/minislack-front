@@ -2,7 +2,7 @@ export interface ReceivedMessage {
     id: number;
     text: string;
     user: User|null;
-    time: string |null; // ISO 8601 형식 문자열
+    createdDate: string |null; // ISO 8601 형식 문자열
     comment: ReceivedMessage[]|null;
 }
 
