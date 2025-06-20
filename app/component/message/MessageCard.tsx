@@ -162,17 +162,17 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
                 onContextMenu={handleContextMenu}
             >
                 <div className="w-fit p-1 flex flex-col">
-                    <Avatar variant="solid" fallback={props.data.user?.username[0]||'U'} />
+                    <Avatar variant="solid" fallback={props.data.user?.nickName[0]||'U'} />
                 </div>
 
                 <div className="ml-4 flex-col p-0 flex-1">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <div className="font-medium text-sm text-gray-700">
-                                {props.data.user?.username}
+                                {props.data.user?.nickName}
                             </div>
                             <div className="text-xs text-gray-500">
-                                {formatTime(props.data.time || "undefined")}
+                                {formatTime(props.data.createdDate || "undefined")}
                             </div>
                         </div>
                     </div>
@@ -268,10 +268,10 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
                         <div key={index} className="mb-2 p-3 bg-gray-50 border border-gray-200 rounded-lg w-fit min-w-60">
                             <div className="flex items-center gap-2 mb-1">
                                 <div className="text-xs font-medium text-gray-700">
-                                    {comment.user?.username || '익명'}
+                                    {/*{comment.user?.username || '익명'}*/}
                                 </div>
                                 <div className="text-xs text-gray-500">
-                                    {comment.time ? formatTime(comment.time) : '시간 정보 없음'}
+                                    {comment.createdDate ? formatTime(comment.createdDate) : '시간 정보 없음'}
                                 </div>
                             </div>
                             <div className="text-sm text-gray-900">
