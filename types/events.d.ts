@@ -1,3 +1,5 @@
+import {User} from "@/types/type";
+
 export interface UserSpaceInEvent {
     type:"spaceIn"
     spaceId:number
@@ -48,3 +50,23 @@ export interface ChannelDeleteReceiveEvent {
     type : "channelDelete"
     id :number
 }
+
+export interface ChatCreateSendEvent {
+    type:"chatCreate"
+    message:{
+        channelId : number
+        parent : number
+        text : string
+    }
+}
+
+
+export interface ChatCreateReceiveEvent {
+    type:"chatCreate"
+    chatMessage: string
+    id : number
+    createdDate: string
+    channelId : number
+    user:User
+}
+

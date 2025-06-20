@@ -5,6 +5,7 @@ import {
     ChannelCreateReceiveEvent,
     ChannelDeleteReceiveEvent,
     ChannelUpdateReceiveEvent,
+    ChatCreateReceiveEvent,
     UserSpaceInEvent
 } from "@/types/events";
 
@@ -19,5 +20,6 @@ type Events = {
     channelCreate : ChannelCreateReceiveEvent
     channelUpdate : ChannelUpdateReceiveEvent
     channelDelete : ChannelDeleteReceiveEvent
+    chatCreate: ChatCreateReceiveEvent
     // 다른 이벤트도 추가 가능
 };
