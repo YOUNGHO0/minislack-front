@@ -82,7 +82,7 @@ export default () => {
 
             {/* 반응형 그리드 레이아웃 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                {channelList.map((channel: Channel) => (
+                {channelList.map((channel: Channel,index : number) => (
                     <div
                         key={channel.id}
                         className="relative bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
@@ -115,6 +115,7 @@ export default () => {
                                     <DropdownMenu.Item
                                         onClick={(e) => {
                                             e.stopPropagation();
+                                            setActiveChannelNumber(index);
                                             setUpdateShow(true)
                                         }}
                                         className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded cursor-pointer outline-none"
