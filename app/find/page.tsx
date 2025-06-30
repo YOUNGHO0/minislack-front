@@ -9,6 +9,7 @@ import axios from "axios";
 import {Channel} from "@/types/channel";
 import {useRouter} from "next/navigation";
 import {SearchIcon} from "lucide-react";
+import {HomeIcon} from "@radix-ui/react-icons";
 import SpaceUpdateButton from "@/app/component/space/SpaceUpdateButton";
 import SpaceJoinDialog from "@/app/component/space/join/SpaceJoinDialog";
 import {channel} from "node:diagnostics_channel";
@@ -90,6 +91,13 @@ export default () => {
                 <Heading className="flex-shrink-0 text-2xl font-semibold text-gray-900">
                     채팅방 찾기
                 </Heading>
+                <Button onClick={() => {
+                    router.push('/space')
+                }}
+                        className="h-8 px-3 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 cursor-pointer">
+                    <HomeIcon className="mr-2 w-4 h-4"/>
+                    홈으로
+                </Button>
             </div>
 
             <SpaceJoinDialog open={openCodeDialog} joinWithInviteCode={joinWithInviteCode} close={()=>{setOpenCodeDialog(false)}}/>
