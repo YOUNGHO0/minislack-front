@@ -17,7 +17,7 @@ const SpaceUpdateButton = ({channelInfo,fetchChannel,hideUpdate}: {
     const [error, setError] = React.useState("");
     const [isOpen, setIsOpen] = React.useState(false); // 다이얼로그 열림 상태 추가
     const [isLoading, setIsLoading] = React.useState(false); // 로딩 상태 추가
-    const [searchEnable, setIsSearchEnable] = React.useState(channelInfo.searchEnable);
+    const [searchDisable, setIsSearchDisable] = React.useState(channelInfo.searchEnable);
     const [codeRequired, setCodeRequired] = React.useState(channelInfo.codeRequired);
 
     const handleEdit = (channel: Channel) => {
@@ -33,7 +33,7 @@ const SpaceUpdateButton = ({channelInfo,fetchChannel,hideUpdate}: {
         setError("");
 
         axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space`,
-            {id: channel.id, name: channel.name, searchEnable:searchEnable, codeRequired : codeRequired}, {
+            {id: channel.id, name: channel.name, searchEnable:!searchDisable, codeRequired : codeRequired}, {
             withCredentials: true,
             headers: {
                 "Content-Type": "application/json"
@@ -85,8 +85,8 @@ const SpaceUpdateButton = ({channelInfo,fetchChannel,hideUpdate}: {
                             <Text as="label" size="2">
                                 <Flex as="span" gap="2">
                                     <Checkbox variant="classic"
-                                              checked={searchEnable}
-                                              onCheckedChange={(checked) => setIsSearchEnable(!!checked)}/>
+                                              checked={searchDisable}
+                                              onCheckedChange={(checked) => setIsSearchDisable(!!checked)}/>
                                     검색 비공개
                                 </Flex>
                             </Text>

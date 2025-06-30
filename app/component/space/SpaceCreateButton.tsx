@@ -11,7 +11,7 @@ const SpaceCreateButton = ({fetchChannel}: { fetchChannel: () => void }) => {
     const [error, setError] = React.useState("");
     const [isOpen, setIsOpen] = React.useState(false); // 다이얼로그 열림 상태 추가
     const [isLoading, setIsLoading] = React.useState(false); // 로딩 상태 추가
-    const [searchEnable, setIsSearchEnable] = React.useState(false);
+    const [searchDisable, setIsSearchDisable] = React.useState(false);
     const [codeRequired, setCodeRequired] = React.useState(false);
     function addRoom() {
         if (!channelName.trim()) {
@@ -26,7 +26,7 @@ const SpaceCreateButton = ({fetchChannel}: { fetchChannel: () => void }) => {
 
         axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space`,
-            {name: channelName, searchEnable : searchEnable, codeRequired:codeRequired }, // 사용자 입력값 사용
+            {name: channelName, searchEnable : !searchDisable, codeRequired:codeRequired }, // 사용자 입력값 사용
             {
                 withCredentials: true,
                 headers: {
@@ -87,7 +87,7 @@ const SpaceCreateButton = ({fetchChannel}: { fetchChannel: () => void }) => {
                         />
                         <Text as="label" size="2">
                             <Flex as="span" gap="2">
-                                <Checkbox variant="classic" onCheckedChange={(checked) => setIsSearchEnable(!!checked)}/>
+                                <Checkbox variant="classic" onCheckedChange={(checked) => setIsSearchDisable(!!checked)}/>
                                 검색 비공개
                             </Flex>
                         </Text>
