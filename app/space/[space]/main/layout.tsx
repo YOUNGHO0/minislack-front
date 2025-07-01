@@ -13,7 +13,7 @@ import axios from "axios";
 import emitter from "@/WebSocket/Emitter";
 import {ChannelCreateReceiveEvent, ChannelDeleteReceiveEvent, ChannelUpdateReceiveEvent} from "@/types/events";
 import {channel} from "node:diagnostics_channel";
-import {useParams} from "next/navigation";
+import {useParams, usePathname} from "next/navigation";
 
 export default function RootLayout({
                                        children,
@@ -21,6 +21,11 @@ export default function RootLayout({
     const [showSidebar, setShowSidebar] = useState(true);
     const [data, setData] = React.useState<Channel[]>([]);
     const {space}= useParams()
+    const path = usePathname();
+    const segments = path.split('/');
+    const lastSegment = segments[segments.length - 1];
+    const isParent = lastSegment === 'main';
+
     useEffect(() => {
 
         emitter.on('channelCreate',(message : ChannelCreateReceiveEvent)=>{
@@ -66,11 +71,15 @@ export default function RootLayout({
             <ChevronDoubleDownIcon className={baseClass} />
         );
     };
+    const parentComponentStyle = isParent ? "" : "hidden md:block"
+    const childComponentStyle = isParent ?  "hidden md:block" : ""
 
     return (
-        <div className="w-full h-full flex flex-col md:flex-row">
+
+
+        <div className={`w-full h-full flex flex-col md:flex-row`}>
             {/* 사이드바 전체 */}
-            <div className="w-full md:w-80 bg-neutral-300 flex flex-col">
+            <div className={`${parentComponentStyle} w-full md:w-80 bg-neutral-300 flex flex-col`}>
                 {/* 헤더 */}
                 <div className="flex items-center justify-between p-4">
                     <div className="text-lg font-extrabold flex items-center gap-2">
@@ -84,14 +93,17 @@ export default function RootLayout({
 
                 {/* 본문 */}
                 {showSidebar && (
-                    <div className="px-4 pb-4 flex-grow overflow-auto">
+                    <div className="px-4 pb-4 flex-grow overflow-auto min-h-50">
                         <ChannelList data={data} />
                     </div>
                 )}
             </div>
 
             {/* 메인 콘텐츠 */}
-            <div className="flex-1 min-h-0">{children}</div>
+            <div className={`${childComponentStyle} flex-3 min-h-0`}>{children}</div>
+
+            {/*사용자 목록 컴포넌트*/}
+            <div className={`${parentComponentStyle} flex-1 w-full h-full bg-amber-600`}> 사용자 목록</div>
         </div>
     );
 }
