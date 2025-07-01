@@ -23,7 +23,6 @@ export interface User{
     id: number;
     profile:number;
     nickName: string;
-    email: string;
 }
 
 export interface Article {
