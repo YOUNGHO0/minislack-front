@@ -14,6 +14,8 @@ import emitter from "@/WebSocket/Emitter";
 import {ChannelCreateReceiveEvent, ChannelDeleteReceiveEvent, ChannelUpdateReceiveEvent} from "@/types/events";
 import {channel} from "node:diagnostics_channel";
 import {useParams, usePathname} from "next/navigation";
+import {User} from "@/types/type";
+import SpaceUserList from "@/app/component/space/userlayout/SpaceUserList";
 
 export default function RootLayout({
                                        children,
@@ -25,6 +27,8 @@ export default function RootLayout({
     const segments = path.split('/');
     const lastSegment = segments[segments.length - 1];
     const isParent = lastSegment === 'main';
+    const [currentEnrolledUserList , setCurrentEnrolledUserList] = React.useState<User[]>([]);
+    const [showUserList, setShowUserList] = useState(true);
 
     useEffect(() => {
 
@@ -45,6 +49,13 @@ export default function RootLayout({
         emitter.on('channelDelete', (message:ChannelDeleteReceiveEvent)=>{
             setData(prev => prev.filter(channel => channel.id !== message.id));
         })
+        // 사용자 목록 받아오기
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users?spaceId=${space}`, {withCredentials:true})
+            .then(response => {
+                if(response.status ===200){
+                    setCurrentEnrolledUserList(response.data);
+                }
+            })
 
 
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/channel?spaceId=${space}`, {withCredentials:true})
@@ -71,6 +82,7 @@ export default function RootLayout({
             <ChevronDoubleDownIcon className={baseClass} />
         );
     };
+
     const parentComponentStyle = isParent ? "" : "hidden md:block"
     const childComponentStyle = isParent ?  "hidden md:block" : ""
 
@@ -88,13 +100,13 @@ export default function RootLayout({
                             {renderToggleIcon()}
                         </button>
                     </div>
-                    <ChannelAndAddButton />
+                    <ChannelAndAddButton/>
                 </div>
 
                 {/* 본문 */}
                 {showSidebar && (
                     <div className="px-4 pb-4 flex-grow overflow-auto min-h-50">
-                        <ChannelList data={data} />
+                        <ChannelList data={data}/>
                     </div>
                 )}
             </div>
@@ -102,8 +114,21 @@ export default function RootLayout({
             {/* 메인 콘텐츠 */}
             <div className={`${childComponentStyle} flex-3 min-h-0`}>{children}</div>
 
-            {/*사용자 목록 컴포넌트*/}
-            <div className={`${parentComponentStyle} flex-1 w-full h-full bg-amber-600`}> 사용자 목록</div>
+            {/* 사용자 목록 컴포넌트 */}
+            <div className={`${parentComponentStyle} flex-1 w-full h-full bg-neutral-200 flex flex-col`}>
+                {/* 헤더: 사용자 목록 제목 + 토글 버튼 */}
+                <div className="flex items-center justify-between p-4">
+                    <div className="text-lg font-extrabold">사용자 목록</div>
+                </div>
+
+                {/* 사용자 목록 본문 */}
+                {showUserList && (
+                    <div className="flex-grow overflow-auto">
+                        <SpaceUserList userList={currentEnrolledUserList} />
+                    </div>
+                )}
+            </div>
+
         </div>
     );
 }
