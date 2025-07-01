@@ -4,23 +4,23 @@ import {Cross2Icon, Pencil1Icon} from "@radix-ui/react-icons";
 import axios from "axios";
 import {Checkbox, Flex, Text, Theme} from "@radix-ui/themes";
 import {PlusCircleIcon} from "@heroicons/react/24/outline";
-import {Channel} from "@/types/channel";
+import {Channel, Space} from "@/types/channel";
 import {channel} from "node:diagnostics_channel";
 
-const SpaceUpdateButton = ({channelInfo,fetchChannel,hideUpdate}: {
+const SpaceUpdateButton = ({spaceInfo,fetchChannel,hideUpdate}: {
     fetchChannel: () => void,
-    channelInfo: Channel,
+    spaceInfo: Space,
     hideUpdate: () => void
 }) => {
-    const [channelName, setChannelName] = React.useState(channelInfo.name); // 채널 이름 상태 추가
+    const [channelName, setChannelName] = React.useState(spaceInfo.name); // 채널 이름 상태 추가
     const [hasError, setHasError] = React.useState(false);
     const [error, setError] = React.useState("");
     const [isOpen, setIsOpen] = React.useState(false); // 다이얼로그 열림 상태 추가
     const [isLoading, setIsLoading] = React.useState(false); // 로딩 상태 추가
-    const [searchDisable, setIsSearchDisable] = React.useState(channelInfo.searchEnable);
-    const [codeRequired, setCodeRequired] = React.useState(channelInfo.codeRequired);
+    const [searchDisable, setIsSearchDisable] = React.useState(spaceInfo.searchEnable);
+    const [codeRequired, setCodeRequired] = React.useState(spaceInfo.codeRequired);
 
-    const handleEdit = (channel: Channel) => {
+    const handleEdit = (space: Channel) => {
 
         if (!channelName.trim()) {
             setHasError(true);
@@ -33,7 +33,7 @@ const SpaceUpdateButton = ({channelInfo,fetchChannel,hideUpdate}: {
         setError("");
 
         axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space`,
-            {id: channel.id, name: channel.name, searchEnable:!searchDisable, codeRequired : codeRequired}, {
+            {id: space.id, name: space.name, searchEnable:!searchDisable, codeRequired : codeRequired}, {
             withCredentials: true,
             headers: {
                 "Content-Type": "application/json"
@@ -104,8 +104,8 @@ const SpaceUpdateButton = ({channelInfo,fetchChannel,hideUpdate}: {
                         <div className="mt-[25px] flex justify-end">
                             <button
                                 onClick={() => {
-                                    channelInfo.name = channelName;
-                                    handleEdit(channelInfo);
+                                    spaceInfo.name = channelName;
+                                    handleEdit(spaceInfo);
                                 }}
                                 disabled={isLoading}
                                 className="inline-flex h-[35px] items-center justify-center rounded bg-green4 px-[15px] font-medium leading-none text-green11 outline-none outline-offset-1 hover:bg-green5 focus-visible:outline-2 focus-visible:outline-green6 select-none disabled:opacity-50 disabled:cursor-not-allowed">

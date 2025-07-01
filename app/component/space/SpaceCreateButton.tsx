@@ -72,7 +72,7 @@ const SpaceCreateButton = ({fetchChannel}: { fetchChannel: () => void }) => {
                         Create Room
                     </Dialog.Title>
                     <Dialog.Description className="mb-3 mt-2.5 text-[15px] leading-normal text-mauve11">
-                        Add Channel Name
+                        Add Room Name
                     </Dialog.Description>
                     <div className="mb-[15px] flex flex-col gap-3">
                         <input
@@ -80,7 +80,7 @@ const SpaceCreateButton = ({fetchChannel}: { fetchChannel: () => void }) => {
                                 hasError ? 'shadow-red-500 focus:shadow-red-500' : 'shadow-violet7 focus:shadow-violet8'
                             }`}
                             id="name"
-                            placeholder="Channel Name"
+                            placeholder="Room Name"
                             value={channelName}
                             onChange={handleInputChange}
                             disabled={isLoading}

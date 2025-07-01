@@ -7,7 +7,7 @@ import {DotsVerticalIcon, Pencil1Icon, TrashIcon} from "@radix-ui/react-icons";
 import axios from "axios";
 
 import SpaceCreateButton from "@/app/component/space/SpaceCreateButton";
-import {Channel} from "@/types/channel";
+import {Channel, Space} from "@/types/channel";
 import {router} from "next/client";
 import {useRouter} from "next/navigation";
 import {SearchIcon} from "lucide-react";
@@ -17,23 +17,23 @@ import * as React from "react";
 export default () => {
 
     const router = useRouter();
-    const [channelList, setChannelList] = useState<Channel[]>([]);
+    const [spaceList, setSpaceList] = useState<Space[]>([]);
     const [updateShow, setUpdateShow] = useState<boolean>(false);
     const [activeChannelNumber, setActiveChannelNumber] = useState(0);
 
-    const fetchChannels = () => {
+    const fetchSpaces = () => {
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space`, {
             withCredentials: true // 쿠키 포함
         }).then((response) => {
             console.log(response.data);
-            setChannelList(response.data); // 실제 데이터로 상태 업데이트
+            setSpaceList(response.data); // 실제 데이터로 상태 업데이트
         }).catch((err) => {
             console.error("GET 요청 오류:", err);
         });
     };
 
     useEffect(() => {
-        fetchChannels();
+        fetchSpaces();
     }, []); // 빈 배열 -> 컴포넌트 마운트 시 1회만 실행
 
     const hideUpdate = () => {
@@ -41,23 +41,23 @@ export default () => {
     }
 
 
-    const handleDelete = (channel: Channel) => {
-        console.log("Delete channel:", channel);
+    const handleDelete = (space: Space) => {
+        console.log("Delete space:", space);
         // 삭제 로직 구현
-        if (confirm(`"${channel.name}" 채널을 삭제하시겠습니까?`)) {
+        if (confirm(`"${space.name}" 채널을 삭제하시겠습니까?`)) {
             // 삭제 API 호출
             axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space`, {
-                data: {id: channel.id},
+                data: {id: space.id},
                 withCredentials: true
             }).then((response) => {
                 if (response.status === 200) {
-                    fetchChannels(); // 삭제 후 목록 새로고침
+                    fetchSpaces(); // 삭제 후 목록 새로고침
                 }
             });
         }
     };
 
-    function getDropDownMenu(index: number, channel: Channel) {
+    function getDropDownMenu(index: number, space: Space) {
         return <>
             {/* 점 세개 드롭다운 메뉴 */}
             <DropdownMenu.Root>
@@ -91,7 +91,7 @@ export default () => {
                             className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded cursor-pointer outline-none"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleDelete(channel);
+                                handleDelete(space);
                             }}
                         >
                             <TrashIcon className="w-4 h-4"/>
@@ -120,37 +120,37 @@ export default () => {
 
             {/* 채널 업데이트 팝업 뜨는 메뉴 */}
             {
-                updateShow && <SpaceUpdateButton channelInfo={channelList[activeChannelNumber]}
-                                                 fetchChannel={fetchChannels}
+                updateShow && <SpaceUpdateButton spaceInfo={spaceList[activeChannelNumber]}
+                                                 fetchChannel={fetchSpaces}
                                                  hideUpdate={hideUpdate}></SpaceUpdateButton>
             }
 
 
             {/* 반응형 그리드 레이아웃 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                {channelList.map((channel: Channel,index : number) => (
+                {spaceList.map((space: Space,index : number) => (
                     <div
-                        key={channel.id}
+                        key={space.id}
                         className="relative bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
-                        onClick={() => router.push(`/space/${channel.id}`)}
+                        onClick={() => router.push(`/space/${space.id}`)}
                     >
                         {/* 채널 이름 */}
                         <div className="pr-8">
                             <h3 className="font-medium text-gray-900 truncate">
-                                {channel.name}
+                                {space.name}
                             </h3>
                             <p className="text-sm text-gray-500 mt-1">
-                                채널 • ID: {channel.id}
+                                채널 • ID: {space.id}
                             </p>
                         </div>
 
-                        {channel.mine === true ?getDropDownMenu(index, channel) : null}
+                        {space.mine === true ?getDropDownMenu(index, space) : null}
                     </div>
                 ))}
 
                 <div
                     className="bg-white rounded-lg border border-dashed border-gray-300 p-4 shadow-sm hover:shadow-md hover:border-gray-400 transition-all duration-200 flex items-center justify-center min-h-[80px]">
-                    <SpaceCreateButton fetchChannel={fetchChannels}/>
+                    <SpaceCreateButton fetchChannel={fetchSpaces}/>
                 </div>
             </div>
         </div>
