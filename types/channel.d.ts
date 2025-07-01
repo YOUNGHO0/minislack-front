@@ -3,4 +3,5 @@ export interface Channel {
     name: string;
     searchEnable : boolean;
     codeRequired : boolean;
+    mine : boolean;
 }

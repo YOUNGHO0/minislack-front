@@ -57,6 +57,52 @@ export default () => {
         }
     };
 
+    function getDropDownMenu(index: number, channel: Channel) {
+        return <>
+            {/* 점 세개 드롭다운 메뉴 */}
+            <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                    <button
+                        className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100 transition-colors">
+                        <DotsVerticalIcon className="w-4 h-4 text-gray-500"/>
+                    </button>
+                </DropdownMenu.Trigger>
+
+                <DropdownMenu.Portal>
+                    <DropdownMenu.Content
+                        className="min-w-[160px] bg-white rounded-md border border-gray-200 shadow-lg p-1 z-50"
+                        sideOffset={5}
+                    >
+                        <DropdownMenu.Item
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveChannelNumber(index);
+                                setUpdateShow(true)
+                            }}
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded cursor-pointer outline-none"
+                        >
+                            <Pencil1Icon className="w-4 h-4"/>
+                            변경
+                        </DropdownMenu.Item>
+
+                        <DropdownMenu.Separator className="h-px bg-gray-200 my-1"/>
+
+                        <DropdownMenu.Item
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded cursor-pointer outline-none"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(channel);
+                            }}
+                        >
+                            <TrashIcon className="w-4 h-4"/>
+                            삭제
+                        </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+        </>;
+    }
+
     return (
         <div className="px-4 sm:px-6 lg:px-[15%] py-10">
             <div className="flex items-center justify-between mb-6">
@@ -98,47 +144,7 @@ export default () => {
                             </p>
                         </div>
 
-                        {/* 점 세개 드롭다운 메뉴 */}
-                        <DropdownMenu.Root>
-                            <DropdownMenu.Trigger asChild>
-                                <button
-                                    className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100 transition-colors">
-                                    <DotsVerticalIcon className="w-4 h-4 text-gray-500"/>
-                                </button>
-                            </DropdownMenu.Trigger>
-
-                            <DropdownMenu.Portal>
-                                <DropdownMenu.Content
-                                    className="min-w-[160px] bg-white rounded-md border border-gray-200 shadow-lg p-1 z-50"
-                                    sideOffset={5}
-                                >
-                                    <DropdownMenu.Item
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setActiveChannelNumber(index);
-                                            setUpdateShow(true)
-                                        }}
-                                        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded cursor-pointer outline-none"
-                                    >
-                                        <Pencil1Icon className="w-4 h-4"/>
-                                        변경
-                                    </DropdownMenu.Item>
-
-                                    <DropdownMenu.Separator className="h-px bg-gray-200 my-1"/>
-
-                                    <DropdownMenu.Item
-                                        className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded cursor-pointer outline-none"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDelete(channel);
-                                        }}
-                                    >
-                                        <TrashIcon className="w-4 h-4"/>
-                                        삭제
-                                    </DropdownMenu.Item>
-                                </DropdownMenu.Content>
-                            </DropdownMenu.Portal>
-                        </DropdownMenu.Root>
+                        {channel.mine === true ?getDropDownMenu(index, channel) : null}
                     </div>
                 ))}
 
