@@ -2,7 +2,7 @@
 import {useParams, useRouter} from "next/navigation";
 import MessageCard from "@/app/component/message/MessageCard";
 import {Box, Button, TextArea} from "@radix-ui/themes";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import emitter from '@/WebSocket/Emitter'
 import {JsonReceivedMessageInfo} from "@/types/webSocketType";
 import {ChannelInfo, ReceivedMessage} from "@/types/type";
@@ -16,6 +16,7 @@ import {
     ChatCreateSendEvent
 } from "@/types/events";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
+import JoinDialog from "@/app/component/channel/joindialog/JoinDialog";
 
 export default ()=>{
 
@@ -28,7 +29,8 @@ export default ()=>{
     const [channelName, setChannelName] = useState("");
     const router = useRouter();
     const [messageInput, setMessageInput] = useState("");
-
+    const [showJoinDialog, setShowJoinDialog] = useState(false);
+    const [mine ,setMine] = useState(false)
     const {sendMessage} = useWebSocket();
     const createChat = ()=>{
         if (messageInput ==="") return;
@@ -82,9 +84,16 @@ export default ()=>{
     //채팅 메세지 데이터 가져오기 useEffect
     useEffect(() => {
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/message?spaceId=${space}&channelId=${channelId}&pageNumber=0`,{withCredentials:true})
-            .then(value => (setMessages(value.data)))
-            // setMessages(value.data));
-
+            .then(response => {
+                if(response.status == 200){
+                    setMessages(response.data)
+                }
+               })
+            .catch(error => {
+                    if (error.response?.status === 403) {
+                        setShowJoinDialog(true);
+                    }
+            });
     }, []);
 
     //Todo : 코드 스타일 수정 필요
@@ -93,7 +102,8 @@ export default ()=>{
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/channel/info?channelId=${channelId}`, {withCredentials:true})
             .then((response)=>{
                 let info :ChannelInfo = response.data
-                setChannelName(info.channelName);
+                setMine(info.mine);
+                setChannelName(info.name);
             })
 
         const handler = (chattingMessage: JsonReceivedMessageInfo) => {
@@ -130,13 +140,17 @@ export default ()=>{
     }, [channelId]);
 
 
+
+
     return <div className={"flex flex-col w-full h-full min-h-0"}>
         {isUpdateShow && <ChannelUpdateDialog channelId={Number(channelId)} channelName={channelName} closeWindow={()=>{setIsUpdateShow(false)}} ></ChannelUpdateDialog>}
         <div className="flex bg-nav p-4 font-bold items-center gap-2">
             {channelName}
-            <ChannelSetting openWindow={()=>{setIsUpdateShow(true)}} closeWindow={()=>{setIsUpdateShow(false)}} channelId={Number(channelId)}></ChannelSetting>
+            <ChannelSetting mine={mine} openWindow={()=>{setIsUpdateShow(true)}} closeWindow={()=>{setIsUpdateShow(false)}} channelId={Number(channelId)}></ChannelSetting>
         </div>
 
+        {/*채널 미참여시 보여줄 다이얼로그*/}
+        {showJoinDialog && <JoinDialog close={()=>setShowJoinDialog(false)} />}
         {/* 메시지 영역 */}
         <div className=" flex-1 overflow-y-auto p-4 min-h-0">
             {messages.map((message) => (
