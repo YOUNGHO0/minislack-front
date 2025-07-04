@@ -1,21 +1,18 @@
 "use client";
 
 import React, {useEffect, useState} from "react";
-import { Channel } from "@/types/channel";
+import {Channel, Space} from "@/types/channel";
 import ChannelList from "@/app/component/channellist/ChannelList";
 import ChannelAndAddButton from "@/app/component/channellist/ChannelAddDialog";
 
-import {
-    ChevronDoubleUpIcon,
-    ChevronDoubleDownIcon,
-} from "@heroicons/react/24/outline";
+import {ChevronDoubleDownIcon, ChevronDoubleUpIcon,} from "@heroicons/react/24/outline";
 import axios from "axios";
 import emitter from "@/WebSocket/Emitter";
 import {ChannelCreateReceiveEvent, ChannelDeleteReceiveEvent, ChannelUpdateReceiveEvent} from "@/types/events";
-import {channel} from "node:diagnostics_channel";
 import {useParams, usePathname} from "next/navigation";
 import {User} from "@/types/type";
 import SpaceUserList from "@/app/component/space/userlayout/SpaceUserList";
+import SpaceInfo from "@/app/component/space/SpaceInfo";
 
 export default function RootLayout({
                                        children,
@@ -29,7 +26,7 @@ export default function RootLayout({
     const isParent = lastSegment === 'main';
     const [currentEnrolledUserList , setCurrentEnrolledUserList] = React.useState<User[]>([]);
     const [showUserList, setShowUserList] = useState(true);
-
+    const [userSpaceInfo , setUserSpaceInfo] = useState<Space>();
     useEffect(() => {
 
         emitter.on('channelCreate',(message : ChannelCreateReceiveEvent)=>{
@@ -65,6 +62,13 @@ export default function RootLayout({
                }
             })
 
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/info?spaceId=${space}`, {withCredentials:true})
+            .then(response => {
+                if(response.status ===200){
+                    setUserSpaceInfo(response.data);
+                }
+            })
+
         return ()=>{
             emitter.off('channelCreate')
             emitter.off('channelUpdate')
@@ -92,9 +96,16 @@ export default function RootLayout({
         <div className={`w-full h-full flex flex-col md:flex-row`}>
             {/* 사이드바 전체 */}
             <div className={`${parentComponentStyle} w-full md:w-80 bg-neutral-300 flex flex-col`}>
+
+                {/*방 정보*/}
+                <div className="flex p-4  items-center gap-2">
+                    <div className=" text-center font-bold text-2xl mb-1">{userSpaceInfo?.name}</div>
+                    <SpaceInfo isUser={userSpaceInfo?.mine === true ? true : false }/>
+                </div>
+
                 {/* 헤더 */}
                 <div className="flex items-center justify-between p-4">
-                    <div className="text-lg font-extrabold flex items-center gap-2">
+                    <div className="text-3sm  font-extrabold flex align-middle items-center gap-2">
                         Channel List
                         <button onClick={() => setShowSidebar((prev) => !prev)}>
                             {renderToggleIcon()}
@@ -112,7 +123,7 @@ export default function RootLayout({
             </div>
 
             {/* 메인 콘텐츠 */}
-            <div className={`${childComponentStyle} flex-3 min-h-0`}>{children}</div>
+            <div className={`${childComponentStyle} flex-4 min-h-0`}>{children}</div>
 
             {/* 사용자 목록 컴포넌트 */}
             <div className={`${parentComponentStyle} flex-1 w-full h-full bg-neutral-200 flex flex-col`}>
