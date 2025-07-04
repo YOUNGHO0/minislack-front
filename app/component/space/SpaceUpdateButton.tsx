@@ -17,7 +17,7 @@ const SpaceUpdateButton = ({spaceInfo,fetchChannel,hideUpdate}: {
     const [error, setError] = React.useState("");
     const [isOpen, setIsOpen] = React.useState(false); // 다이얼로그 열림 상태 추가
     const [isLoading, setIsLoading] = React.useState(false); // 로딩 상태 추가
-    const [searchDisable, setIsSearchDisable] = React.useState(spaceInfo.searchEnable);
+    const [searchDisable, setIsSearchDisable] = React.useState(!spaceInfo.searchEnable);
     const [codeRequired, setCodeRequired] = React.useState(spaceInfo.codeRequired);
 
     const handleEdit = (space: Channel) => {
