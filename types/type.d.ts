@@ -35,7 +35,8 @@ export interface Article {
 
 export interface ChannelInfo{
     id:number
-    channelName:string
+    name:string
+    mine : boolean
 }
 
 
