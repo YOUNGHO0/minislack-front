@@ -3,22 +3,16 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {Button, Heading} from "@radix-ui/themes";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import {DotsVerticalIcon, Pencil1Icon, TrashIcon} from "@radix-ui/react-icons";
-import axios from "axios";
-import {Channel} from "@/types/channel";
-import {useRouter} from "next/navigation";
-import {SearchIcon} from "lucide-react";
 import {HomeIcon} from "@radix-ui/react-icons";
-import SpaceUpdateButton from "@/app/component/space/SpaceUpdateButton";
+import axios from "axios";
+import {Channel, Space} from "@/types/channel";
+import {useRouter} from "next/navigation";
 import SpaceJoinDialog from "@/app/component/space/join/SpaceJoinDialog";
-import {channel} from "node:diagnostics_channel";
-import {responseCookiesToRequestCookies} from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export default () => {
 
     const router = useRouter();
-    const [channelList, setChannelList] = useState<Channel[]>([]);
+    const [spaceList, setSpaceList] = useState<Space[]>([]);
     const [updateShow, setUpdateShow] = useState<boolean>(false);
     const [activeSpaceNumber, setActiveSpaceNumber] = useState(0);
     const [openCodeDialog, setOpenCodeDialog] = useState<boolean>(false);
@@ -28,7 +22,7 @@ export default () => {
             withCredentials: true // 쿠키 포함
         }).then((response) => {
             console.log(response.data);
-            setChannelList(response.data); // 실제 데이터로 상태 업데이트
+            setSpaceList(response.data); // 실제 데이터로 상태 업데이트
         }).catch((err) => {
             console.error("GET 요청 오류:", err);
         });
@@ -61,7 +55,7 @@ export default () => {
 
     const handleJoin = (index : number)=>{
         setActiveSpaceNumber(index);
-        if(channelList[index].codeRequired){
+        if(spaceList[index].codeRequired){
             setOpenCodeDialog(true);
         }
         else{
@@ -73,10 +67,10 @@ export default () => {
 
     const joinWithInviteCode = (inviteCode: string): Promise<void> => {
         return axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${channelList[activeSpaceNumber].id}&inviteCode=${inviteCode}`
+            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${spaceList[activeSpaceNumber].id}&inviteCode=${inviteCode}`
         ,{withCredentials: true}).then(response => {
             if (response.status === 200) {
-                router.push(`/space/${channelList[activeSpaceNumber].id}`);
+                router.push(`/space/${spaceList[activeSpaceNumber].id}`);
             }
         }).catch(error => {
             // 호출한 쪽에서 catch로 처리할 수 있도록 다시 던져줌
@@ -104,7 +98,7 @@ export default () => {
 
             {/* 반응형 그리드 레이아웃 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                {channelList.map((channel: Channel,index : number) => (
+                {spaceList.map((channel: Channel,index : number) => (
                     <div
                         key={channel.id}
                         className="relative bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
@@ -121,7 +115,7 @@ export default () => {
 
                     </div>
                 ))}
-                {channelList.length == 0 ? <div> 참가 가능한 방이 없습니다 </div> : <></>}
+                {spaceList.length == 0 ? <div> 참가 가능한 방이 없습니다 </div> : <></>}
             </div>
         </div>
     );
