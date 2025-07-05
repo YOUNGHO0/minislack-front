@@ -1,5 +1,12 @@
 import {Button, DropdownMenu, Separator} from "@radix-ui/themes";
-import {DotsHorizontalIcon, DotsVerticalIcon, ExitIcon, Pencil1Icon, TrashIcon} from "@radix-ui/react-icons";
+import {
+    DotsHorizontalIcon,
+    DotsVerticalIcon,
+    ExitIcon,
+    Pencil1Icon,
+    PersonIcon,
+    TrashIcon
+} from "@radix-ui/react-icons";
 import * as React from "react";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {ChannelDeleteSendEvent, ChannelUpdateSendEvent} from "@/types/events";
@@ -8,9 +15,22 @@ import axios from "axios";
 import {useParams} from "next/navigation";
 import {useState} from "react";
 import ChannelLeaveErrorDialog from "@/app/component/error/ChannelLeaveErrorDialog";
+import ChannelAdminChange from "@/app/component/channel/ChannelAdminChange";
 
-function getUpdateAndDelete(openWindow: () => void, sendDeleteMessage: () => void) {
+function getUpdateAndDelete(setChangeAdminState:(flag:boolean)=>void,openWindow: () => void, sendDeleteMessage: () => void) {
     return <>
+        <DropdownMenu.Separator className="h-px bg-gray-200 my-1"/>
+        <DropdownMenu.Item
+            className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-red-50 rounded cursor-pointer outline-none"
+            onSelect={(event) => {
+                setChangeAdminState(true);
+            }}
+        >
+            <PersonIcon className="w-4 h-4" />
+            관리자 변경
+        </DropdownMenu.Item>
+
+        <DropdownMenu.Separator className="h-px bg-gray-200 my-1"/>
         <DropdownMenu.Item onClick={openWindow}
                            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded cursor-pointer outline-none">
             <Pencil1Icon className="w-4 h-4"/>
@@ -31,6 +51,7 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
     const {sendMessage} = useWebSocket()
     const {space} = useParams();
     const [errorState, setErrorState] = useState(false);
+    const [changeAdminState, setChangeAdminState] = useState(false);
     const sendDeleteMessage = ()=>{
         let channelDeleteSendEvent :ChannelDeleteSendEvent = {message: {id: channelId}, type: "channelDelete"}
         sendMessage(JSON.stringify(channelDeleteSendEvent))
@@ -64,6 +85,7 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
         <div>
             <ChannelLeaveErrorDialog alertState={errorState} closeWindow={()=>setErrorState(false)}></ChannelLeaveErrorDialog>
             <ChannelLeaveDialog alertState={channelOutState} closeWindow={()=>setChannelOutState(false)} leave={leaveChannel}></ChannelLeaveDialog>
+            <ChannelAdminChange open={changeAdminState} closeWindow={()=>setChangeAdminState(false)}></ChannelAdminChange>
             <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
                     <DotsVerticalIcon className="w-4 h-4 font-bold"/>
@@ -78,8 +100,9 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
                         <ExitIcon className="w-4 h-4" />
                         채널 나가기
                     </DropdownMenu.Item>
-                    <DropdownMenu.Separator className="h-px bg-gray-200 my-1"/>
-                    {mine && getUpdateAndDelete(openWindow, sendDeleteMessage)}
+
+
+                    {mine && getUpdateAndDelete(setChangeAdminState,openWindow, sendDeleteMessage)}
                 </DropdownMenu.Content>
             </DropdownMenu.Root>
         </div>
