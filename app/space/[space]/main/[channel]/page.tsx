@@ -81,19 +81,23 @@ export default ()=>{
         };
     }, [channelId]);
 
-    //채팅 메세지 데이터 가져오기 useEffect
-    useEffect(() => {
+    const getMessage = ()=>{
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/message?spaceId=${space}&channelId=${channelId}&pageNumber=0`,{withCredentials:true})
             .then(response => {
                 if(response.status == 200){
                     setMessages(response.data)
                 }
-               })
+            })
             .catch(error => {
-                    if (error.response?.status === 403) {
-                        setShowJoinDialog(true);
-                    }
+                if (error.response?.status === 403) {
+                    setShowJoinDialog(true);
+                }
             });
+    }
+
+    //채팅 메세지 데이터 가져오기 useEffect
+    useEffect(() => {
+        getMessage();
     }, []);
 
     //Todo : 코드 스타일 수정 필요
@@ -150,7 +154,7 @@ export default ()=>{
         </div>
 
         {/*채널 미참여시 보여줄 다이얼로그*/}
-        {showJoinDialog && <JoinDialog close={()=>setShowJoinDialog(false)} />}
+        {showJoinDialog && <JoinDialog getMessage={getMessage} close={()=>setShowJoinDialog(false)} />}
         {/* 메시지 영역 */}
         <div className=" flex-1 overflow-y-auto p-4 min-h-0">
             {messages.map((message) => (
