@@ -60,6 +60,14 @@ export interface ChatCreateSendEvent {
     }
 }
 
+export interface ChannelJoinSend{
+
+    type:"channelJoin"
+    message:{
+        id : number
+    }
+}
+
 
 export interface ChatCreateReceiveEvent {
     type:"chatCreate"
