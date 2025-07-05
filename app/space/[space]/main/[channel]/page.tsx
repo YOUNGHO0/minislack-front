@@ -2,7 +2,7 @@
 import {useParams, useRouter} from "next/navigation";
 import MessageCard from "@/app/component/message/MessageCard";
 import {Box, Button, TextArea} from "@radix-ui/themes";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import emitter from '@/WebSocket/Emitter'
 import {JsonReceivedMessageInfo} from "@/types/webSocketType";
 import {ChannelInfo, ReceivedMessage} from "@/types/type";
@@ -44,6 +44,13 @@ export default ()=>{
         setMessageInput("");
 
     }
+    const bottomRef = useRef<HTMLDivElement>(null); // ✅ 추가
+
+    useEffect(() => {
+        if (bottomRef.current) {
+            bottomRef.current.scrollIntoView({ behavior: 'auto' }); // ✅ 메시지 도착 시 하단으로 스크롤
+        }
+    }, [messages]);
 
     // 채널 관련 UseEffect
     useEffect(() => {
@@ -160,6 +167,7 @@ export default ()=>{
             {messages.map((message) => (
                 <MessageCard key={message.id} data={message}/>
             ))}
+            <div ref={bottomRef} /> {/* ✅ 하단 기준점 */}
         </div>
 
         {/* 입력창 영역 */}
