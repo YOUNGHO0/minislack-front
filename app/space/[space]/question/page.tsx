@@ -50,7 +50,7 @@ export default ()=>{
 
                     {question?.answer.map((ans: Article) => (
                         <div key={ans?.id} className={"mt-5"}>
-                            <div>{ans?.user?.username}</div>
+                            <div>{ans?.user?.nickName}</div>
                             <div key={ans.id}>{ans?.text}</div>
                         </div>
 
