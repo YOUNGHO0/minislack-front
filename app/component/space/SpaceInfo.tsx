@@ -1,5 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import {PersonIcon,ExitIcon, HamburgerMenuIcon} from "@radix-ui/react-icons";
+import {ClipboardCopyIcon, PersonIcon, ExitIcon, HamburgerMenuIcon, Link2Icon} from "@radix-ui/react-icons";
 import * as React from "react";
 import {useState} from "react";
 import SpaceExitDialog from "@/app/component/space/SpaceExitDialog";
@@ -7,12 +7,14 @@ import SpaceUserExitErrorDialog from "@/app/component/space/SpaceUserExitErrorDi
 import axios from "axios";
 import {useParams} from "next/navigation";
 import AdminChangeDialog from "@/app/component/space/adminchange/AdminDialog";
+import SpaceInviteDialog from "@/app/component/space/invite/SpaceInviteDialog";
 
 export default ({isUser } : {isUser:boolean}) => {
     const {space} = useParams();
     const [alertState , setAlertState] = useState(false);
     const [errorState , setErrorState] = useState(false);
     const [changeAdminState, setChangeAdminState] = useState(false);
+    const [inviteState, setInviteState] = useState(false);
     const leaveSpace = ()=>{
         axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/leave`,
@@ -39,6 +41,7 @@ export default ({isUser } : {isUser:boolean}) => {
             <SpaceUserExitErrorDialog alertState={errorState} closeWindow={()=>setErrorState(false)}></SpaceUserExitErrorDialog>
             <SpaceExitDialog leave={leaveSpace}  alertState={alertState} closeWindow={()=>setAlertState(false)} ></SpaceExitDialog>
             <AdminChangeDialog open={changeAdminState} closeWindow={()=>setChangeAdminState(false)}></AdminChangeDialog>
+            <SpaceInviteDialog closeWindow={()=>setInviteState(false)} open={inviteState} ></SpaceInviteDialog>
             <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
                     <button
@@ -52,7 +55,16 @@ export default ({isUser } : {isUser:boolean}) => {
                         className="min-w-[160px] bg-white rounded-md border border-gray-200 shadow-lg p-1 z-50"
                         sideOffset={5}
                     >
-
+                        <DropdownMenu.Item
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-red-50 rounded cursor-pointer outline-none"
+                            onSelect={(event) => {
+                                setInviteState(true);
+                            }}
+                        >
+                            <Link2Icon className="w-4 h-4" />
+                            공유
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Separator className="h-px bg-gray-200 my-1"/>
                         {isUser && (
                             <>
                             <DropdownMenu.Item
@@ -77,6 +89,8 @@ export default ({isUser } : {isUser:boolean}) => {
                             <ExitIcon className="w-4 h-4" />
                             방 나가기
                         </DropdownMenu.Item>
+
+
 
                     </DropdownMenu.Content>
                 </DropdownMenu.Portal>
