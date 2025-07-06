@@ -15,8 +15,12 @@ export default function HomeAppBar() {
     const router = useRouter();
     // 경로가 숨김 경로이거나 2단계 이상이면 AppBar 숨김
     const pathSegments = pathname.split("/").filter(Boolean); // 빈 문자열 제거
+    const isSpacePath = pathSegments[0] === "space";
+    const shouldHideAppBar = isSpacePath && pathSegments.length >= 2;
 
-    const shouldHideAppBar = pathSegments.length >= 2;
+    if (shouldHideAppBar) {
+        return null;
+    }
 
     if (shouldHideAppBar) {
         return null;
