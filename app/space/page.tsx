@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {Button, Heading} from "@radix-ui/themes";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import {DotsVerticalIcon, Pencil1Icon, TrashIcon} from "@radix-ui/react-icons";
-import axios from "axios";
+import axios, {HttpStatusCode} from "axios";
 
 import SpaceCreateButton from "@/app/component/space/SpaceCreateButton";
 import {Channel, Space} from "@/types/channel";
@@ -38,6 +38,36 @@ export default () => {
 
     const hideUpdate = () => {
         setUpdateShow(false);
+    }
+
+    const leaveSpace = (space: number)=>{
+        axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/leave`,
+            {spaceId : space}, // 사용자 입력값 사용
+            {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+    }
+
+    const checkJoin = (space : number)=>{
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${space}&inviteCode=""`, { withCredentials: true })
+            .then((res) => {
+
+            }).catch( (res)=>{
+
+            if(res.status == HttpStatusCode.Conflict) {
+                router.push(`/space/${space}`)
+                return;
+            }
+            else if(res.status == HttpStatusCode.Forbidden){
+                alert("삭제된 채팅방 입니다");
+                leaveSpace(space);
+            }
+
+        })
     }
 
 
@@ -132,7 +162,7 @@ export default () => {
                     <div
                         key={space.id}
                         className="relative bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
-                        onClick={() => router.push(`/space/${space.id}`)}
+                        onClick={() => checkJoin(space.id) }
                     >
                         {/* 채널 이름 */}
                         <div className="pr-8">
