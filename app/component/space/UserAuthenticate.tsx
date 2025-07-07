@@ -10,7 +10,10 @@ export default ()=>{
             .then((response:AxiosResponse) => {
                 if(response.status !== 200) router.push(`${process.env.NEXT_PUBLIC_WEB_URL}/login`)
             })
-            .catch(()=>{router.push(`${process.env.NEXT_PUBLIC_WEB_URL}/login`)})
+            .catch(()=>{
+                const currentUrl = window.location.pathname + window.location.search;
+                document.cookie = `redirect=${encodeURIComponent(currentUrl)}; path=/`;
+                router.push(`${process.env.NEXT_PUBLIC_WEB_URL}/login`)})
     }, []);
 
 }
