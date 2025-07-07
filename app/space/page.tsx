@@ -57,15 +57,14 @@ export default () => {
             .then((res) => {
 
             }).catch( (res)=>{
-
-            if(res.status == HttpStatusCode.Conflict) {
-                router.push(`/space/${space}`)
-                return;
-            }
-            else if(res.status == HttpStatusCode.Forbidden){
+                if(res.status == HttpStatusCode.Forbidden){
                 alert("삭제된 채팅방 입니다");
                 leaveSpace(space);
-            }
+                }
+                else{
+                    router.push(`/space/${space}`)
+                    return;
+                }
 
         })
     }
