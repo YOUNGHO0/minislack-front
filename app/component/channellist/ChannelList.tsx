@@ -8,7 +8,6 @@ export default (props: { data: Channel[] }) => {
 
        return <div className={"p-1"} key={p.id}>
            <ChannelName channel={p}></ChannelName>
-           <Separator orientation="horizontal" size="4" style={{marginTop:"4px"}}/>
        </div>
     });
     return (
