@@ -4,6 +4,7 @@ export interface ReceivedMessage {
     user: User|null;
     createdDate: string |null; // ISO 8601 형식 문자열
     comment: ReceivedMessage[]|null;
+    flushed : boolean
 }
 
 export interface SendChatMessage {

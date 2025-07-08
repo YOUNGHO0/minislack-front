@@ -71,7 +71,7 @@ export default ()=>{
             if(Number(channelId) !== message.channelId) return;
 
 
-            const chatMessage: ReceivedMessage = {comment: [], id: message.id, text: message.chatMessage, createdDate: message.createdDate, user: message.user}
+            const chatMessage: ReceivedMessage = {comment: [], id: message.id, text: message.chatMessage, createdDate: message.createdDate, user: message.user,flushed:false}
             setMessages((prevData) => [...prevData, chatMessage]);
 
         }

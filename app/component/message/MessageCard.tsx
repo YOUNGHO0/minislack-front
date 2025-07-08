@@ -245,12 +245,14 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
                                 className="absolute right-0 top-8 bg-white border border-gray-200 rounded-md shadow-lg z-10 min-w-[100px]"
                                 ref={menuRef}
                             >
-                                <button
-                                    onClick={handleEdit}
-                                    className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
-                                >
-                                    편집
-                                </button>
+                                {!props.data.flushed &&
+                                    (<button
+                                        onClick={handleEdit}
+                                        className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
+                                    >
+                                        편집
+                                    </button>
+                                )}
                                 <button
                                     onClick={handleAddComment}
                                     className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
