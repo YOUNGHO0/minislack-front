@@ -7,8 +7,8 @@ export default  ({alertState, closeWindow}: {alertState:boolean, closeWindow: ()
         <AlertDialog.Content maxWidth="450px">
             <AlertDialog.Title>관리자 변경 필요</AlertDialog.Title>
             <AlertDialog.Description size="2">
-                <div>방 관리자는 나갈 수 없습니다.</div>
-                <div>다른 사람으로 관리자를 변경하세요</div>
+                <>방 관리자는 나갈 수 없습니다.</>
+                <>다른 사람으로 관리자를 변경하세요</>
             </AlertDialog.Description>
 
             <Flex gap="3" mt="4" justify="end">

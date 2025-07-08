@@ -5,7 +5,7 @@ import {useState} from "react";
 import SpaceExitDialog from "@/app/component/space/SpaceExitDialog";
 import SpaceUserExitErrorDialog from "@/app/component/space/SpaceUserExitErrorDialog";
 import axios from "axios";
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import AdminChangeDialog from "@/app/component/space/adminchange/AdminDialog";
 import SpaceInviteDialog from "@/app/component/space/invite/SpaceInviteDialog";
 
@@ -15,6 +15,7 @@ export default ({isUser } : {isUser:boolean}) => {
     const [errorState , setErrorState] = useState(false);
     const [changeAdminState, setChangeAdminState] = useState(false);
     const [inviteState, setInviteState] = useState(false);
+    const router = useRouter();
     const leaveSpace = ()=>{
         axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/leave`,
@@ -26,7 +27,7 @@ export default ({isUser } : {isUser:boolean}) => {
                 }
             }).then(response => {
                 if (response.status === 200) {
-                    console.log("이동 필요");
+                    router.push(`/space`);
                 }
         })
             .catch(reason => {
