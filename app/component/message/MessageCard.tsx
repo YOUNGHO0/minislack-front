@@ -2,6 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { UserCircleIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/outline';
 import {Avatar, TextArea} from '@radix-ui/themes';
 import {ReceivedMessage} from "@/types/type";
+import {useWebSocket} from "@/WebSocket/WebSocketProvider";
+import {MessageDeleteSendEvent, MessageEditSendEvent} from "@/types/events";
+import {useParams} from "next/navigation";
 
 
 export default function MessageCard(props: { data: ReceivedMessage }) {
@@ -20,7 +23,8 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
     const textRef = useRef<HTMLDivElement>(null);
     const commentRef = useRef<HTMLTextAreaElement>(null);
     const contextMenuRef = useRef<HTMLDivElement>(null);
-
+    const {sendMessage} = useWebSocket();
+    const {space,channel} = useParams();
     useEffect(() => {
         if (!isEditing) {
             setEditText(props.data.text);
@@ -77,12 +81,14 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
     };
 
     const handleSaveEdit = () => {
-        console.log('메시지 저장됨 - ID:', props.data.id, '새 텍스트:', editText);
+        const message : MessageEditSendEvent = {message: {channelId: Number(channel), chatId: props.data.id, text: editText}, type: "chatUpdate"}
+        sendMessage(JSON.stringify(message));
         setIsEditing(false);
     };
 
     const handleDelete = () => {
-        console.log('삭제 클릭됨 - 메시지 ID:', props.data.id);
+        const message : MessageDeleteSendEvent = {message: {channelId: Number(channel), id: props.data.id}, type: "chatDelete"}
+        sendMessage(JSON.stringify(message));
         setShowMenu(false);
         setContextMenuPos(null);
     };
@@ -153,6 +159,9 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
         }
     };
 
+
+
+
     return (
         <>
             <div
@@ -188,7 +197,6 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
                                     className="text-xs w-full p-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     style={{ width: textWidth ? `${textWidth}px` : 'auto' }}
                                     rows={3}
-                                    placeholder="메시지를 입력하세요..."
                                 />
                                 <div className="flex justify-between gap-2">
                                     <button

@@ -60,6 +60,24 @@ export interface ChatCreateSendEvent {
     }
 }
 
+export interface MessageEditSendEvent {
+    type:"chatUpdate"
+    message:{
+        channelId : number
+        chatId : number
+        text : string
+    }
+}
+export interface MessageDeleteSendEvent {
+    type:"chatDelete"
+    message:{
+        channelId : number
+        id : number
+    }
+}
+
+
+
 export interface ChannelJoinSend{
 
     type:"channelJoin"
@@ -78,3 +96,15 @@ export interface ChatCreateReceiveEvent {
     user:User
 }
 
+export interface ChatDeleteReceiveEvent {
+    type:"chatDelete"
+    id : number
+    channelId : number
+}
+
+export interface ChatUpdateReceiveEvent {
+    type:"chatUpdate"
+    text: string
+    id : number
+    channelId : number
+}

@@ -13,7 +13,7 @@ import {
     ChannelDeleteReceiveEvent,
     ChannelUpdateReceiveEvent,
     ChatCreateReceiveEvent,
-    ChatCreateSendEvent
+    ChatCreateSendEvent, ChatDeleteReceiveEvent, ChatUpdateReceiveEvent
 } from "@/types/events";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import JoinDialog from "@/app/component/channel/joindialog/JoinDialog";
@@ -68,7 +68,6 @@ export default ()=>{
         };
 
         const handleChatCreate = (message : ChatCreateReceiveEvent) =>{
-            console.log("message111" + JSON.stringify(message));
             if(Number(channelId) !== message.channelId) return;
 
 
@@ -77,12 +76,36 @@ export default ()=>{
 
         }
 
+        const handleChatUpdate = (message : ChatUpdateReceiveEvent) =>{
+            console.log("실행됨");
+            console.log(message);
+            if(message.channelId === Number(channelId)){
+                setMessages( (prevData) =>
+                    prevData.map((data)=>{
+                        if(data.id === message.id){
+                            data.text = message.text;
+                        }
+                        return data;
+                    }
+                ))}
+        }
+
+        const handleChatDelete = (message : ChatDeleteReceiveEvent)=>{
+            if(message.channelId === Number(channelId)){
+                setMessages((prevData) => prevData.filter((value)=> value.id !== message.id))
+            }
+        }
+
         emitter.on("chatCreate", handleChatCreate);
+        emitter.on("chatUpdate", handleChatUpdate);
+        emitter.on("chatDelete", handleChatDelete);
         emitter.on("channelUpdate", handleChannelUpdate);
         emitter.on("channelDelete", handleChannelDelete);
 
         return () => {
             emitter.off("chatCreate", handleChatCreate);
+            emitter.off("chatUpdate", handleChatUpdate);
+            emitter.off("chatDelete", handleChatDelete)
             emitter.off("channelUpdate", handleChannelUpdate);
             emitter.off("channelDelete", handleChannelDelete);
         };
@@ -167,7 +190,7 @@ export default ()=>{
             {messages.map((message) => (
                 <MessageCard key={message.id} data={message}/>
             ))}
-            <div ref={bottomRef} /> {/* ✅ 하단 기준점 */}
+            <div ref={bottomRef} />
         </div>
 
         {/* 입력창 영역 */}
