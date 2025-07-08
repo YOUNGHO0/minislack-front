@@ -12,7 +12,7 @@ import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {ChannelDeleteSendEvent, ChannelUpdateSendEvent} from "@/types/events";
 import ChannelLeaveDialog from "@/app/component/channel/ChannelLeaveDialog";
 import axios from "axios";
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import {useState} from "react";
 import ChannelLeaveErrorDialog from "@/app/component/error/ChannelLeaveErrorDialog";
 import ChannelAdminChange from "@/app/component/channel/ChannelAdminChange";
@@ -52,6 +52,8 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
     const {space} = useParams();
     const [errorState, setErrorState] = useState(false);
     const [changeAdminState, setChangeAdminState] = useState(false);
+    const [channelOutState, setChannelOutState] = React.useState(false);
+    const router = useRouter();
     const sendDeleteMessage = ()=>{
         let channelDeleteSendEvent :ChannelDeleteSendEvent = {message: {id: channelId}, type: "channelDelete"}
         sendMessage(JSON.stringify(channelDeleteSendEvent))
@@ -59,7 +61,7 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
         closeWindow();
     }
 
-    const [channelOutState, setChannelOutState] = React.useState(false);
+
     const leaveChannel = ()=>{
         axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/channel/leave`,
@@ -71,7 +73,7 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
                 }
             }).then(response => {
             if (response.status === 200) {
-                console.log("이동 필요");
+                router.push(`/space/${space}/main`);
             }
         })
             .catch(reason => {

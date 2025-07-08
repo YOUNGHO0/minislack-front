@@ -25,7 +25,6 @@ export default ({alertState, closeWindow, leave} : {alertState : boolean, closeW
                                 onClick={()=>{
                                     closeWindow();
                                     leave();
-                                    router.push(`/space/${params.space}/main`);
                                 }}>
                             채널 나가기
                         </Button>
