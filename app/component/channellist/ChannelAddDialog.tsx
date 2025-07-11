@@ -27,8 +27,8 @@ const ChannelAddDialog = () => {
     };
     // 검색어에 따라 사용자 필터링
     const filteredUsers = userList.filter(user =>
-        user.nickName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchQuery.toLowerCase())
+        user.nickName.toLowerCase().includes(searchQuery.toLowerCase())
+        // user.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     // 사용자 선택/해제
@@ -201,9 +201,9 @@ const ChannelAddDialog = () => {
                                             <div className="text-[15px] font-medium text-mauve12">
                                                 {user.nickName}
                                             </div>
-                                            <div className="text-[13px] text-mauve11">
-                                                {user.email}
-                                            </div>
+                                            {/*<div className="text-[13px] text-mauve11">*/}
+                                            {/*    {user.email}*/}
+                                            {/*</div>*/}
                                         </div>
                                     </div>
                                 );
