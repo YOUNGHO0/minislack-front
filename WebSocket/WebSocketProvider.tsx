@@ -3,6 +3,7 @@
 
 import {createContext, useContext, useEffect, useRef} from 'react'
 import emitter from '../WebSocket/Emitter'
+import {useParams} from "next/navigation";
 // WebSocket 타입 정의
 type WebSocketContextType = {
     sendMessage: (msg: string) => void
@@ -14,9 +15,9 @@ const WebSocketContext = createContext<WebSocketContextType>({
 })
 
 // Provider 정의
-export const  WebSocketProvider =({ children, space }: { children: React.ReactNode,  space: string | number  }) => {
+export const  WebSocketProvider =({ children }: { children: React.ReactNode }) => {
     const socketRef = useRef<WebSocket | null>(null)
-
+    const {space} = useParams();
     useEffect(() => {
         const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}?space=${space}`);
         socketRef.current = ws
