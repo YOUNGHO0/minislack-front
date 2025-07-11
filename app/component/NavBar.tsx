@@ -19,16 +19,16 @@ export default function NavBar(){
 
 
         <nav
-            className="relative flex lg:flex-col items-center justify-between
+            className=" flex lg:flex-col items-center
              lg:p-3 bg-neutral-200  lg:order-first p-1">
-            <div className={"flex w-100 lg:w-10 lg:h-80  h-10 flex-row lg:flex-col items-center justify-evenly "}>
+            <div className={"flex w-100 px-10 lg:py-10 lg:px-0 lg:w-10 lg:h-80  h-10 flex-row lg:flex-col items-center justify-start "}>
                 <MainButton></MainButton>
-                <QuestionButton></QuestionButton>
-                <SettingButton></SettingButton>
+                {/*<QuestionButton></QuestionButton>*/}
+                {/*<SettingButton></SettingButton>*/}
             </div>
 
             <div className="lg:w-8 lg:h-1/5 w-1/5 items-center flex justify-center">
-                <AcademicCapIcon className="w-8"/>
+                {/*<AcademicCapIcon className="w-8"/>*/}
             </div>
 
         </nav>
