@@ -6,5 +6,5 @@ import ChannelList from "@/app/component/channellist/ChannelList";
 
 export default function Home() {
 
-    return <div> oops </div>
+    return <></>
 }
