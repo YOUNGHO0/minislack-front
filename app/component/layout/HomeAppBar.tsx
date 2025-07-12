@@ -20,15 +20,6 @@ export default function HomeAppBar() {
     const isSpacePath = pathSegments[0] === "space";
     const shouldHideAppBar = isSpacePath && pathSegments.length >= 2;
     const [isLogin,setIsLoggedIn] = React.useState(false);
-    if (shouldHideAppBar) {
-        return null;
-    }
-
-    const logout = ()=>{
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/logout`, {withCredentials:true})
-            .then(()=> setIsLoggedIn(false));
-    }
-
 
     useEffect(() => {
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user`, { withCredentials: true })
@@ -43,6 +34,18 @@ export default function HomeAppBar() {
                 }
             });
     }, []);
+
+
+    if (shouldHideAppBar) {
+        return null;
+    }
+
+    const logout = ()=>{
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/logout`, {withCredentials:true})
+            .then(()=> setIsLoggedIn(false));
+    }
+
+
 
     return (
         <Box sx={{ flexGrow: 1 }}>
