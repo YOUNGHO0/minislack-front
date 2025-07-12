@@ -9,6 +9,8 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import {usePathname, useRouter} from "next/navigation";
+import axios from "axios";
+import {useEffect} from "react";
 
 export default function HomeAppBar() {
     const pathname = usePathname();
@@ -17,14 +19,30 @@ export default function HomeAppBar() {
     const pathSegments = pathname.split("/").filter(Boolean); // 빈 문자열 제거
     const isSpacePath = pathSegments[0] === "space";
     const shouldHideAppBar = isSpacePath && pathSegments.length >= 2;
-
+    const [isLogin,setIsLoggedIn] = React.useState(false);
     if (shouldHideAppBar) {
         return null;
     }
 
-    if (shouldHideAppBar) {
-        return null;
+    const logout = ()=>{
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/logout`, {withCredentials:true})
+            .then(()=> setIsLoggedIn(false));
     }
+
+
+    useEffect(() => {
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user`, { withCredentials: true })
+            .then(response => {
+                if (response.status === 200) {
+                    setIsLoggedIn(true);
+                }
+            })
+            .catch(error => {
+                if (error.response?.status === 401) {
+                    setIsLoggedIn(false);
+                }
+            });
+    }, []);
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -42,7 +60,7 @@ export default function HomeAppBar() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         EChat
                     </Typography>
-                    <Button onClick={()=>{router.push(`/login${pathname ? `?redirect=${pathname}` : "" }`)}} color="inherit">Login</Button>
+                    {isLogin ===true ? <Button onClick={logout} color="inherit">Logout</Button> : <Button onClick={()=>{router.push(`/login${pathname ? `?redirect=${pathname}` : "" }`)}} color="inherit">Login</Button>}
                 </Toolbar>
             </AppBar>
         </Box>
