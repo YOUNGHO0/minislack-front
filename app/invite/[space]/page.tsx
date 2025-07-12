@@ -1,5 +1,5 @@
 'use client'
-import {useParams, useRouter} from "next/navigation";
+import {useParams, usePathname, useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import axios, {HttpStatusCode} from "axios";
 import {Space} from "@/types/channel";
@@ -9,6 +9,7 @@ import * as React from "react";
 
 export default  ()=> {
     const {space} = useParams();
+    const path = usePathname();
     const [userSpaceInfo, setUserSpaceInfo] = useState<Space>();
     const router = useRouter()
     const [openCodeDialog, setOpenCodeDialog] = useState<boolean>(false);
@@ -42,7 +43,7 @@ export default  ()=> {
                 if(res.status == HttpStatusCode.Unauthorized) {
                     const currentUrl = window.location.pathname + window.location.search;
                     document.cookie = `redirect=${encodeURIComponent(currentUrl)}; path=/`;
-                    router.push("/login")
+                    router.push(`/login?redirect=${path}`)
                 }
                 else{
                      router.push("/404")

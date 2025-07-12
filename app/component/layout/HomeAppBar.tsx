@@ -42,7 +42,7 @@ export default function HomeAppBar() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         EChat
                     </Typography>
-                    <Button onClick={()=>{router.push("/login")}} color="inherit">Login</Button>
+                    <Button onClick={()=>{router.push(`/login${pathname ? `?redirect=${pathname}` : "" }`)}} color="inherit">Login</Button>
                 </Toolbar>
             </AppBar>
         </Box>
