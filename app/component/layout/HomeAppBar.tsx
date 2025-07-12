@@ -42,7 +42,11 @@ export default function HomeAppBar() {
 
     const logout = ()=>{
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/logout`, {withCredentials:true})
-            .then(()=> setIsLoggedIn(false));
+            .then(()=> {
+                setIsLoggedIn(false)
+                router.push("/")
+            });
+
     }
 
 
