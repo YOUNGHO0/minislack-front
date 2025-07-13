@@ -5,16 +5,16 @@ import {ReceivedMessage} from "@/types/type";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {MessageDeleteSendEvent, MessageEditSendEvent} from "@/types/events";
 import {useParams} from "next/navigation";
+import MessageReplyBar from "@/app/component/message/MessageReplyBar";
+import MessageReply from "@/app/component/message/MessageReply";
 
 
-export default function MessageCard(props: { data: ReceivedMessage }) {
+export default function MessageCard(props: { parentMessage:ReceivedMessage|undefined, data: ReceivedMessage, setMessageId : (messageId:number) =>void }) {
     const [showMenu, setShowMenu] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(props.data.text);
     const [textWidth, setTextWidth] = useState<number | null>(null);
-    const [showCommentBox, setShowCommentBox] = useState(false);
-    const [showCommentList, setShowCommentList] = useState(false);
     const [commentText, setCommentText] = useState('');
     const [contextMenuPos, setContextMenuPos] = useState<{x: number, y: number} | null>(null);
 
@@ -56,12 +56,6 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
         }
     }, [isEditing, editText?.length]);
 
-    // 댓글 입력 창 포커스
-    useEffect(() => {
-        if (showCommentBox && commentRef.current) {
-            commentRef.current.focus();
-        }
-    }, [showCommentBox]);
 
     const handleEdit = () => {
         if (textRef.current) {
@@ -72,7 +66,6 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
         setEditText(props.data.text);
         setShowMenu(false);
         setContextMenuPos(null);
-        setShowCommentList(false);
     };
 
     const handleCancelEdit = () => {
@@ -93,17 +86,12 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
         setContextMenuPos(null);
     };
 
-    const handleAddComment = () => {
-        setShowCommentBox(true);
+    const handleAddComment = (messageId:number) => {
         setShowMenu(false);
         setContextMenuPos(null);
+        props.setMessageId(messageId);
         // 댓글 목록이 열려있을 때만 유지, 닫혀있으면 그대로 둠
         // setShowCommentList(false); 제거
-    };
-
-    const handleShowComments = () => {
-        setShowCommentList(!showCommentList);
-        setShowCommentBox(false);
     };
 
     const handleSaveComment = () => {
@@ -111,13 +99,11 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
             console.log('댓글 저장됨 - 메시지 ID:', props.data.id, '댓글:', commentText);
             // 여기서 실제 댓글 저장 로직 구현
             setCommentText('');
-            setShowCommentBox(false);
         }
     };
 
     const handleCancelComment = () => {
         setCommentText('');
-        setShowCommentBox(false);
     };
 
     // 우클릭 컨텍스트 메뉴
@@ -214,19 +200,14 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
                                 </div>
                             </div>
                         ) : (
-                            <div className="text-gray-900">{editText}</div>
+                            <>
+                            {console.log(props.parentMessage)}
+                            {props.parentMessage !==  undefined ? <MessageReply message={props.parentMessage}></MessageReply> : <></>}
+                            <div className="text-gray-900 whitespace-pre-line break-words">{editText}</div>
+                            </>
                         )}
                     </div>
 
-                    {/* 댓글 수 표시 */}
-                    {props.data.comment && props.data.comment.length > 0 && (
-                        <div
-                            className="mt-2 text-xs text-blue-600 cursor-pointer hover:underline"
-                            onClick={handleShowComments}
-                        >
-                            댓글 {props.data.comment.length}개
-                        </div>
-                    )}
                 </div>
 
                 {/* 호버 시 나타나는 점 세개 버튼 - 편집 모드가 아닐 때만 표시 */}
@@ -254,7 +235,7 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
                                     </button>
                                 )}
                                 <button
-                                    onClick={handleAddComment}
+                                    onClick={()=>handleAddComment(props.data.id)}
                                     className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
                                 >
                                     댓글 달기
@@ -271,56 +252,6 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
                 )}
             </div>
 
-            {/* 댓글 목록 */}
-            {showCommentList && props.data.comment && props.data.comment.length > 0 && (
-                <div className="mx-4 mb-4 ml-16">
-                    {props.data.comment.map((comment, index) => (
-                        <div key={index} className="mb-2 p-3 bg-gray-50 border border-gray-200 rounded-lg w-fit min-w-60">
-                            <div className="flex items-center gap-2 mb-1">
-                                <div className="text-xs font-medium text-gray-700">
-                                    {/*{comment.user?.username || '익명'}*/}
-                                </div>
-                                <div className="text-xs text-gray-500">
-                                    {comment.createdDate ? formatTime(comment.createdDate) : '시간 정보 없음'}
-                                </div>
-                            </div>
-                            <div className="text-sm text-gray-900">
-                                {comment.text}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {/* 댓글 입력 창 */}
-            {showCommentBox && (
-                <div className="mx-4 mb-4 ml-16 p-3 bg-gray-50 border border-gray-200 rounded-lg w-fit min-w-80">
-                    <div className="text-sm text-gray-600 mb-2">댓글 작성</div>
-                    <TextArea
-                        ref={commentRef}
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                        onKeyDown={handleCommentKeyDown}
-                        className="text-xs w-full p-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        rows={2}
-                        placeholder="댓글을 입력하세요..."
-                    />
-                    <div className="flex justify-end gap-2 mt-2">
-                        <button
-                            onClick={handleCancelComment}
-                            className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
-                        >
-                            취소
-                        </button>
-                        <button
-                            onClick={handleSaveComment}
-                            className="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
-                        >
-                            댓글 달기
-                        </button>
-                    </div>
-                </div>
-            )}
 
             {/* 우클릭 컨텍스트 메뉴 */}
             {contextMenuPos && (
@@ -339,7 +270,7 @@ export default function MessageCard(props: { data: ReceivedMessage }) {
                         편집
                     </button>
                     <button
-                        onClick={handleAddComment}
+                        onClick={()=>handleAddComment(props.data.id)}
                         className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
                     >
                         댓글 달기
