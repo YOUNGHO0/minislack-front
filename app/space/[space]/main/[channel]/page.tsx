@@ -47,6 +47,14 @@ export default ()=>{
     const bottomRef = useRef<HTMLDivElement>(null); // ✅ 추가
 
     useEffect(() => {
+        const textArea = textAreaRef.current;
+        if (textArea) {
+            textArea.style.height = "auto"; // 리셋
+            textArea.style.height = `${textArea.scrollHeight}px`; // 내용 높이만큼 설정
+        }
+    }, [messageInput]);
+
+    useEffect(() => {
         if (bottomRef.current) {
             bottomRef.current.scrollIntoView({ behavior: 'auto' }); // ✅ 메시지 도착 시 하단으로 스크롤
         }
