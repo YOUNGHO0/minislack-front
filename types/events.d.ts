@@ -93,8 +93,9 @@ export interface ChatCreateReceiveEvent {
     id: number
     parentId: number
     createdDate: string
-    channelId : number
-    user:User
+    channelId: number
+    user: User
+    parentMessage:ChatCreateReceiveEvent
 }
 
 export interface ChatDeleteReceiveEvent {
