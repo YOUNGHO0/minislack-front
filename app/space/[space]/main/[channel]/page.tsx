@@ -17,6 +17,7 @@ import {
 } from "@/types/events";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import JoinDialog from "@/app/component/channel/joindialog/JoinDialog";
+import MessageReplyBar from "@/app/component/message/MessageReplyBar";
 
 export default ()=>{
 
@@ -29,19 +30,23 @@ export default ()=>{
     const [channelName, setChannelName] = useState("");
     const router = useRouter();
     const [messageInput, setMessageInput] = useState("");
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [mine ,setMine] = useState(false)
+    const [replyMessageId, setReplyMessageId] = useState<number | null>(null);
     const {sendMessage} = useWebSocket();
     const createChat = ()=>{
         if (messageInput ==="") return;
-
+        let parent = 0;
+        if(replyMessageId !== null) parent = replyMessageId;
         const chatCreateSendEvent: ChatCreateSendEvent = {
-            message: {channelId: Number(channelId), parent: 0, text:messageInput },
+            message: {channelId: Number(channelId), parent: parent, text:messageInput },
             type: "chatCreate"
         }
 
         sendMessage(JSON.stringify(chatCreateSendEvent));
         setMessageInput("");
+        setReplyMessageId(null);
 
     }
     const bottomRef = useRef<HTMLDivElement>(null); // ✅ 추가
@@ -77,9 +82,16 @@ export default ()=>{
 
         const handleChatCreate = (message : ChatCreateReceiveEvent) =>{
             if(Number(channelId) !== message.channelId) return;
-
-
-            const chatMessage: ReceivedMessage = {comment: [], id: message.id, text: message.chatMessage, createdDate: message.createdDate, user: message.user,flushed:false}
+            let parentMessage : ReceivedMessage | null = null;
+            if(message.parentMessage !== null) parentMessage = {
+                createdDate: message.parentMessage.createdDate,
+                flushed: false,
+                id: message.parentMessage.id,
+                parentMessage: null,
+                text: message.parentMessage.chatMessage,
+                user : message.parentMessage.user
+            }
+            const chatMessage: ReceivedMessage = {id: message.id, text: message.chatMessage, parentMessage:parentMessage, createdDate: message.createdDate, user: message.user,flushed:false}
             setMessages((prevData) => [...prevData, chatMessage]);
 
         }
@@ -184,6 +196,8 @@ export default ()=>{
 
 
 
+
+
     return <div className={"flex flex-col w-full h-full min-h-0"}>
         {isUpdateShow && <ChannelUpdateDialog channelId={Number(channelId)} channelName={channelName} closeWindow={()=>{setIsUpdateShow(false)}} ></ChannelUpdateDialog>}
         <div className="flex bg-nav p-4 font-bold items-center gap-2">
@@ -196,22 +210,24 @@ export default ()=>{
         {/* 메시지 영역 */}
         <div className=" flex-1 overflow-y-auto p-4 min-h-0">
             {messages.map((message) => (
-                <MessageCard key={message.id} data={message}/>
+                <MessageCard parentMessage={message.parentMessage === null? undefined : message.parentMessage} key={message.id} data={message} setMessageId={(messageId:number)=>setReplyMessageId(messageId)}/>
             ))}
             <div ref={bottomRef} />
         </div>
 
         {/* 입력창 영역 */}
-        <div className="p-4 min-h-0">
+        <div className="p-4 min-h-0 px-[5%]">
             <Box className="flex flex-col w-full h-full">
-                <TextArea
+                {replyMessageId !== null ? <MessageReplyBar onCancel={()=>setReplyMessageId(null)} message={messages.find(msg => msg.id === replyMessageId)}></MessageReplyBar>  : <></> }
+                    <TextArea
                     size="3"
                     placeholder=""
                     className="w-full mb-2"
                     value={messageInput}
+                    ref={textAreaRef}
                     onChange={(event) => {setMessageInput(event.target.value);}}
                 />
-                <Button onClick={createChat} style={{"display" : "flex","marginLeft" : "auto"}}>Submit</Button>
+                <Button onClick={createChat} style={{"display" : "flex","marginLeft" : "auto"}}>전송</Button>
             </Box>
         </div>
 
