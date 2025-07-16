@@ -27,7 +27,6 @@ export const  WebSocketProvider =({ children }: { children: React.ReactNode }) =
         }
 
         ws.onmessage = (event) => {
-            console.log(event.data);
             try {
                 const data = JSON.parse(event.data);
                 if (data.type) {

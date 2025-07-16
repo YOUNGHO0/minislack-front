@@ -25,7 +25,6 @@ export default ()=>{
     const params = useParams();
     const channelId = params.channel;
     const space = params.space;
-    console.log("space" + space);
     const [messages, setMessages] = useState<ReceivedMessage[]>([]);
     const [channelName, setChannelName] = useState("");
     const router = useRouter();

@@ -201,7 +201,6 @@ export default function MessageCard(props: { parentMessage:ReceivedMessage|undef
                             </div>
                         ) : (
                             <>
-                            {console.log(props.parentMessage)}
                             {props.parentMessage !==  undefined ? <MessageReply message={props.parentMessage}></MessageReply> : <></>}
                             <div className="text-gray-900 whitespace-pre-line break-words">{editText}</div>
                             </>
