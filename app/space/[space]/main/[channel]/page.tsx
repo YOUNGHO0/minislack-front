@@ -109,11 +109,27 @@ export default ()=>{
                 ))}
         }
 
-        const handleChatDelete = (message : ChatDeleteReceiveEvent)=>{
-            if(message.channelId === Number(channelId)){
-                setMessages((prevData) => prevData.filter((value)=> value.id !== message.id))
-            }
-        }
+        const handleChatDelete = (message: ChatDeleteReceiveEvent) => {
+            if (message.channelId !== Number(channelId)) return;
+
+            setMessages((prev) => {
+                return prev
+                    .filter((msg) => msg.id !== message.id)
+                    .map((msg) => {
+                        const parent = msg.parentMessage;
+                        if (parent && parent.id === message.id) {
+                            return {
+                                ...msg,
+                                parentMessage: {
+                                    ...parent,
+                                    text: "삭제된 메세지 입니다",
+                                },
+                            };
+                        }
+                        return msg;
+                    });
+            });
+        };
 
         emitter.on("chatCreate", handleChatCreate);
         emitter.on("chatUpdate", handleChatUpdate);
