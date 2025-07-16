@@ -88,16 +88,15 @@ export default ()=>{
                 id: message.parentMessage.id,
                 parentMessage: null,
                 text: message.parentMessage.chatMessage,
-                user : message.parentMessage.user
+                user : message.parentMessage.user,
+                mine : message.mine
             }
-            const chatMessage: ReceivedMessage = {id: message.id, text: message.chatMessage, parentMessage:parentMessage, createdDate: message.createdDate, user: message.user,flushed:false}
+            const chatMessage: ReceivedMessage = {id: message.id, text: message.chatMessage, parentMessage:parentMessage, createdDate: message.createdDate, user: message.user,flushed:false,mine:message.mine}
             setMessages((prevData) => [...prevData, chatMessage]);
 
         }
 
         const handleChatUpdate = (message : ChatUpdateReceiveEvent) =>{
-            console.log("실행됨");
-            console.log(message);
             if(message.channelId === Number(channelId)){
                 setMessages( (prevData) =>
                     prevData.map((data)=>{

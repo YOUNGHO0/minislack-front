@@ -4,6 +4,7 @@ export interface ReceivedMessage {
     user: User|null;
     createdDate: string |null; // ISO 8601 형식 문자열
     flushed : boolean
+    mine : boolean
     parentMessage: ReceivedMessage | null
 }
 

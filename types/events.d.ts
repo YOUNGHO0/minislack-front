@@ -91,6 +91,7 @@ export interface ChatCreateReceiveEvent {
     channelId: number
     user: User
     parentMessage:ChatCreateReceiveEvent
+    mine : boolean
 }
 
 export interface ChatDeleteReceiveEvent {

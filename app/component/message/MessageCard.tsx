@@ -225,7 +225,7 @@ export default function MessageCard(props: { parentMessage:ReceivedMessage|undef
                                 className="absolute right-0 top-8 bg-white border border-gray-200 rounded-md shadow-lg z-10 min-w-[100px]"
                                 ref={menuRef}
                             >
-                                {!props.data.flushed &&
+                                {props.data.mine&& !props.data.flushed &&
                                     (<button
                                         onClick={handleEdit}
                                         className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
@@ -239,12 +239,12 @@ export default function MessageCard(props: { parentMessage:ReceivedMessage|undef
                                 >
                                     댓글 달기
                                 </button>
-                                <button
+                                {props.data.mine && <button
                                     onClick={handleDelete}
                                     className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 text-red-600 transition-colors"
                                 >
                                     삭제
-                                </button>
+                                </button>}
                             </div>
                         )}
                     </div>
