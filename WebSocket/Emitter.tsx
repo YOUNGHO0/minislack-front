@@ -5,7 +5,7 @@ import {
     ChannelCreateReceiveEvent,
     ChannelDeleteReceiveEvent,
     ChannelUpdateReceiveEvent,
-    ChatCreateReceiveEvent, ChatDeleteReceiveEvent, ChatUpdateReceiveEvent,
+    ChatCreateReceiveEvent, ChatDeleteReceiveEvent, ChatUpdateReceiveEvent, SpaceJoinReceiveEvent, SpaceOutReceiveEvent,
     UserSpaceInEvent
 } from "@/types/events";
 
@@ -16,12 +16,13 @@ export default emitter
 type Events = {
     channel: JsonReceivedChannelInfo;
     channelMessage: JsonReceivedMessageInfo
-    spaceIn: UserSpaceInEvent
     channelCreate : ChannelCreateReceiveEvent
     channelUpdate : ChannelUpdateReceiveEvent
     channelDelete : ChannelDeleteReceiveEvent
     chatCreate: ChatCreateReceiveEvent
     chatUpdate: ChatUpdateReceiveEvent
     chatDelete: ChatDeleteReceiveEvent
+    spaceJoin: SpaceJoinReceiveEvent
+    spaceOut : SpaceOutReceiveEvent
     // 다른 이벤트도 추가 가능
 };

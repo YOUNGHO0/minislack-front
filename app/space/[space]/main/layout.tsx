@@ -8,7 +8,12 @@ import ChannelAndAddButton from "@/app/component/channellist/ChannelAddDialog";
 import {ChevronDoubleDownIcon, ChevronDoubleUpIcon,} from "@heroicons/react/24/outline";
 import axios from "axios";
 import emitter from "@/WebSocket/Emitter";
-import {ChannelCreateReceiveEvent, ChannelDeleteReceiveEvent, ChannelUpdateReceiveEvent} from "@/types/events";
+import {
+    ChannelCreateReceiveEvent,
+    ChannelDeleteReceiveEvent,
+    ChannelUpdateReceiveEvent,
+    SpaceJoinReceiveEvent, SpaceOutReceiveEvent
+} from "@/types/events";
 import {useParams, usePathname} from "next/navigation";
 import {User} from "@/types/type";
 import SpaceUserList from "@/app/component/space/userlayout/SpaceUserList";
@@ -29,6 +34,13 @@ export default function RootLayout({
     const [userSpaceInfo , setUserSpaceInfo] = useState<Space>();
     useEffect(() => {
 
+        emitter.on('spaceJoin', (message: SpaceJoinReceiveEvent)=>
+            setCurrentEnrolledUserList((prevData)=> [...prevData,message.dto])
+        )
+        emitter.on('spaceOut', (message:SpaceOutReceiveEvent) =>{
+            setCurrentEnrolledUserList((prevData)=> prevData.filter(prevData => prevData.id !== message.dto.id))
+        })
+
         emitter.on('channelCreate',(message : ChannelCreateReceiveEvent)=>{
             let createdChannel:Channel = {id: message.id, name: message.channelName}
             setData(prevData => [...prevData, createdChannel]);
@@ -43,6 +55,7 @@ export default function RootLayout({
                 )
             );
         });
+
         emitter.on('channelDelete', (message:ChannelDeleteReceiveEvent)=>{
             setData(prev => prev.filter(channel => channel.id !== message.id));
         })
@@ -73,6 +86,8 @@ export default function RootLayout({
             emitter.off('channelCreate')
             emitter.off('channelUpdate')
             emitter.off('channelDelete')
+            emitter.off('spaceJoin')
+            emitter.off('spaceOut')
         }
     }, []);
 

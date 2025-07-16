@@ -1,10 +1,5 @@
 import {User} from "@/types/type";
 
-export interface UserSpaceInEvent {
-    type: "spaceIn"
-    spaceId: number
-}
-
 export interface ChannelCreateSendEvent {
     type: "channelCreate"
     message: {
@@ -109,4 +104,14 @@ export interface ChatUpdateReceiveEvent {
     text: string
     id: number
     channelId: number
+}
+
+export interface SpaceJoinReceiveEvent {
+    type: "spaceJoin"
+    dto :User
+}
+
+export interface SpaceOutReceiveEvent {
+    type: "spaceJoin"
+    dto :User
 }
