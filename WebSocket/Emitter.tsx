@@ -6,7 +6,6 @@ import {
     ChannelDeleteReceiveEvent,
     ChannelUpdateReceiveEvent,
     ChatCreateReceiveEvent, ChatDeleteReceiveEvent, ChatUpdateReceiveEvent, SpaceJoinReceiveEvent, SpaceOutReceiveEvent,
-    UserSpaceInEvent
 } from "@/types/events";
 
 const emitter = mitt<Events>()
