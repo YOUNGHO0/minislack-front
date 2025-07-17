@@ -9,7 +9,7 @@ import MessageReplyBar from "@/app/component/message/MessageReplyBar";
 import MessageReply from "@/app/component/message/MessageReply";
 
 
-export default function MessageCard(props: { parentMessage:ReceivedMessage|undefined, data: ReceivedMessage, setMessageId : (messageId:number) =>void }) {
+export default function MessageCard(props: { scroll : (id:number)=>void , refCallback?: (el: HTMLDivElement | null) => void, parentMessage:ReceivedMessage|undefined, data: ReceivedMessage, setMessageId : (messageId:number) =>void }) {
     const [showMenu, setShowMenu] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -151,7 +151,8 @@ export default function MessageCard(props: { parentMessage:ReceivedMessage|undef
     return (
         <>
             <div
-                className="m-4 p-2 flex min-w-60 w-fit rounded-lg border border-gray-200 hover:bg-gray-50 relative"
+                ref={props.refCallback}
+                className="m-2 p-2 flex min-w-60 w-fit rounded-lg border border-gray-200 hover:bg-gray-50 relative"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onContextMenu={handleContextMenu}
@@ -201,7 +202,10 @@ export default function MessageCard(props: { parentMessage:ReceivedMessage|undef
                             </div>
                         ) : (
                             <>
-                            {props.parentMessage !==  undefined ? <MessageReply message={props.parentMessage}></MessageReply> : <></>}
+                            {props.parentMessage !==  undefined ?
+                                <MessageReply scroll={props.scroll} message={props.parentMessage}></MessageReply
+                               >
+                                : <></>}
                             <div className="text-gray-900 whitespace-pre-line break-words">{editText}</div>
                             </>
                         )}

@@ -20,7 +20,7 @@ import JoinDialog from "@/app/component/channel/joindialog/JoinDialog";
 import MessageReplyBar from "@/app/component/message/MessageReplyBar";
 
 export default ()=>{
-
+    const messageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
     const [isUpdateShow,setIsUpdateShow]=useState(false);
     const params = useParams();
     const channelId = params.channel;
@@ -207,6 +207,38 @@ export default ()=>{
         };
     }, [channelId]);
 
+    const scroll = (id: number) => {
+        const el = messageRefs.current[id];
+        if (!el) return;
+
+        // 스크롤 시작
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        const observer = new IntersectionObserver(
+            ([entry], observerInstance) => {
+                if (entry.isIntersecting) {
+                    // 요소가 뷰포트에 들어왔을 때 실행
+                    observerInstance.disconnect();
+
+                    // 깜빡임 효과
+                    el.classList.add('bg-gray-100', 'transition', 'duration-300');
+                    el.style.transform = 'scale(1.1)';
+
+                    setTimeout(() => {
+                        el.classList.remove('bg-gray-100');
+                        el.style.transform = 'scale(1)';
+                    }, 700);
+                }
+            },
+            {
+                root: null, // 기본: viewport 기준
+                threshold: 1, // 완전히 보일 때만 트리거 (값을 낮추면 더 일찍 감지)
+            }
+        );
+
+        observer.observe(el);
+    };
+
 
 
 
@@ -222,9 +254,11 @@ export default ()=>{
         {/*채널 미참여시 보여줄 다이얼로그*/}
         {showJoinDialog && <JoinDialog getMessage={getMessage} close={()=>setShowJoinDialog(false)} />}
         {/* 메시지 영역 */}
-        <div className=" flex-1 overflow-y-auto p-4 min-h-0">
+        <div className="flex flex-col flex-1 overflow-y-auto p-4 min-h-0">
             {messages.map((message) => (
-                <MessageCard parentMessage={message.parentMessage === null? undefined : message.parentMessage} key={message.id} data={message} setMessageId={(messageId:number)=>setReplyMessageId(messageId)}/>
+                <div key={message.id} className="message-row w-full">
+                    <MessageCard scroll={scroll}  refCallback={(el) => messageRefs.current[message.id] = el} parentMessage={message.parentMessage === null? undefined : message.parentMessage} key={message.id} data={message} setMessageId={(messageId:number)=>setReplyMessageId(messageId)}/>
+                </div>
             ))}
             <div ref={bottomRef} />
         </div>
