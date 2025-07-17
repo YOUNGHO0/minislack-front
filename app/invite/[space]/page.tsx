@@ -55,7 +55,13 @@ export default  ()=> {
     const checkJoin = (space:Space|undefined)=>{
         if (!space) return; // space가 undefined면 아무 동작도 하지 않음
         if(userSpaceInfo?.codeRequired){
-            setOpenCodeDialog(true);
+            if(code === null){
+                setOpenCodeDialog(true);
+            }
+            else{
+                joinWithInviteCode(code);
+            }
+
         }
         else{
             joinWithInviteCode("").catch((res)=>{
