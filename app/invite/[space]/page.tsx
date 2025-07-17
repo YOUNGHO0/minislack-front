@@ -64,11 +64,7 @@ export default  ()=> {
 
         }
         else{
-            joinWithInviteCode("").catch((res)=>{
-                if(res.status === HttpStatusCode.Conflict){
-                    router.push(`/space/${userSpaceInfo?.id}/main`);
-                }
-            })
+            joinWithInviteCode("");
         }
     }
 
