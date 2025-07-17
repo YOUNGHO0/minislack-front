@@ -22,8 +22,9 @@ const InviteDialog = ({open, closeWindow} : {open:boolean, closeWindow : ()=>voi
     useEffect(() => {
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/invite?id=${space}`, { withCredentials: true })
             .then((res) => {
-                let defaultCode = `${process.env.NEXT_PUBLIC_WEB_URL}/space/${space}/main`;
-                defaultCode += res.data.inviteCode;
+                let defaultCode = `${process.env.NEXT_PUBLIC_WEB_URL}/invite/${space}`;
+                if(res.data.inviteCode !== "" )
+                defaultCode += "?code=" +  res.data.inviteCode;
                 setInviteLink(defaultCode);
             });
     }, []);

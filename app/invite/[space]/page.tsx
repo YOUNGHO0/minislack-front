@@ -1,5 +1,5 @@
 'use client'
-import {useParams, usePathname, useRouter} from "next/navigation";
+import {useParams, usePathname, useRouter, useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import axios, {HttpStatusCode} from "axios";
 import {Space} from "@/types/channel";
@@ -10,6 +10,7 @@ import * as React from "react";
 export default  ()=> {
     const {space} = useParams();
     const path = usePathname();
+    const code = useSearchParams().get("code");
     const [userSpaceInfo, setUserSpaceInfo] = useState<Space>();
     const router = useRouter()
     const [openCodeDialog, setOpenCodeDialog] = useState<boolean>(false);
@@ -41,9 +42,8 @@ export default  ()=> {
             })
             .catch((res)=>{
                 if(res.status == HttpStatusCode.Unauthorized) {
-                    const currentUrl = window.location.pathname + window.location.search;
-                    document.cookie = `redirect=${encodeURIComponent(currentUrl)}; path=/`;
-                    router.push(`/login?redirect=${path}`)
+                    const redirectUrl = `${path}${code ? `?code=${code}` : ""}`;
+                    router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
                 }
                 else{
                      router.push("/404")
@@ -83,9 +83,6 @@ export default  ()=> {
                     입장하기를 클릭하면
                     <div className={"font-bold pl-2 pr-2"}>{userSpaceInfo?.name}</div>
                     에 입장합니다
-                </div>
-                <div>
-                    버튼을 눌러 Echat을 시작해 보세요!
                 </div>
                 <div className="w-full flex mt-10">
                     <Button style={{marginLeft:"auto" ,marginRight:"10px"}} onClick={() => checkJoin(userSpaceInfo)}>
