@@ -8,6 +8,12 @@ export interface ReceivedMessage {
     parentMessage: ReceivedMessage | null
 }
 
+export interface MessagePageResponse {
+    totalPageCount: number;
+    currentPageNumber: number;
+    messageList: ReceivedMessage[];
+}
+
 export interface SendChatMessage {
     channelId: number;
     parent:number|null
