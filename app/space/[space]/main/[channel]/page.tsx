@@ -338,6 +338,27 @@ export default ()=>{
         }
     };
 
+    useEffect(() => {
+        const scrollContainer = scrollContainerRef.current;
+        if (!scrollContainer) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            // 기본 스크롤을 막지 않고, 델타 값만 조절
+            const originalDelta = e.deltaY;
+            const reducedDelta = originalDelta * 0.3; // 민감도 조절
+
+            // 기본 이벤트는 막지 않고, 스크롤 속도만 조절
+            e.preventDefault();
+            scrollContainer.scrollTop += reducedDelta;
+        };
+
+        scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
+
+        return () => {
+            scrollContainer.removeEventListener('wheel', handleWheel);
+        };
+    }, []);
+
     return <div className={"flex flex-col w-full h-full min-h-0"}>
         {isUpdateShow && <ChannelUpdateDialog channelId={Number(channelId)} channelName={channelName} closeWindow={()=>{setIsUpdateShow(false)}} ></ChannelUpdateDialog>}
         <div className="flex bg-nav p-4 font-bold items-center gap-2">
@@ -357,7 +378,6 @@ export default ()=>{
             {/* 로딩 인디케이터 */}
             {isLoading && minPageNumber !== null && minPageNumber > 0 && (
                 <div className="flex justify-center py-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
                 </div>
             )}
 
