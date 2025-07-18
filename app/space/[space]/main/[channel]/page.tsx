@@ -228,11 +228,11 @@ export default ()=>{
                     observerInstance.disconnect();
 
                     el.classList.add('bg-gray-100', 'transition', 'duration-300');
-                    el.style.transform = 'scale(1.1)';
+                    el.classList.add('animate-pulse');
 
                     setTimeout(() => {
-                        el.classList.remove('bg-gray-100');
-                        el.style.transform = 'scale(1)';
+                        el.classList.remove('bg-gray-100', 'transition', 'duration-300');
+                        el.classList.remove('animate-pulse');
                     }, 700);
                 }
             },
