@@ -3,6 +3,8 @@ import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import {Theme} from "@radix-ui/themes";
 import HomeAppBar from "@/app/component/layout/HomeAppBar";
+import KeyboardSensor from "@/app/component/keyboard/KeyboardSensor";
+import React from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,12 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable}`}
       >
+      <KeyboardSensor>
       <Theme>
           <div className={"w-screen h-screen"}>
               <HomeAppBar></HomeAppBar>
                   {children}
           </div>
       </Theme>
+      </KeyboardSensor>
       </body>
     </html>
   );
