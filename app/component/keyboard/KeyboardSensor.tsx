@@ -21,7 +21,15 @@ export default function KeyboardSensor({
 
             const delta = initialHeight.current - vv.height;
             const isKeyboardOpen = delta > 100;
-            setKeyboardHeight(isKeyboardOpen ? delta : 0);
+            const newHeight = isKeyboardOpen ? delta : 0;
+            setKeyboardHeight(newHeight);
+
+            if (isKeyboardOpen && paddingRef.current) {
+                // padding이 보이게 스크롤하면 자연히 입력창이 위로 올라온다
+                setTimeout(() => {
+                    paddingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 50);
+            }
         };
 
         vv.addEventListener("resize", handleResize);
@@ -37,7 +45,10 @@ export default function KeyboardSensor({
     return (
         <>
             {children}
-            <div ref={paddingRef} className="w-full pointer-events-none transition-all duration-300" />
+            <div
+                ref={paddingRef}
+                className="w-full pointer-events-none transition-all duration-300"
+            />
         </>
     );
 }
