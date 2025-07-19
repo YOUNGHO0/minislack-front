@@ -40,7 +40,7 @@ export default () => {
     const [isLoading, setIsLoading] = useState(false); // useState로 변경
     const firstLoadRef = useRef(true);
     const topSentinelRef = useRef<HTMLDivElement>(null);
-
+    const inputBottomRef = useRef<HTMLDivElement>(null);
     const createChat = () => {
         if (messageInput === "") return;
         let parent = 0;
@@ -422,8 +422,14 @@ export default () => {
                     onChange={(event) => {
                         setMessageInput(event.target.value);
                     }}
+                    onFocus={() => {
+                        setTimeout(() => {
+                            inputBottomRef.current?.scrollIntoView({behavior: 'smooth'});
+                        }, 100); // 키보드 올라오는 시간 고려
+                    }}
                 />
                 <Button onClick={createChat} style={{"display": "flex", "marginLeft": "auto"}}>전송</Button>
+                <div ref={inputBottomRef}/>
             </Box>
         </div>
     </div>
