@@ -19,9 +19,9 @@ import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import JoinDialog from "@/app/component/channel/joindialog/JoinDialog";
 import MessageReplyBar from "@/app/component/message/MessageReplyBar";
 
-export default ()=>{
+export default () => {
     const messageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
-    const [isUpdateShow,setIsUpdateShow]=useState(false);
+    const [isUpdateShow, setIsUpdateShow] = useState(false);
     const params = useParams();
     const channelId = params.channel;
     const space = params.space;
@@ -31,7 +31,7 @@ export default ()=>{
     const [messageInput, setMessageInput] = useState("");
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [showJoinDialog, setShowJoinDialog] = useState(false);
-    const [mine ,setMine] = useState(false)
+    const [mine, setMine] = useState(false)
     const [replyMessageId, setReplyMessageId] = useState<number | null>(null);
     const [minPageNumber, setMinPageNumber] = useState<number | null>(null);
     const [totalPageNumber, setTotalPageNumber] = useState<number | null>(null);
@@ -41,12 +41,12 @@ export default ()=>{
     const firstLoadRef = useRef(true);
     const topSentinelRef = useRef<HTMLDivElement>(null);
 
-    const createChat = ()=>{
-        if (messageInput ==="") return;
+    const createChat = () => {
+        if (messageInput === "") return;
         let parent = 0;
-        if(replyMessageId !== null) parent = replyMessageId;
+        if (replyMessageId !== null) parent = replyMessageId;
         const chatCreateSendEvent: ChatCreateSendEvent = {
-            message: {channelId: Number(channelId), parent: parent, text:messageInput },
+            message: {channelId: Number(channelId), parent: parent, text: messageInput},
             type: "chatCreate"
         }
 
@@ -69,7 +69,7 @@ export default ()=>{
         if (firstLoadRef.current && messages.length > 0) {
             firstLoadRef.current = false;
             if (bottomRef.current) {
-                bottomRef.current.scrollIntoView({ behavior: 'auto' });
+                bottomRef.current.scrollIntoView({behavior: 'auto'});
             }
         }
     }, [messages]);
@@ -89,38 +89,47 @@ export default ()=>{
             }
         };
 
-        const handleChatCreate = (message : ChatCreateReceiveEvent) =>{
-            if(Number(channelId) !== message.channelId) return;
-            let parentMessage : ReceivedMessage | null = null;
-            if(message.parentMessage !== null) parentMessage = {
+        const handleChatCreate = (message: ChatCreateReceiveEvent) => {
+            if (Number(channelId) !== message.channelId) return;
+            let parentMessage: ReceivedMessage | null = null;
+            if (message.parentMessage !== null) parentMessage = {
                 createdDate: message.parentMessage.createdDate,
                 flushed: false,
                 id: message.parentMessage.id,
                 parentMessage: null,
                 text: message.parentMessage.chatMessage,
-                user : message.parentMessage.user,
-                mine : message.mine
+                user: message.parentMessage.user,
+                mine: message.mine
             }
-            const chatMessage: ReceivedMessage = {id: message.id, text: message.chatMessage, parentMessage:parentMessage, createdDate: message.createdDate, user: message.user,flushed:false,mine:message.mine}
+            const chatMessage: ReceivedMessage = {
+                id: message.id,
+                text: message.chatMessage,
+                parentMessage: parentMessage,
+                createdDate: message.createdDate,
+                user: message.user,
+                flushed: false,
+                mine: message.mine
+            }
             setMessages((prevData) => [...prevData, chatMessage]);
 
             if (bottomRef.current) {
                 requestAnimationFrame(() => {
-                    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+                    bottomRef.current?.scrollIntoView({behavior: 'smooth'});
                 });
             }
         }
 
-        const handleChatUpdate = (message : ChatUpdateReceiveEvent) =>{
-            if(message.channelId === Number(channelId)){
-                setMessages( (prevData) =>
-                    prevData.map((data)=>{
-                            if(data.id === message.id){
+        const handleChatUpdate = (message: ChatUpdateReceiveEvent) => {
+            if (message.channelId === Number(channelId)) {
+                setMessages((prevData) =>
+                    prevData.map((data) => {
+                            if (data.id === message.id) {
                                 data.text = message.text;
                             }
                             return data;
                         }
-                    ))}
+                    ))
+            }
         }
 
         const handleChatDelete = (message: ChatDeleteReceiveEvent) => {
@@ -160,10 +169,10 @@ export default ()=>{
         };
     }, [channelId]);
 
-    const getMessage = ()=>{
-        axios.get<MessagePageResponse>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/message?spaceId=${space}&channelId=${channelId}&pageNumber=-1`,{withCredentials:true})
+    const getMessage = () => {
+        axios.get<MessagePageResponse>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/message?spaceId=${space}&channelId=${channelId}&pageNumber=-1`, {withCredentials: true})
             .then(response => {
-                if(response.status == 200){
+                if (response.status == 200) {
                     setTotalPageNumber(response.data.totalPageCount);
                     setMinPageNumber(response.data.currentPageNumber);
                     setMessages(response.data.messageList)
@@ -182,9 +191,9 @@ export default ()=>{
     }, []);
 
     useEffect(() => {
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/channel/info?channelId=${channelId}`, {withCredentials:true})
-            .then((response)=>{
-                let info :ChannelInfo = response.data
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/channel/info?channelId=${channelId}`, {withCredentials: true})
+            .then((response) => {
+                let info: ChannelInfo = response.data
                 setMine(info.mine);
                 setChannelName(info.name);
             })
@@ -225,7 +234,7 @@ export default ()=>{
         const el = messageRefs.current[id];
         if (!el) return;
 
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.scrollIntoView({behavior: 'smooth', block: 'center'});
 
         const observer = new IntersectionObserver(
             ([entry], observerInstance) => {
@@ -302,7 +311,7 @@ export default ()=>{
         try {
             const res = await axios.get<MessagePageResponse>(
                 `${process.env.NEXT_PUBLIC_API_URL}/api/v1/message?spaceId=${space}&channelId=${channelId}&pageNumber=${pageNumber}`,
-                { withCredentials: true }
+                {withCredentials: true}
             );
 
             if (res.status === 200) {
@@ -339,7 +348,7 @@ export default ()=>{
             // 로딩 완료 후 지연을 주어 연속 로딩 방지
             setTimeout(() => {
 
-            }, );
+            },);
         }
     };
 
@@ -357,7 +366,7 @@ export default ()=>{
             scrollContainer.scrollTop += reducedDelta;
         };
 
-        scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
+        scrollContainer.addEventListener('wheel', handleWheel, {passive: false});
 
         return () => {
             scrollContainer.removeEventListener('wheel', handleWheel);
@@ -365,43 +374,56 @@ export default ()=>{
     }, []);
 
     return <div className={"flex flex-col w-full h-full min-h-0"}>
-        {isUpdateShow && <ChannelUpdateDialog channelId={Number(channelId)} channelName={channelName} closeWindow={()=>{setIsUpdateShow(false)}} ></ChannelUpdateDialog>}
+        {isUpdateShow &&
+            <ChannelUpdateDialog channelId={Number(channelId)} channelName={channelName} closeWindow={() => {
+                setIsUpdateShow(false)
+            }}></ChannelUpdateDialog>}
         <div className="flex bg-nav p-4 font-bold items-center gap-2">
             {channelName}
-            <ChannelSetting mine={mine} openWindow={()=>{setIsUpdateShow(true)}} closeWindow={()=>{setIsUpdateShow(false)}} channelId={Number(channelId)}></ChannelSetting>
+            <ChannelSetting mine={mine} openWindow={() => {
+                setIsUpdateShow(true)
+            }} closeWindow={() => {
+                setIsUpdateShow(false)
+            }} channelId={Number(channelId)}></ChannelSetting>
         </div>
 
-        {showJoinDialog && <JoinDialog getMessage={getMessage} close={()=>setShowJoinDialog(false)} />}
+        {showJoinDialog && <JoinDialog getMessage={getMessage} close={() => setShowJoinDialog(false)}/>}
 
         {/* 메시지 영역 */}
         <div ref={scrollContainerRef} className="flex flex-col flex-1 overflow-y-auto p-4 min-h-0">
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
-                <div ref={topSentinelRef} className="h-10 w-full flex-shrink-0" />
+                <div ref={topSentinelRef} className="h-10 w-full flex-shrink-0"/>
             )}
 
 
             {messages.map((message) => (
                 <div key={message.id} className="message-row w-full">
-                    <MessageCard  scrollContainerRef={scrollContainerRef}  scroll={scroll} refCallback={(el) => messageRefs.current[message.id] = el} parentMessage={message.parentMessage === null? undefined : message.parentMessage} data={message} setMessageId={(messageId:number)=>setReplyMessageId(messageId)}/>
+                    <MessageCard scrollContainerRef={scrollContainerRef} scroll={scroll}
+                                 refCallback={(el) => messageRefs.current[message.id] = el}
+                                 parentMessage={message.parentMessage === null ? undefined : message.parentMessage}
+                                 data={message} setMessageId={(messageId: number) => setReplyMessageId(messageId)}/>
                 </div>
             ))}
-            <div ref={bottomRef} />
+            <div ref={bottomRef}/>
         </div>
 
         {/* 입력창 영역 */}
         <div className="p-4 min-h-0 px-[5%]">
             <Box className="flex flex-col w-full h-full">
-                {replyMessageId !== null ? <MessageReplyBar onCancel={()=>setReplyMessageId(null)} message={messages.find(msg => msg.id === replyMessageId)}></MessageReplyBar> : <></> }
+                {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
+                                                            message={messages.find(msg => msg.id === replyMessageId)}></MessageReplyBar> : <></>}
                 <TextArea
                     size="3"
                     placeholder=""
                     className="w-full mb-2"
                     value={messageInput}
                     ref={textAreaRef}
-                    onChange={(event) => {setMessageInput(event.target.value);}}
+                    onChange={(event) => {
+                        setMessageInput(event.target.value);
+                    }}
                 />
-                <Button onClick={createChat} style={{"display" : "flex","marginLeft" : "auto"}}>전송</Button>
+                <Button onClick={createChat} style={{"display": "flex", "marginLeft": "auto"}}>전송</Button>
             </Box>
         </div>
     </div>
