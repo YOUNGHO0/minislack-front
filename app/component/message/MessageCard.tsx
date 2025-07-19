@@ -1,15 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { UserCircleIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/outline';
+import React, {useEffect, useRef, useState} from 'react';
+import {EllipsisHorizontalIcon} from '@heroicons/react/24/outline';
 import {Avatar, TextArea} from '@radix-ui/themes';
 import {ReceivedMessage} from "@/types/type";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {MessageDeleteSendEvent, MessageEditSendEvent} from "@/types/events";
 import {useParams} from "next/navigation";
-import MessageReplyBar from "@/app/component/message/MessageReplyBar";
 import MessageReply from "@/app/component/message/MessageReply";
 
 
-export default function MessageCard(props: { scroll : (id:number)=>void , refCallback?: (el: HTMLDivElement | null) => void, parentMessage:ReceivedMessage|undefined, data: ReceivedMessage, setMessageId : (messageId:number) =>void }) {
+export default function MessageCard(props: {  scrollContainerRef?: React.RefObject<HTMLDivElement | null> ,scroll : (id:number)=>void , refCallback?: (el: HTMLDivElement | null) => void, parentMessage:ReceivedMessage|undefined, data: ReceivedMessage, setMessageId : (messageId:number) =>void }) {
     const [showMenu, setShowMenu] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -21,7 +20,6 @@ export default function MessageCard(props: { scroll : (id:number)=>void , refCal
     const menuRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const textRef = useRef<HTMLDivElement>(null);
-    const commentRef = useRef<HTMLTextAreaElement>(null);
     const contextMenuRef = useRef<HTMLDivElement>(null);
     const {sendMessage} = useWebSocket();
     const {space,channel} = useParams();
@@ -67,6 +65,24 @@ export default function MessageCard(props: { scroll : (id:number)=>void , refCal
         setShowMenu(false);
         setContextMenuPos(null);
     };
+
+    useEffect(() => {
+        if (!showMenu || !menuRef.current || !props.scrollContainerRef?.current) return;
+
+        requestAnimationFrame(() => {
+            const menuRect = menuRef.current!.getBoundingClientRect();
+            const container = props.scrollContainerRef!.current!;
+            const containerRect = container.getBoundingClientRect();
+            const containerHeight = container.clientHeight;
+
+            // 메뉴가 아래로 잘릴 때
+            if (menuRect.bottom > containerRect.bottom) {
+                const overflowAmount = menuRect.bottom - containerRect.bottom;
+                // 현재 스크롤 위치에 overflow만큼 더해서 스크롤 내림
+                container.scrollTop += overflowAmount + 10; // 10px 여유 공간 추가
+            }
+        });
+    }, [showMenu]);
 
     const handleCancelEdit = () => {
         setIsEditing(false);

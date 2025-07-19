@@ -383,7 +383,7 @@ export default ()=>{
 
             {messages.map((message) => (
                 <div key={message.id} className="message-row w-full">
-                    <MessageCard scroll={scroll} refCallback={(el) => messageRefs.current[message.id] = el} parentMessage={message.parentMessage === null? undefined : message.parentMessage} data={message} setMessageId={(messageId:number)=>setReplyMessageId(messageId)}/>
+                    <MessageCard  scrollContainerRef={scrollContainerRef}  scroll={scroll} refCallback={(el) => messageRefs.current[message.id] = el} parentMessage={message.parentMessage === null? undefined : message.parentMessage} data={message} setMessageId={(messageId:number)=>setReplyMessageId(messageId)}/>
                 </div>
             ))}
             <div ref={bottomRef} />
