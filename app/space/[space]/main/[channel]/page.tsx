@@ -104,6 +104,11 @@ export default ()=>{
             const chatMessage: ReceivedMessage = {id: message.id, text: message.chatMessage, parentMessage:parentMessage, createdDate: message.createdDate, user: message.user,flushed:false,mine:message.mine}
             setMessages((prevData) => [...prevData, chatMessage]);
 
+            if (bottomRef.current) {
+                requestAnimationFrame(() => {
+                    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+                });
+            }
         }
 
         const handleChatUpdate = (message : ChatUpdateReceiveEvent) =>{
