@@ -375,11 +375,6 @@ export default ()=>{
                 <div ref={topSentinelRef} className="h-10 w-full flex-shrink-0" />
             )}
 
-            {/* 로딩 인디케이터 */}
-            {isLoading && minPageNumber !== null && minPageNumber > 0 && (
-                <div className="flex justify-center py-2">
-                </div>
-            )}
 
             {messages.map((message) => (
                 <div key={message.id} className="message-row w-full">
