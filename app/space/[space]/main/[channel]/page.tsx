@@ -455,11 +455,6 @@ export default () => {
                         onChange={(event) => {
                             setMessageInput(event.target.value);
                         }}
-                        onFocus={() => {
-                            setTimeout(() => {
-                                inputBottomRef.current?.scrollIntoView({behavior: 'smooth'});
-                            }, 100); // 키보드 올라오는 시간 고려
-                        }}
                     />
                     <Button onClick={createChat}>전송</Button>
                 </div>
