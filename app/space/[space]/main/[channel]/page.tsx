@@ -60,10 +60,10 @@ export default () => {
         const inputValue = textAreaRef.current?.value || "";
         if (inputValue === "") return;
 
-        if (textAreaRef.current) {
+        // 키보드가 열려있을 때만 포커스 유지
+        if (keyboardHeight > 0 && textAreaRef.current) {
             textAreaRef.current.focus();
         }
-
 
         let parent = 0;
         if (replyMessageId !== null) parent = replyMessageId;
