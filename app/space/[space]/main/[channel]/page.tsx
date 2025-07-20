@@ -112,10 +112,12 @@ export default () => {
 
     // chatCreate 이벤트로 인한 메시지 추가 시에만 스크롤 처리
     useEffect(() => {
-        if (shouldScrollToBottom && isUserTouchingRef.current == false) {
-            requestAnimationFrame(() => {
-                scrollToBottom();
-            });
+        if (shouldScrollToBottom) {
+            if(isUserTouchingRef.current == false){
+                requestAnimationFrame(() => {
+                    scrollToBottom();
+                });
+            }
             setShouldScrollToBottom(false); // 다시 초기화
         }
     }, [shouldScrollToBottom]);
@@ -433,12 +435,14 @@ export default () => {
         // 터치 이벤트 핸들러
         const handleTouchStart = () => {
             isUserTouchingRef.current = true;
+            console.log("touch true");
         };
 
         const handleTouchEnd = () => {
             // 터치 종료 후 잠시 대기 후 플래그 해제
             setTimeout(() => {
                 isUserTouchingRef.current = false;
+                console.log("no touch state");
             }, 150);
         };
 
