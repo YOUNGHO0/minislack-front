@@ -393,7 +393,12 @@ export default () => {
         }
     }, []);
 
-    return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0" style={{ height: '100dvh' }}>
+    return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0"
+                style={{
+                    height: '100dvh',
+                    transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : 'translateY(0)'
+                }}
+    >
         {isUpdateShow &&
             <ChannelUpdateDialog channelId={Number(channelId)} channelName={channelName} closeWindow={() => {
                 setIsUpdateShow(false)
@@ -413,9 +418,7 @@ export default () => {
         <div 
             ref={scrollContainerRef} 
             className="flex flex-col flex-1 overflow-y-auto lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0 pb-32 lg:pt-0 pt-12 transition-transform duration-[2000ms] ease-out"
-            style={{ 
-                transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : 'translateY(0)'
-            }}
+
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
@@ -437,9 +440,6 @@ export default () => {
         <div 
             ref={inputContainerRef}
             className="py-1 px-[5%] min-h-0 flex-shrink-0 bg-white border-t border-gray-200 lg:static lg:pb-1 fixed bottom-0 left-0 right-0 z-[60] transition-transform duration-[2000ms] ease-out"
-            style={{ 
-                transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : 'translateY(0)'
-            }}
         >
             <Box className="flex flex-col w-full">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
