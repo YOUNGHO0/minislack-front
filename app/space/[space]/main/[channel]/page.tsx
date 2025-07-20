@@ -40,7 +40,6 @@ export default () => {
     const [isLoading, setIsLoading] = useState(false); // useState로 변경
     const firstLoadRef = useRef(true);
     const topSentinelRef = useRef<HTMLDivElement>(null);
-    const inputBottomRef = useRef<HTMLDivElement>(null);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const inputContainerRef = useRef<HTMLDivElement>(null);
     const createChat = () => {
