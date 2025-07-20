@@ -6,7 +6,7 @@ import {useParams} from "next/navigation";
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
   return (
 
-      <div className={"flex lg:flex-row flex-col w-full h-full"}>
+      <div className={"flex lg:flex-row flex-col flex-1"}>
           <WebSocketProvider>
               <div className="flex-1 overflow-auto">
                   {children}

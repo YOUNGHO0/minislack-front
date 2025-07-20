@@ -373,12 +373,12 @@ export default () => {
         };
     }, []);
 
-    return <div className={"flex flex-col w-full h-full min-h-0"}>
+    return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden" style={{ height: '100dvh' }}>
         {isUpdateShow &&
             <ChannelUpdateDialog channelId={Number(channelId)} channelName={channelName} closeWindow={() => {
                 setIsUpdateShow(false)
             }}></ChannelUpdateDialog>}
-        <div className="flex bg-nav p-4 font-bold items-center gap-2">
+        <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2 flex-shrink-0">
             {channelName}
             <ChannelSetting mine={mine} openWindow={() => {
                 setIsUpdateShow(true)
@@ -390,15 +390,14 @@ export default () => {
         {showJoinDialog && <JoinDialog getMessage={getMessage} close={() => setShowJoinDialog(false)}/>}
 
         {/* 메시지 영역 */}
-        <div ref={scrollContainerRef} className="flex flex-col flex-1 overflow-y-auto p-4 min-h-0">
+        <div ref={scrollContainerRef} className="flex flex-col flex-1 overflow-y-auto p-2 min-h-0 overscroll-contain">
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
                 <div ref={topSentinelRef} className="h-10 w-full flex-shrink-0"/>
             )}
 
-
             {messages.map((message) => (
-                <div key={message.id} className="message-row w-full">
+                <div key={message.id} className="message-row w-full flex-shrink-0">
                     <MessageCard scrollContainerRef={scrollContainerRef} scroll={scroll}
                                  refCallback={(el) => messageRefs.current[message.id] = el}
                                  parentMessage={message.parentMessage === null ? undefined : message.parentMessage}
@@ -409,27 +408,28 @@ export default () => {
         </div>
 
         {/* 입력창 영역 */}
-        <div className="p-4 min-h-0 px-[5%]">
-            <Box className="flex flex-col w-full h-full">
+        <div className="py-1 px-[5%] min-h-0 flex-shrink-0 bg-white border-t border-gray-200 lg:pb-1 pb-16">
+            <Box className="flex flex-col w-full">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
                                                             message={messages.find(msg => msg.id === replyMessageId)}></MessageReplyBar> : <></>}
-                <TextArea
-                    size="3"
-                    placeholder=""
-                    className="w-full mb-2"
-                    value={messageInput}
-                    ref={textAreaRef}
-                    onChange={(event) => {
-                        setMessageInput(event.target.value);
-                    }}
-                    onFocus={() => {
-                        setTimeout(() => {
-                            inputBottomRef.current?.scrollIntoView({behavior: 'smooth'});
-                        }, 100); // 키보드 올라오는 시간 고려
-                    }}
-                />
-                <Button onClick={createChat} style={{"display": "flex", "marginLeft": "auto"}}>전송</Button>
-                <div ref={inputBottomRef}/>
+                <div className="flex gap-2 items-center">
+                    <TextArea
+                        size="2"
+                        placeholder=""
+                        className="flex-1"
+                        value={messageInput}
+                        ref={textAreaRef}
+                        onChange={(event) => {
+                            setMessageInput(event.target.value);
+                        }}
+                        onFocus={() => {
+                            setTimeout(() => {
+                                inputBottomRef.current?.scrollIntoView({behavior: 'smooth'});
+                            }, 100); // 키보드 올라오는 시간 고려
+                        }}
+                    />
+                    <Button onClick={createChat}>전송</Button>
+                </div>
             </Box>
         </div>
     </div>

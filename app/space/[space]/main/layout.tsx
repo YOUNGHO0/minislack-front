@@ -138,7 +138,7 @@ export default function RootLayout({
             </div>
 
             {/* 메인 콘텐츠 */}
-            <div className={`${childComponentStyle} flex-4 min-h-0`}>{children}</div>
+            <div className={`${childComponentStyle} flex-4 min-h-0 overflow-y-hidden`}>{children}</div>
 
             {/* 사용자 목록 컴포넌트 */}
             <div className={`${parentComponentStyle} flex-1 w-full h-full bg-neutral-200 flex flex-col`}>

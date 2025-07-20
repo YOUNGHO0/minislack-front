@@ -32,7 +32,7 @@ export default function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable}`}
         >
         <Theme>
-            <div className={"w-screen h-screen"}>
+            <div className={"flex flex-col h-screen"}>
                 <HomeAppBar></HomeAppBar>
                 {children}
             </div>
