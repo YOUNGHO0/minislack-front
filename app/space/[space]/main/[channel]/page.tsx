@@ -295,9 +295,6 @@ export default () => {
     const loadPreviousMessages = async (pageNumber: number) => {
         if (isLoading) return;
 
-        // 키보드가 열려있을 때는 무한 스크롤 비활성화
-        if (keyboardHeight > 0) return;
-
         // 추가 보안: 같은 페이지를 다시 로드하지 않도록
         if (minPageNumber !== null && pageNumber >= minPageNumber) return;
 
@@ -362,9 +359,6 @@ export default () => {
         if (!scrollContainer) return;
 
         const handleWheel = (e: WheelEvent) => {
-            // 키보드가 열려있을 때는 휠 이벤트 무시
-            if (keyboardHeight > 0) return;
-            
             // 기본 스크롤을 막지 않고, 델타 값만 조절
             const originalDelta = e.deltaY;
             const reducedDelta = originalDelta * 0.3; // 민감도 조절
@@ -379,7 +373,7 @@ export default () => {
         return () => {
             scrollContainer.removeEventListener('wheel', handleWheel);
         };
-    }, [keyboardHeight]);
+    }, []);
 
     // 키보드 높이 감지
     useEffect(() => {
