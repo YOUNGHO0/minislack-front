@@ -80,20 +80,7 @@ export default () => {
         if (textAreaRef.current) {
             textAreaRef.current.focus();
         }
-        
-        // 추가로 requestAnimationFrame으로도 포커스 복원
-        requestAnimationFrame(() => {
-            if (textAreaRef.current) {
-                textAreaRef.current.focus();
-            }
-        });
-        
-        // 한 번 더 setTimeout으로 포커스 복원
-        setTimeout(() => {
-            if (textAreaRef.current) {
-                textAreaRef.current.focus();
-            }
-        }, 100);
+
     }
     const bottomRef = useRef<HTMLDivElement>(null);
 
