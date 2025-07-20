@@ -42,6 +42,17 @@ export default () => {
     const topSentinelRef = useRef<HTMLDivElement>(null);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const inputContainerRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        const container = scrollContainerRef.current;
+        if (container) {
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: 'smooth',
+            });
+        }
+    };
+
     const createChat = () => {
         if (messageInput === "") return;
         let parent = 0;
@@ -115,7 +126,7 @@ export default () => {
 
             if (bottomRef.current) {
                 requestAnimationFrame(() => {
-                    bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+                    scrollToBottom();
                 });
             }
         }
