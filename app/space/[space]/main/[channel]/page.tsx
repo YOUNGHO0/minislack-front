@@ -66,6 +66,12 @@ export default () => {
         setMessageInput("");
         setReplyMessageId(null);
 
+        // 전송 후 입력창에 포커스를 유지하여 키보드가 닫히지 않도록 함
+        requestAnimationFrame(() => {
+            if (textAreaRef.current) {
+                textAreaRef.current.focus();
+            }
+        });
     }
     const bottomRef = useRef<HTMLDivElement>(null);
 
