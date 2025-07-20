@@ -393,11 +393,13 @@ export default () => {
                     setLastScrollTop(scrollContainerRef.current.scrollTop);
                 }
                 
-                // 키보드가 열린 후 스크롤 위치 복원
+                // 키보드가 열린 후 스크롤 위치 조정
                 if (isNowKeyboardOpen && scrollContainerRef.current && lastScrollTop > 0) {
                     setTimeout(() => {
                         if (scrollContainerRef.current) {
-                            scrollContainerRef.current.scrollTop = lastScrollTop;
+                            // 키보드 높이만큼 스크롤 위치를 위로 조정
+                            const adjustedScrollTop = Math.max(0, lastScrollTop - keyboardHeight);
+                            scrollContainerRef.current.scrollTop = adjustedScrollTop;
                         }
                     }, 50);
                 }
