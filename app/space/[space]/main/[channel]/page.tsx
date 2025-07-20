@@ -382,15 +382,6 @@ export default () => {
             if (visualViewport) {
                 const keyboardHeight = window.innerHeight - visualViewport.height;
                 setKeyboardHeight(keyboardHeight);
-                
-                // 키보드가 올라올 때 마지막 메시지로 스크롤
-                if (keyboardHeight > 0 && scrollContainerRef.current) {
-                    setTimeout(() => {
-                        if (scrollContainerRef.current) {
-                            scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
-                        }
-                    }, 100);
-                }
             }
         };
 
