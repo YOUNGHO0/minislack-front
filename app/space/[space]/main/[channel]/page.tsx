@@ -455,6 +455,7 @@ export default () => {
                             setMessageInput(event.target.value);
                         }}
                     />
+
                     <Button onClick={createChat}>전송</Button>
                 </div>
             </Box>
