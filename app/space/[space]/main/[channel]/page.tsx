@@ -52,6 +52,9 @@ export default () => {
         }
     };
 
+    // 사용자가 터치로 스크롤 중인지 추적
+    const isUserTouchingRef = useRef(false);
+
     const createChat = () => {
         const inputValue = textAreaRef.current?.value || "";
         if (inputValue === "") return;
@@ -110,6 +113,15 @@ export default () => {
         }
     }, [messages]);
 
+    useEffect(() => {
+        if (bottomRef.current) {
+            // 사용자가 터치 중이면 자동 스크롤 하지 않음
+            if (isUserTouchingRef.current) {
+                return;
+            }
+        }
+    }, [messages]);
+
     // 채널 관련 UseEffect
     useEffect(() => {
         const handleChannelUpdate = (message: ChannelUpdateReceiveEvent) => {
@@ -148,11 +160,6 @@ export default () => {
             }
             setMessages((prevData) => [...prevData, chatMessage]);
 
-            if (bottomRef.current) {
-                requestAnimationFrame(() => {
-                    scrollToBottom();
-                });
-            }
         }
 
         const handleChatUpdate = (message: ChatUpdateReceiveEvent) => {
@@ -402,10 +409,28 @@ export default () => {
             scrollContainer.scrollTop += reducedDelta;
         };
 
+        // 터치 이벤트 핸들러
+        const handleTouchStart = () => {
+            isUserTouchingRef.current = true;
+        };
+
+        const handleTouchEnd = () => {
+            // 터치 종료 후 잠시 대기 후 플래그 해제
+            setTimeout(() => {
+                isUserTouchingRef.current = false;
+            }, 150);
+        };
+
         scrollContainer.addEventListener('wheel', handleWheel, {passive: false});
+        scrollContainer.addEventListener('touchstart', handleTouchStart, {passive: true});
+        scrollContainer.addEventListener('touchend', handleTouchEnd, {passive: true});
+        scrollContainer.addEventListener('touchcancel', handleTouchEnd, {passive: true});
 
         return () => {
             scrollContainer.removeEventListener('wheel', handleWheel);
+            scrollContainer.removeEventListener('touchstart', handleTouchStart);
+            scrollContainer.removeEventListener('touchend', handleTouchEnd);
+            scrollContainer.removeEventListener('touchcancel', handleTouchEnd);
         };
     }, []);
 
