@@ -53,8 +53,15 @@ export default () => {
         }
     };
 
+    // 전송 버튼 클릭 여부를 추적하는 ref
+    const isSendingRef = useRef(false);
+
     const createChat = () => {
         if (messageInput === "") return;
+        
+        // 전송 시작 표시
+        isSendingRef.current = true;
+        
         let parent = 0;
         if (replyMessageId !== null) parent = replyMessageId;
         const chatCreateSendEvent: ChatCreateSendEvent = {
@@ -66,12 +73,10 @@ export default () => {
         setMessageInput("");
         setReplyMessageId(null);
 
-        // 전송 후 입력창에 포커스를 유지하여 키보드가 닫히지 않도록 함
-        requestAnimationFrame(() => {
-            if (textAreaRef.current) {
-                textAreaRef.current.focus();
-            }
-        });
+        // 전송 완료 후 플래그 리셋
+        setTimeout(() => {
+            isSendingRef.current = false;
+        }, 100);
     }
     const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -470,6 +475,16 @@ export default () => {
                         ref={textAreaRef}
                         onChange={(event) => {
                             setMessageInput(event.target.value);
+                        }}
+                        onBlur={() => {
+                            // 전송 버튼을 눌러서 blur가 발생한 경우 포커스 복원
+                            if (isSendingRef.current) {
+                                setTimeout(() => {
+                                    if (textAreaRef.current) {
+                                        textAreaRef.current.focus();
+                                    }
+                                }, 50);
+                            }
                         }}
                     />
 
