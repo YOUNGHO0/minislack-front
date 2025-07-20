@@ -43,8 +43,6 @@ export default () => {
     const inputBottomRef = useRef<HTMLDivElement>(null);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const inputContainerRef = useRef<HTMLDivElement>(null);
-    const [lastScrollTop, setLastScrollTop] = useState(0);
-    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
     const createChat = () => {
         if (messageInput === "") return;
         let parent = 0;
@@ -383,28 +381,7 @@ export default () => {
             const visualViewport = window.visualViewport;
             if (visualViewport) {
                 const keyboardHeight = window.innerHeight - visualViewport.height;
-                const wasKeyboardOpen = isKeyboardOpen;
-                const isNowKeyboardOpen = keyboardHeight > 0;
-                
                 setKeyboardHeight(keyboardHeight);
-                
-                // 키보드가 처음 열릴 때 현재 스크롤 위치 저장
-                if (!wasKeyboardOpen && isNowKeyboardOpen && scrollContainerRef.current) {
-                    setLastScrollTop(scrollContainerRef.current.scrollTop);
-                }
-                
-                // 키보드가 열린 후 스크롤 위치 조정
-                if (isNowKeyboardOpen && scrollContainerRef.current && lastScrollTop > 0) {
-                    setTimeout(() => {
-                        if (scrollContainerRef.current) {
-                            // 키보드 높이만큼 스크롤 위치를 위로 조정
-                            const adjustedScrollTop = Math.max(0, lastScrollTop - keyboardHeight);
-                            scrollContainerRef.current.scrollTop = adjustedScrollTop;
-                        }
-                    }, 50);
-                }
-                
-                setIsKeyboardOpen(isNowKeyboardOpen);
             }
         };
 
@@ -415,7 +392,7 @@ export default () => {
                 visualViewport.removeEventListener('resize', handleResize);
             };
         }
-    }, [isKeyboardOpen, lastScrollTop]);
+    }, []);
 
     return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0" style={{ height: '100dvh' }}>
         {isUpdateShow &&
@@ -437,9 +414,6 @@ export default () => {
         <div 
             ref={scrollContainerRef} 
             className="flex flex-col flex-1 overflow-y-auto lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0 pb-32 lg:pt-0 pt-12"
-            style={{ 
-                paddingBottom: keyboardHeight > 0 ? `${keyboardHeight + 128}px` : '128px'
-            }}
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
