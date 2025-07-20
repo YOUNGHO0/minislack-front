@@ -41,6 +41,8 @@ export default () => {
     const firstLoadRef = useRef(true);
     const topSentinelRef = useRef<HTMLDivElement>(null);
     const inputBottomRef = useRef<HTMLDivElement>(null);
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
+    const inputContainerRef = useRef<HTMLDivElement>(null);
     const createChat = () => {
         if (messageInput === "") return;
         let parent = 0;
@@ -373,6 +375,25 @@ export default () => {
         };
     }, []);
 
+    // 키보드 높이 감지
+    useEffect(() => {
+        const handleResize = () => {
+            const visualViewport = window.visualViewport;
+            if (visualViewport) {
+                const keyboardHeight = window.innerHeight - visualViewport.height;
+                setKeyboardHeight(keyboardHeight);
+            }
+        };
+
+        const visualViewport = window.visualViewport;
+        if (visualViewport) {
+            visualViewport.addEventListener('resize', handleResize);
+            return () => {
+                visualViewport.removeEventListener('resize', handleResize);
+            };
+        }
+    }, []);
+
     return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden" style={{ height: '100dvh' }}>
         {isUpdateShow &&
             <ChannelUpdateDialog channelId={Number(channelId)} channelName={channelName} closeWindow={() => {
@@ -408,7 +429,13 @@ export default () => {
         </div>
 
         {/* 입력창 영역 */}
-        <div className="py-1 px-[5%] min-h-0 flex-shrink-0 bg-white border-t border-gray-200 lg:static lg:pb-1 fixed bottom-0 left-0 right-0 z-[60]">
+        <div 
+            ref={inputContainerRef}
+            className="py-1 px-[5%] min-h-0 flex-shrink-0 bg-white border-t border-gray-200 lg:static lg:pb-1 fixed left-0 right-0 z-[60]"
+            style={{ 
+                bottom: keyboardHeight > 0 ? `${keyboardHeight}px` : '0px'
+            }}
+        >
             <Box className="flex flex-col w-full">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
                                                             message={messages.find(msg => msg.id === replyMessageId)}></MessageReplyBar> : <></>}
