@@ -434,7 +434,7 @@ export default () => {
         {/* 메시지 영역 */}
         <div 
             ref={scrollContainerRef} 
-            className="flex flex-col flex-1 overflow-y-auto lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 "
+            className="flex flex-col flex-1 overflow-y-auto lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 transition-transform duration-[300ms] ease-ou "
 
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
