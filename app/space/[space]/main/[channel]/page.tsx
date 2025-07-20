@@ -41,6 +41,7 @@ export default () => {
     const topSentinelRef = useRef<HTMLDivElement>(null);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const inputContainerRef = useRef<HTMLDivElement>(null);
+    const isUserTouchingRef = useRef(false);
 
     const scrollToBottom = () => {
         const container = scrollContainerRef.current;
@@ -111,7 +112,7 @@ export default () => {
 
     // chatCreate 이벤트로 인한 메시지 추가 시에만 스크롤 처리
     useEffect(() => {
-        if (shouldScrollToBottom) {
+        if (shouldScrollToBottom && isUserTouchingRef.current == false) {
             requestAnimationFrame(() => {
                 scrollToBottom();
             });
@@ -415,6 +416,45 @@ export default () => {
         };
     }, []);
 
+    useEffect(() => {
+        const scrollContainer = scrollContainerRef.current;
+        if (!scrollContainer) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            // 기본 스크롤을 막지 않고, 델타 값만 조절
+            const originalDelta = e.deltaY;
+            const reducedDelta = originalDelta * 0.3; // 민감도 조절
+
+            // 기본 이벤트는 막지 않고, 스크롤 속도만 조절
+            e.preventDefault();
+            scrollContainer.scrollTop += reducedDelta;
+        };
+
+        // 터치 이벤트 핸들러
+        const handleTouchStart = () => {
+            isUserTouchingRef.current = true;
+        };
+
+        const handleTouchEnd = () => {
+            // 터치 종료 후 잠시 대기 후 플래그 해제
+            setTimeout(() => {
+                isUserTouchingRef.current = false;
+            }, 150);
+        };
+
+        scrollContainer.addEventListener('wheel', handleWheel, {passive: false});
+        scrollContainer.addEventListener('touchstart', handleTouchStart, {passive: true});
+        scrollContainer.addEventListener('touchend', handleTouchEnd, {passive: true});
+        scrollContainer.addEventListener('touchcancel', handleTouchEnd, {passive: true});
+
+        return () => {
+            scrollContainer.removeEventListener('wheel', handleWheel);
+            scrollContainer.removeEventListener('touchstart', handleTouchStart);
+            scrollContainer.removeEventListener('touchend', handleTouchEnd);
+            scrollContainer.removeEventListener('touchcancel', handleTouchEnd);
+        };
+    }, []);
+
     // 키보드 높이 감지
     useEffect(() => {
         const handleResize = () => {
@@ -491,6 +531,20 @@ export default () => {
                         placeholder=""
                         className="flex-1"
                         ref={textAreaRef}
+                        onKeyDown={(e) => {
+                            // 데스크탑에서 엔터키로 전송, 모바일에서는 줄바꿈
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                // 모바일 감지 (터치 이벤트 지원 여부로 판단)
+                                const isMobile = 'ontouchstart' in window;
+                                
+                                if (!isMobile) {
+                                    // 데스크탑에서는 전송
+                                    e.preventDefault();
+                                    createChat();
+                                }
+                                // 모바일에서는 기본 동작(줄바꿈) 허용
+                            }
+                        }}
                         onBlur={(e) => {
                             // 전송 버튼 클릭으로 인한 blur인지 확인
                             const relatedTarget = e.relatedTarget as HTMLElement;
