@@ -43,6 +43,8 @@ export default () => {
     const inputBottomRef = useRef<HTMLDivElement>(null);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const inputContainerRef = useRef<HTMLDivElement>(null);
+    const [lastScrollTop, setLastScrollTop] = useState(0);
+    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
     const createChat = () => {
         if (messageInput === "") return;
         let parent = 0;
@@ -381,7 +383,26 @@ export default () => {
             const visualViewport = window.visualViewport;
             if (visualViewport) {
                 const keyboardHeight = window.innerHeight - visualViewport.height;
+                const wasKeyboardOpen = isKeyboardOpen;
+                const isNowKeyboardOpen = keyboardHeight > 0;
+                
                 setKeyboardHeight(keyboardHeight);
+                
+                // 키보드가 처음 열릴 때 현재 스크롤 위치 저장
+                if (!wasKeyboardOpen && isNowKeyboardOpen && scrollContainerRef.current) {
+                    setLastScrollTop(scrollContainerRef.current.scrollTop);
+                }
+                
+                // 키보드가 열린 후 스크롤 위치 복원
+                if (isNowKeyboardOpen && scrollContainerRef.current && lastScrollTop > 0) {
+                    setTimeout(() => {
+                        if (scrollContainerRef.current) {
+                            scrollContainerRef.current.scrollTop = lastScrollTop;
+                        }
+                    }, 50);
+                }
+                
+                setIsKeyboardOpen(isNowKeyboardOpen);
             }
         };
 
@@ -392,7 +413,7 @@ export default () => {
                 visualViewport.removeEventListener('resize', handleResize);
             };
         }
-    }, []);
+    }, [isKeyboardOpen, lastScrollTop]);
 
     return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0" style={{ height: '100dvh' }}>
         {isUpdateShow &&
