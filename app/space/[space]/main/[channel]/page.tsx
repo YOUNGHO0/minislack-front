@@ -52,6 +52,9 @@ export default () => {
         }
     };
 
+    // chatCreate 이벤트로 인한 스크롤 플래그
+    const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
+
     const createChat = () => {
         const inputValue = textAreaRef.current?.value || "";
         if (inputValue === "") return;
@@ -106,6 +109,16 @@ export default () => {
         }
     }, [messages]);
 
+    // chatCreate 이벤트로 인한 메시지 추가 시에만 스크롤 처리
+    useEffect(() => {
+        if (shouldScrollToBottom) {
+            requestAnimationFrame(() => {
+                scrollToBottom();
+            });
+            setShouldScrollToBottom(false); // 다시 초기화
+        }
+    }, [shouldScrollToBottom]);
+
     // 채널 관련 UseEffect
     useEffect(() => {
         const handleChannelUpdate = (message: ChannelUpdateReceiveEvent) => {
@@ -143,12 +156,9 @@ export default () => {
                 mine: message.mine
             }
             setMessages((prevData) => [...prevData, chatMessage]);
-
-            if (bottomRef.current) {
-                requestAnimationFrame(() => {
-                    scrollToBottom();
-                });
-            }
+            
+            // chatCreate 이벤트로 인한 메시지 추가임을 표시
+            setShouldScrollToBottom(true);
         }
 
         const handleChatUpdate = (message: ChatUpdateReceiveEvent) => {
