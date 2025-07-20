@@ -28,7 +28,6 @@ export default () => {
     const [messages, setMessages] = useState<ReceivedMessage[]>([]);
     const [channelName, setChannelName] = useState("");
     const router = useRouter();
-    const [messageInput, setMessageInput] = useState("");
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [mine, setMine] = useState(false)
@@ -54,16 +53,22 @@ export default () => {
     };
 
     const createChat = () => {
-        if (messageInput === "") return;
+        const inputValue = textAreaRef.current?.value || "";
+        if (inputValue === "") return;
+        
         let parent = 0;
         if (replyMessageId !== null) parent = replyMessageId;
         const chatCreateSendEvent: ChatCreateSendEvent = {
-            message: {channelId: Number(channelId), parent: parent, text: messageInput},
+            message: {channelId: Number(channelId), parent: parent, text: inputValue},
             type: "chatCreate"
         }
 
         sendMessage(JSON.stringify(chatCreateSendEvent));
-        setMessageInput("");
+        
+        // 입력창 비우기
+        if (textAreaRef.current) {
+            textAreaRef.current.value = "";
+        }
         setReplyMessageId(null);
 
         // 전송 후 입력창에 포커스를 유지하여 키보드가 닫히지 않도록 함
@@ -78,10 +83,19 @@ export default () => {
     useEffect(() => {
         const textArea = textAreaRef.current;
         if (textArea) {
-            textArea.style.height = "auto";
-            textArea.style.height = `${textArea.scrollHeight}px`;
+            // input 이벤트 리스너 추가
+            const handleInput = () => {
+                textArea.style.height = "auto";
+                textArea.style.height = `${textArea.scrollHeight}px`;
+            };
+            
+            textArea.addEventListener('input', handleInput);
+            
+            return () => {
+                textArea.removeEventListener('input', handleInput);
+            };
         }
-    }, [messageInput]);
+    }, []);
 
     useEffect(() => {
         if (firstLoadRef.current && messages.length > 0) {
@@ -466,11 +480,7 @@ export default () => {
                         size="2"
                         placeholder=""
                         className="flex-1"
-                        value={messageInput}
                         ref={textAreaRef}
-                        onChange={(event) => {
-                            setMessageInput(event.target.value);
-                        }}
                     />
 
                     <Button onClick={createChat}>전송</Button>
