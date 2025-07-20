@@ -76,10 +76,6 @@ export default () => {
         }
         setReplyMessageId(null);
 
-        // 즉시 포커스 복원 (여러 번 시도)
-        if (textAreaRef.current) {
-            textAreaRef.current.focus();
-        }
 
     }
     const bottomRef = useRef<HTMLDivElement>(null);
