@@ -462,20 +462,19 @@ export default () => {
 
     // 키보드 높이 감지
     useEffect(() => {
+        const visualViewport = window.visualViewport;
+
         const handleResize = () => {
-            const visualViewport = window.visualViewport;
-            console.log("resized " + visualViewport);
-            if (visualViewport) {
-                const keyboardHeight = window.innerHeight - visualViewport.height;
-                setKeyboardHeight(keyboardHeight);
-            }
+            if (!visualViewport) return;
+            const heightDiff = window.innerHeight - visualViewport.height;
+            const threshold = 150;
+            setKeyboardHeight(heightDiff > threshold ? heightDiff : 0);
         };
 
-        const visualViewport = window.visualViewport;
         if (visualViewport) {
-            visualViewport.addEventListener('resize', handleResize);
+            visualViewport.addEventListener("resize", handleResize);
             return () => {
-                visualViewport.removeEventListener('resize', handleResize);
+                visualViewport.removeEventListener("resize", handleResize);
             };
         }
     }, []);
