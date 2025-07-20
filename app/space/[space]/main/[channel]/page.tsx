@@ -62,6 +62,7 @@ export default () => {
 
         // 키보드가 열려있을 때만 포커스 유지
         if (keyboardHeight > 0 && textAreaRef.current) {
+            console.log("keyboardHeight : ", keyboardHeight);
             textAreaRef.current.focus();
         }
 
@@ -463,6 +464,7 @@ export default () => {
     useEffect(() => {
         const handleResize = () => {
             const visualViewport = window.visualViewport;
+            console.log("resized " + visualViewport);
             if (visualViewport) {
                 const keyboardHeight = window.innerHeight - visualViewport.height;
                 setKeyboardHeight(keyboardHeight);
