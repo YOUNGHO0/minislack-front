@@ -55,7 +55,12 @@ export default () => {
     const createChat = () => {
         const inputValue = textAreaRef.current?.value || "";
         if (inputValue === "") return;
-        
+
+        if (textAreaRef.current) {
+            textAreaRef.current.focus();
+        }
+
+
         let parent = 0;
         if (replyMessageId !== null) parent = replyMessageId;
         const chatCreateSendEvent: ChatCreateSendEvent = {
@@ -71,12 +76,24 @@ export default () => {
         }
         setReplyMessageId(null);
 
-        // 전송 후 입력창에 포커스를 유지하여 키보드가 닫히지 않도록 함
+        // 즉시 포커스 복원 (여러 번 시도)
+        if (textAreaRef.current) {
+            textAreaRef.current.focus();
+        }
+        
+        // 추가로 requestAnimationFrame으로도 포커스 복원
         requestAnimationFrame(() => {
             if (textAreaRef.current) {
                 textAreaRef.current.focus();
             }
         });
+        
+        // 한 번 더 setTimeout으로 포커스 복원
+        setTimeout(() => {
+            if (textAreaRef.current) {
+                textAreaRef.current.focus();
+            }
+        }, 100);
     }
     const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -481,9 +498,28 @@ export default () => {
                         placeholder=""
                         className="flex-1"
                         ref={textAreaRef}
+                        onBlur={(e) => {
+                            // 전송 버튼 클릭으로 인한 blur인지 확인
+                            const relatedTarget = e.relatedTarget as HTMLElement;
+                            if (relatedTarget && relatedTarget.tagName === 'BUTTON') {
+                                // 전송 버튼 클릭으로 인한 blur라면 포커스 복원
+                                setTimeout(() => {
+                                    if (textAreaRef.current) {
+                                        textAreaRef.current.focus();
+                                    }
+                                }, 10);
+                            }
+                        }}
                     />
 
-                    <Button onClick={createChat}>전송</Button>
+                    <Button 
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            createChat();
+                        }}
+                    >전송</Button>
                 </div>
             </Box>
         </div>
