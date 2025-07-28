@@ -106,8 +106,7 @@ export default () => {
                         <DropdownMenu.Item
                             onClick={(e) => {
                                 e.stopPropagation();
-                                setActiveChannelNumber(index);
-                                setUpdateShow(true)
+                                router.push(`/edit?id=${space.id}`)
                             }}
                             className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded cursor-pointer outline-none"
                         >
@@ -147,13 +146,6 @@ export default () => {
                     채팅방 찾기
                 </Button>
             </div>
-
-            {/* 채널 업데이트 팝업 뜨는 메뉴 */}
-            {
-                updateShow && <SpaceUpdateButton spaceInfo={spaceList[activeChannelNumber]}
-                                                 fetchChannel={fetchSpaces}
-                                                 hideUpdate={hideUpdate}></SpaceUpdateButton>
-            }
 
 
             {/* 반응형 그리드 레이아웃 */}
