@@ -237,7 +237,7 @@ export default () => {
     }, []);
 
     useEffect(() => {
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/channel/info?channelId=${channelId}`, {withCredentials: true})
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/channel/info?spaceId=${space}&channelId=${channelId}`, {withCredentials: true})
             .then((response) => {
                 let info: ChannelInfo = response.data
                 setMine(info.mine);
