@@ -32,7 +32,6 @@ const SpaceCreatePage = () => {
     useEffect(() => {
         axios.get<UserInfo>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/info`,{withCredentials :true})
             .then(result =>{
-                console.log(result.data.nickName);
                 setDefaultNickName(result.data.nickName);
             })
 
@@ -58,7 +57,7 @@ const SpaceCreatePage = () => {
             }
         ).then((response) => {
             if (response.status === 200) {
-                router.push('/');
+                router.push(`/space/${response.data}/main`);
             } else {
                 setHasError(true);
                 setError("채널 생성에 실패했습니다.");
@@ -67,6 +66,7 @@ const SpaceCreatePage = () => {
             setHasError(true);
             setError("채널 생성 중 오류가 발생했습니다.");
         }).finally(() => {
+
             setIsLoading(false);
         });
     }
