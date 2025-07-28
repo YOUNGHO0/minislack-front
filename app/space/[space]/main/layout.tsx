@@ -5,7 +5,7 @@ import {Channel, Space} from "@/types/channel";
 import ChannelList from "@/app/component/channellist/ChannelList";
 import ChannelAndAddButton from "@/app/component/channellist/ChannelAddDialog";
 
-import {ChevronDoubleDownIcon, ChevronDoubleUpIcon,} from "@heroicons/react/24/outline";
+import {ChevronDoubleDownIcon, ChevronDoubleUpIcon, PlusIcon,} from "@heroicons/react/24/outline";
 import axios from "axios";
 import emitter from "@/WebSocket/Emitter";
 import {
@@ -14,14 +14,16 @@ import {
     ChannelUpdateReceiveEvent,
     SpaceJoinReceiveEvent, SpaceOutReceiveEvent
 } from "@/types/events";
-import {useParams, usePathname} from "next/navigation";
+import {useParams, usePathname, useRouter} from "next/navigation";
 import {User} from "@/types/type";
 import SpaceUserList from "@/app/component/space/userlayout/SpaceUserList";
 import SpaceInfo from "@/app/component/space/SpaceInfo";
+import {router} from "next/client";
 
 export default function RootLayout({
                                        children,
                                    }: Readonly<{ children: React.ReactNode }>) {
+    const router = useRouter();
     const [showSidebar, setShowSidebar] = useState(true);
     const [data, setData] = React.useState<Channel[]>([]);
     const {space}= useParams()
@@ -126,7 +128,11 @@ export default function RootLayout({
                             {renderToggleIcon()}
                         </button>
                     </div>
-                    <ChannelAndAddButton/>
+                    <button
+                        onClick={() => router.push("main/create")}
+                        className="inline-flex  items-center justify-center rounded font-medium leading-none  outline-none outline-offset-1 hover:bg-mauve3 focus-visible:outline-2 focus-visible:outline-violet6 select-none">
+                        <PlusIcon className={"w-6 "}/>
+                    </button>
                 </div>
 
                 {/* 본문 */}
