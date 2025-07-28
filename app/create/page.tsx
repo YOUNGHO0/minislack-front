@@ -72,7 +72,7 @@ const SpaceCreatePage = () => {
     }
 
     return (
-        <div className="w-full flex flex-col justify-center py-12 lg:px-[30%]">
+        <div className="w-full flex flex-col justify-center py-4 lg:px-[30%]">
             <Theme>
                 <div className="flex flex-col max-w-3xl w-full bg-white p-6 rounded-md">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-2">방 생성</h2>
