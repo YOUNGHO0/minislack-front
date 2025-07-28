@@ -123,7 +123,7 @@ const SpaceEditPage = () => {
                         disabled={isLoading}
                         className="mt-10 w-full h-[40px] bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition disabled:opacity-50"
                     >
-                        {isLoading ? "수정 중..." : "채널 수정"}
+                        {isLoading ? "수정 중..." : "방 수정"}
                     </button>
                 </div>
             </Theme>
