@@ -72,9 +72,9 @@ const SpaceEditPage = () => {
     // if (!spaceInfo) return <div className="text-center p-6">로딩 중...</div>;
 
     return (
-        <div className="w-full flex flex-col justify-center py-12 lg:px-[30%]">
+        <div className="w-full flex flex-col sm:px-6 lg:px-[15%] py-4">
             <Theme>
-                <div className="flex flex-col max-w-3xl w-full bg-white p-6 rounded-md">
+                <div className="flex flex-col w-full bg-white p-6 rounded-md">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-2">방 수정</h2>
                     <h3 className="mt-3 mb-3 font-semibold">채팅방 설정</h3>
 
