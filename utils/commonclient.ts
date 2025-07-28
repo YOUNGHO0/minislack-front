@@ -10,6 +10,5 @@ export const routeTo = (number: number, pathname: string, path: string) => {
     const baseParts = parts.slice(0, number );
     const base = '/' + baseParts.join('/');
     const targetPath = `${base}/${path}`;
-    console.log(targetPath)
     return targetPath;
 };
