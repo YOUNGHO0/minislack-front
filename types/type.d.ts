@@ -47,4 +47,12 @@ export interface ChannelInfo{
     mine : boolean
 }
 
+interface UserInfo {
+    email : string
+    profileImageId : Number
+    nickName : string
+
+}
+
+
 
