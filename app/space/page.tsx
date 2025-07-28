@@ -13,6 +13,7 @@ import {useRouter} from "next/navigation";
 import {SearchIcon} from "lucide-react";
 import SpaceUpdateButton from "@/app/component/space/SpaceUpdateButton";
 import * as React from "react";
+import {PlusCircleIcon} from "@heroicons/react/24/outline";
 
 export default () => {
 
@@ -178,8 +179,9 @@ export default () => {
                 ))}
 
                 <div
+                    onClick={()=>{router.push("/create")}}
                     className="bg-white rounded-lg border border-dashed border-gray-300 p-4 shadow-sm hover:shadow-md hover:border-gray-400 transition-all duration-200 flex items-center justify-center min-h-[80px]">
-                    <SpaceCreateButton fetchChannel={fetchSpaces}/>
+                    <PlusCircleIcon className={"w-10"}></PlusCircleIcon>
                 </div>
             </div>
         </div>
