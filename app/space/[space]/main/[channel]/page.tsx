@@ -485,10 +485,6 @@ export default () => {
                     transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : 'translateY(0)'
                 }}
     >
-        {isUpdateShow &&
-            <ChannelUpdateDialog channelId={Number(channelId)} channelName={channelName} closeWindow={() => {
-                setIsUpdateShow(false)
-            }}></ChannelUpdateDialog>}
         <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2 flex-shrink-0 lg:static fixed top-0 left-0 right-0 z-[70]">
             {channelName}
             <ChannelSetting mine={mine} openWindow={() => {

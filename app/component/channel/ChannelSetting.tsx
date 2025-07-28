@@ -12,13 +12,16 @@ import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {ChannelDeleteSendEvent, ChannelUpdateSendEvent} from "@/types/events";
 import ChannelLeaveDialog from "@/app/component/channel/ChannelLeaveDialog";
 import axios from "axios";
-import {useParams, useRouter} from "next/navigation";
+import {useParams, usePathname, useRouter} from "next/navigation";
 import {useState} from "react";
 import ChannelLeaveErrorDialog from "@/app/component/error/ChannelLeaveErrorDialog";
 import ChannelAdminChange from "@/app/component/channel/ChannelAdminChange";
 
-function getUpdateAndDelete(setChangeAdminState:(flag:boolean)=>void,openWindow: () => void, sendDeleteMessage: () => void) {
+
+function getUpdateAndDelete(goEdit:()=>void,setChangeAdminState:(flag:boolean)=>void, space:number, channelId:number, sendDeleteMessage: () => void) {
+
     return <>
+
         <DropdownMenu.Separator className="h-px bg-gray-200 my-1"/>
         <DropdownMenu.Item
             className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-red-50 rounded cursor-pointer outline-none"
@@ -31,7 +34,7 @@ function getUpdateAndDelete(setChangeAdminState:(flag:boolean)=>void,openWindow:
         </DropdownMenu.Item>
 
         <DropdownMenu.Separator className="h-px bg-gray-200 my-1"/>
-        <DropdownMenu.Item onClick={openWindow}
+        <DropdownMenu.Item onClick={()=> goEdit()}
                            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded cursor-pointer outline-none">
             <Pencil1Icon className="w-4 h-4"/>
             변경
@@ -54,6 +57,7 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
     const [changeAdminState, setChangeAdminState] = useState(false);
     const [channelOutState, setChannelOutState] = React.useState(false);
     const router = useRouter();
+    const editLink = `${usePathname()}/edit`;
     const sendDeleteMessage = ()=>{
         let channelDeleteSendEvent :ChannelDeleteSendEvent = {message: {id: channelId}, type: "channelDelete"}
         sendMessage(JSON.stringify(channelDeleteSendEvent))
@@ -103,8 +107,7 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
                         채널 나가기
                     </DropdownMenu.Item>
 
-
-                    {mine && getUpdateAndDelete(setChangeAdminState,openWindow, sendDeleteMessage)}
+                    {mine && getUpdateAndDelete(()=>router.push(editLink),setChangeAdminState,Number(space),channelId, sendDeleteMessage)}
                 </DropdownMenu.Content>
             </DropdownMenu.Root>
         </div>
