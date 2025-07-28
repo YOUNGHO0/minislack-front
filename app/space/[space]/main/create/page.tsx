@@ -79,24 +79,19 @@ const ChannelCreatePage = () => {
     };
 
     return (
-        <Box style={{ maxWidth: '600px', margin: '0 auto', paddingTop: '40px', paddingBottom: '40px', paddingLeft: '16px', paddingRight: '16px' }}>
+        <div className={"flex flex-col"} style={{ maxWidth: '600px', margin: '0 auto', paddingTop: '40px', paddingBottom: '40px', paddingLeft: '16px', paddingRight: '16px' }}>
             <Heading as="h1" size="6" mb="5">
-                Create New Channel
+                채널 생성
             </Heading>
 
             {/* 채널명 입력 */}
             <Box mb="4">
-                <Text as="label" size="2" weight="medium" color="violet" mb="1" style={{ display: 'block' }}>
-                    Channel Name
-                </Text>
-                <TextField.Root ref={channelNameRef} placeholder="Channel Name" />
+                <TextField.Root ref={channelNameRef} placeholder="이름" />
             </Box>
 
             {/* 채널 옵션 */}
             <Box mb="4">
-                <Text size="2" weight="medium" color="violet" mb="2" style={{ display: 'block' }}>
-                    Channel Options
-                </Text>
+
 
                 <Flex direction="column" gap="2">
                     <Flex align="center" gap="2">
@@ -129,11 +124,11 @@ const ChannelCreatePage = () => {
 
             {/* 사용자 검색 */}
             <Box mb="4">
-                <Text as="label" size="2" weight="medium" color="violet" mb="1" style={{ display: 'block' }}>
-                    Search Users
-                </Text>
+                <h2 className="mt-3 mb-2 font-semibold"  style={{ display: 'block' }}>
+                    사용자 추가
+                </h2>
                 <TextField.Root
-                    placeholder="Search users..."
+                    placeholder="검색"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -181,7 +176,7 @@ const ChannelCreatePage = () => {
             )}
 
             {/* 사용자 리스트 */}
-            <Box mb="6">
+            <Box className={"flex flex-col"} mb="6">
                 <ScrollArea
                     type="auto"
                     style={{
@@ -223,20 +218,18 @@ const ChannelCreatePage = () => {
                             );
                         })
                     ) : (
-                        <Box style={{ textAlign: 'center', padding: '12px 0' }}>
-                            <Text color="gray">No users found</Text>
+                        <Box style={{ color:"black", textAlign: 'center', padding: '12px 0' }}>
+                            <Text>초대 가능한 사용자가 없습니다</Text>
                         </Box>
                     )}
                 </ScrollArea>
             </Box>
 
             {/* 생성 버튼 */}
-            <Flex justify="end">
-                <Button onClick={createChannel} color="green" radius="full">
-                    Create Channel
-                </Button>
-            </Flex>
-        </Box>
+            <Button className={"w-full justify-end"} onClick={createChannel} >
+                채널 생성
+            </Button>
+        </div>
     );
 };
 
