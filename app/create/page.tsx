@@ -5,7 +5,6 @@ import {useRouter} from "next/navigation";
 import {Checkbox, Flex, Text, Theme} from "@radix-ui/themes";
 import axios from "axios";
 import {useEffect} from "react";
-import {createLazyResult} from "next/dist/server/lib/lazy-result";
 import {UserInfo} from "@/types/type";
 
 
@@ -24,18 +23,24 @@ const SpaceCreatePage = () => {
     const [defaultNickName, setDefaultNickName] = React.useState("");
 
     useEffect(() => {
-        if (!useDefaultProfile && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [useDefaultProfile]);
+        axios.get<UserInfo>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/info`, { withCredentials: true })
+            .then(result => {
+                setDefaultNickName(result.data.nickName);
+            });
+    }, []);
 
     useEffect(() => {
-        axios.get<UserInfo>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/info`,{withCredentials :true})
-            .then(result =>{
-                setDefaultNickName(result.data.nickName);
-            })
-
-    }, []);
+        if (!useDefaultProfile && inputRef.current) {
+            // 모바일 키보드 대응: 약간의 딜레이 후 중앙으로 스크롤 및 포커스
+            setTimeout(() => {
+                inputRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                });
+                inputRef.current?.focus();
+            }, 100);
+        }
+    }, [useDefaultProfile]);
 
     function addRoom() {
         if (!channelName.trim()) {
@@ -50,7 +55,14 @@ const SpaceCreatePage = () => {
 
         axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space`,
-            { name: channelName, searchEnable: !searchDisable, codeRequired, useCustomProfile : !useDefaultProfile , nickName : customNickName , profileImageId: null },
+            {
+                name: channelName,
+                searchEnable: !searchDisable,
+                codeRequired,
+                useCustomProfile: !useDefaultProfile,
+                nickName: customNickName,
+                profileImageId: null
+            },
             {
                 withCredentials: true,
                 headers: { "Content-Type": "application/json" }
@@ -66,13 +78,12 @@ const SpaceCreatePage = () => {
             setHasError(true);
             setError("채널 생성 중 오류가 발생했습니다.");
         }).finally(() => {
-
             setIsLoading(false);
         });
     }
 
     return (
-        <div className="w-full flex flex-col justify-center py-4 lg:px-[30%]">
+        <div className="w-full flex flex-col justify-center py-4 lg:px-[30%] overflow-auto">
             <Theme>
                 <div className="flex flex-col max-w-3xl w-full bg-white p-6 rounded-md">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-2">방 생성</h2>
@@ -153,14 +164,13 @@ const SpaceCreatePage = () => {
                             <input
                                 ref={inputRef}
                                 readOnly={useDefaultProfile}
-                                className={`h-[40px] w-full rounded px-3 text-[16px] border outline-none ${
+                                className={`scroll-mt-24 h-[40px] w-full rounded px-3 text-[16px] border outline-none ${
                                     nickNameError ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-400'
                                 } ${useDefaultProfile ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
-                                value= {useDefaultProfile ? defaultNickName : customNickName}
+                                value={useDefaultProfile ? defaultNickName : customNickName}
                                 onChange={(e) => {
                                     if (!useDefaultProfile) {
                                         setCustomNickName(e.target.value);
-
                                     }
                                 }}
                             />
