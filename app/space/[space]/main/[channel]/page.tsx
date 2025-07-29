@@ -479,7 +479,7 @@ export default () => {
         }
     }, []);
 
-    return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0"
+    return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0 z-[80]"
                 style={{
                     height: '100dvh',
                     transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : 'translateY(0)'
@@ -521,7 +521,7 @@ export default () => {
         {/* 입력창 영역 */}
         <div 
             ref={inputContainerRef}
-            className="py-1 px-[5%] min-h-0 bg-white border-t border-gray-200  lg:pb-1  transition-transform duration-[800ms] ease-out"
+            className="py-1 px-[5%] min-h-0 bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 lg:pb-1  transition-transform duration-[800ms] ease-out z-[80]"
         >
             <Box className="flex flex-col w-full">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}

@@ -1,38 +1,79 @@
+'use client';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Home, User } from 'lucide-react';
 
+const ImprovedNavbar = () => {
+    const [activeMenu, setActiveMenu] = useState<string | null>(null);
+    const router = useRouter();
 
-import { QuestionMarkCircleIcon , AcademicCapIcon } from '@heroicons/react/24/outline';
-import MainButton from "@/app/component/MainButton";
-import QuestionButton from "@/app/component/QuestionButton";
-import Setting from "@/app/component/SettingButton";
-import SettingButton from "@/app/component/SettingButton";
+    const menuItems = [
+        { id: 'home', icon: Home, label: '홈', path: '/home' },
+        { id: 'profile', icon: User, label: '프로필', path: '/profile' }
+    ];
 
+    const handleClick = (id: string, path: string) => {
+        setActiveMenu(id);
+        router.push(path);
+    };
 
-interface PageProps {
-    params: { spaceId: string };
-    searchParams?: { [key: string]: string | string[] | undefined };
-}
+    return (
+        <>
+            {/* Desktop Navigation */}
+            <nav className="lg:order-first hidden lg:flex lg:flex-col p-1 lg:left-0 lg:top-0 lg:h-full lg:w-20 bg-white border-r shadow-sm z-50">
+                <div className="flex flex-col items-center pt-4 gap-3">
+                    {menuItems.map(({ id, icon: Icon, label, path }) => (
+                        <button
+                            key={id}
+                            onClick={() => handleClick(id, path)}
+                            className={`p-3 rounded-lg transition-all duration-200 group ${
+                                activeMenu === id
+                                    ? 'bg-blue-50 text-blue-600 shadow-md'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                            }`}
+                        >
+                            <Icon
+                                className={`w-5 h-5 transition-transform duration-200 ${
+                                    activeMenu === id ? 'scale-110' : 'group-hover:scale-105'
+                                }`}
+                            />
+                        </button>
+                    ))}
+                </div>
+                <div className="flex-1" />
+            </nav>
 
-
-export default function NavBar(){
-
-    return(
-
-
-        <nav
-            className=" flex lg:flex-col items-center
-             lg:p-3 bg-neutral-200 lg:order-first p-1 ">
-            <div className={"flex w-100 px-10 lg:py-10 lg:px-0 lg:w-10 lg:h-80  h-10 flex-row lg:flex-col items-center justify-start "}>
-                <MainButton></MainButton>
-                {/*<QuestionButton></QuestionButton>*/}
-                {/*<SettingButton></SettingButton>*/}
-            </div>
-
-            <div className="lg:w-8 lg:h-1/5 w-1/5 items-center flex justify-center">
-                {/*<AcademicCapIcon className="w-8"/>*/}
-            </div>
-
-        </nav>
+            {/* Mobile Navigation */}
+            <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-30">
+                <div className="flex items-center justify-around">
+                    {menuItems.map(({ id, icon: Icon, label, path }) => (
+                        <button
+                            key={id}
+                            onClick={() => handleClick(id, path)}
+                            className={`relative flex flex-col-reverse items-center p-2 rounded-lg transition-all duration-200 ${
+                                activeMenu === id
+                                    ? 'text-blue-600'
+                                    : 'text-gray-600 hover:text-gray-900'
+                            }`}
+                        >
+                            <span className={`text-xs mt-1 font-medium ${
+                                activeMenu === id ? 'text-blue-600' : 'text-gray-500'
+                            }`}>
+                            </span>
+                            <Icon
+                                className={`w-5 h-5 transition-transform duration-200 ${
+                                    activeMenu === id ? 'scale-110' : ''
+                                }`}
+                            />
+                            {activeMenu === id && (
+                                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-full" />
+                            )}
+                        </button>
+                    ))}
+                </div>
+            </nav>
+        </>
     );
+};
 
-
-}
+export default ImprovedNavbar;
