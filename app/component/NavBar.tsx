@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import {usePathname, useRouter} from 'next/navigation';
 import { Home, User } from 'lucide-react';
 
 const ImprovedNavbar = () => {
@@ -8,13 +8,16 @@ const ImprovedNavbar = () => {
     const router = useRouter();
 
     const menuItems = [
-        { id: 'home', icon: Home, label: '홈', path: '/home' },
+        { id: 'home', icon: Home, label: '홈', path: '/' },
         { id: 'profile', icon: User, label: '프로필', path: '/profile' }
     ];
 
+    const pathname = usePathname();
+    const segments = pathname.split("/");
+    const basePath = segments.length >= 3  ? `/${segments[1]}/${segments[2]}` : "/";
     const handleClick = (id: string, path: string) => {
         setActiveMenu(id);
-        router.push(path);
+        router.push(`${basePath}/${path}`);
     };
 
     return (
