@@ -70,7 +70,7 @@ export default () => {
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${spaceList[activeSpaceNumber].id}&inviteCode=${inviteCode}`
         ,{withCredentials: true}).then(response => {
             if (response.status === 200) {
-                router.push(`/space/${spaceList[activeSpaceNumber].id}`);
+                router.push(`/space/${spaceList[activeSpaceNumber].id}/join?inviteCode=${inviteCode !== "" ? inviteCode : ''}`);
             }
         }).catch(error => {
             // 호출한 쪽에서 catch로 처리할 수 있도록 다시 던져줌

@@ -22,7 +22,7 @@ export default  ()=> {
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${userSpaceInfo.id}&inviteCode=${inviteCode}`
             ,{withCredentials: true}).then(response => {
             if (response.status === 200) {
-                router.push(`/space/${userSpaceInfo.id}`);
+                router.push(`/space/${userSpaceInfo.id}/join?inviteCode=${inviteCode !== "" ? inviteCode : ''}`);
             }
         }).catch(error => {
             if(error.response?.status == HttpStatusCode.Conflict){
@@ -34,7 +34,7 @@ export default  ()=> {
     };
 
     useEffect(() => {
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/info?spaceId=${space}`, {withCredentials: true})
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/info/invite?spaceId=${space}`, {withCredentials: true})
             .then(response => {
                 if (response.status === 200) {
                     setUserSpaceInfo(response.data);
