@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {useRouter} from "next/navigation";
-import {Checkbox, Flex, Text, Theme} from "@radix-ui/themes";
+import {Checkbox, Flex, Text, TextField, Theme} from "@radix-ui/themes";
 import axios from "axios";
 import {useEffect} from "react";
 import {UserInfo} from "@/types/type";
@@ -89,7 +89,7 @@ const SpaceCreatePage = () => {
                     <h2 className="text-2xl font-semibold text-gray-800 mb-2">방 생성</h2>
                     <h3 className="mt-3 mb-3 font-semibold">채팅방 설정</h3>
 
-                    <input
+                    <TextField.Root
                         className={`h-[40px] w-full rounded px-3 text-[16px] border outline-none mb-3 ${
                             hasError ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-400'
                         }`}
@@ -161,7 +161,7 @@ const SpaceCreatePage = () => {
                         </Text>
 
                         <div className="mt-4 mb-4">
-                            <input
+                            <TextField.Root
                                 ref={inputRef}
                                 readOnly={useDefaultProfile}
                                 className={`scroll-mt-24 h-[40px] w-full rounded px-3 text-[16px] border outline-none ${
