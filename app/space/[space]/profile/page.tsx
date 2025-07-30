@@ -38,13 +38,14 @@ export default function ProfilePage() {
     }, []);
 
     return (
-        <div className="flex flex-col sm:px-6 lg:px-[15%] py-4 px-2">
+        <div className="flex flex-col sm:px-6 lg:px-[30%] py-4 px-2">
 
             <h1 className={"font-semibold mx-2 mt-3 "}>채팅 프로필</h1>
-            <main className="w-full justify-center flex flex-col ">
-
+            <main className="mt-10 w-full justify-center flex flex-col ">
+                <Card>
             <CardContent className="p-6 space-y-6 mx-2">
                 {/* 프로필 이미지 */}
+
                 <div className="flex items-center gap-4">
                     <Avatar
                         src=""
@@ -55,12 +56,13 @@ export default function ProfilePage() {
 
                 {/* 닉네임 */}
                 <div className="flex items-center gap-4">
-                    <div className="w-20">닉네임</div>
-                    <span className="flex-1">{nickname}</span>
+                    <div className="w-20 font">닉네임</div>
+                    <span className="flex-1 font-bold">{nickname}</span>
                     <Button variant="outline" onClick={handleNicknameChange}>변경</Button>
                 </div>
 
             </CardContent>
+            </Card>
 
             </main>
         </div>
