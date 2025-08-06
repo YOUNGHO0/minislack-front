@@ -17,24 +17,24 @@ const items = [
     title: '멀티 채널 채팅',
     description:
       '관심 주제에 대한 채널을 만들 수 있습니다.',
-    imageLight: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/dash-light.png")`,
-    imageDark: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/dash-dark.png")`,
+    imageLight: `url(/images/main.png)`,
+    imageDark: `url(/images/main.png)`,
   },
   {
     icon: <EdgesensorHighRoundedIcon />,
     title: '초대 코드 생성',
     description:
       '초대 코드를 생성해 해당 코드를 입력해야 참가 가능한 방을 생성합니다.',
-    imageLight: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/mobile-light.png")`,
-    imageDark: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/mobile-dark.png")`,
+      imageLight: `url(/images/createRoom.png)`,
+      imageDark: `url(/images/createRoom.png)`,
   },
   {
     icon: <DevicesRoundedIcon />,
     title: '채팅방 검색 On OFF',
     description:
       '채팅방의 검색 여부를 설정할 수 있습니다. 검색을 허용하지 않으면 초대링크로만 입장 가능합니다',
-    imageLight: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/devices-light.png")`,
-    imageDark: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/devices-dark.png")`,
+      imageLight: `url(/images/createRoom.png)`,
+      imageDark: `url(/images/createRoom.png)`,
   },
 ];
 
@@ -100,8 +100,9 @@ export function MobileLayout({
         <Box
           sx={(theme) => ({
             mb: 2,
-            backgroundSize: 'cover',
+            backgroundSize: 'contain',
             backgroundPosition: 'center',
+            backgroundRepeat:'no-repeat',
             minHeight: 280,
             backgroundImage: 'var(--items-imageLight)',
             ...theme.applyStyles('dark', {
@@ -244,9 +245,11 @@ export default function Features() {
             <Box
               sx={(theme) => ({
                 m: 'auto',
-                width: 420,
+                width: 500,
                 height: 500,
                 backgroundSize: 'contain',
+                backgroundRepeat:'no-repeat',
+                backgroundPosition: 'center',
                 backgroundImage: 'var(--items-imageLight)',
                 ...theme.applyStyles('dark', {
                   backgroundImage: 'var(--items-imageDark)',
