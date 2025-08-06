@@ -102,7 +102,7 @@ export default function HomeAppBar() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        EChat
+                        EliveChat
                     </Typography>
                     {isLogin
                         ? <Button onClick={logout} color="inherit">Logout</Button>
