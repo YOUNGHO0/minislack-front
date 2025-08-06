@@ -19,7 +19,6 @@ export default function MarketingPage(props: { disableCustomTheme?: boolean }) {
       <Hero />
       <div>
         <Features />
-        <Divider />
         <Footer />
       </div>
     </AppTheme>
