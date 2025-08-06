@@ -1,10 +1,11 @@
+'use client'
 
-import NavBar from "@/app/component/NavBar";
-import {bgMagenta} from "next/dist/lib/picocolors";
-import {Channel} from "@/types/channel";
-import ChannelList from "@/app/component/channellist/ChannelList";
+
+import MarketingPage from "@/app/templates/marketing-page/MarketingPage";
 
 export default function Home() {
 
-    return <></>
+    return  <div>
+        <MarketingPage></MarketingPage>
+    </div>
 }
