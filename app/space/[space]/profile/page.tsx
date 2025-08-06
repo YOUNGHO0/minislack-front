@@ -47,6 +47,7 @@ export default function ProfilePage() {
                 {/* 프로필 이미지 */}
 
                 <div className="flex items-center gap-4">
+                    <h3 className={"mr-5"}>이미지</h3>
                     <Avatar
                         src=""
                         fallback="A"
