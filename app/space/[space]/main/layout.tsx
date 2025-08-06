@@ -123,7 +123,7 @@ export default function RootLayout({
                 {/* 헤더 */}
                 <div className="flex items-center justify-between p-4">
                     <div className="text-3sm  font-extrabold flex align-middle items-center gap-2">
-                        Channel List
+                        채널 목록
                         <button onClick={() => setShowSidebar((prev) => !prev)}>
                             {renderToggleIcon()}
                         </button>
