@@ -28,7 +28,7 @@ export default () => {
     const [messages, setMessages] = useState<ReceivedMessage[]>([]);
     const [channelName, setChannelName] = useState("");
     const router = useRouter();
-    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const textAreaRef = useRef<HTMLDivElement>(null);
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [mine, setMine] = useState(false)
     const [replyMessageId, setReplyMessageId] = useState<number | null>(null);
@@ -42,6 +42,7 @@ export default () => {
     const [keyboardHeight, setKeyboardHeight] = useState(0);
     const inputContainerRef = useRef<HTMLDivElement>(null);
     const isUserTouchingRef = useRef(false);
+    const [inputHeight, setInputHeight] = useState(0);
 
     const scrollToBottom = () => {
         const container = scrollContainerRef.current;
@@ -57,7 +58,7 @@ export default () => {
     const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
 
     const createChat = () => {
-        const inputValue = textAreaRef.current?.value || "";
+        const inputValue = textAreaRef.current?.innerText || "";
         if (inputValue === "") return;
 
         // 키보드가 열려있을 때만 포커스 유지
@@ -77,7 +78,7 @@ export default () => {
         
         // 입력창 비우기
         if (textAreaRef.current) {
-            textAreaRef.current.value = "";
+            textAreaRef.current.innerText = "";
         }
         setReplyMessageId(null);
 
@@ -479,6 +480,41 @@ export default () => {
         }
     }, []);
 
+
+    useEffect(() => {
+        const resizeObserver = new ResizeObserver(() => {
+            if (inputContainerRef.current) {
+                setInputHeight(inputContainerRef.current.offsetHeight);
+            }
+        });
+
+        if (inputContainerRef.current) {
+            resizeObserver.observe(inputContainerRef.current);
+            // 초기값 세팅
+            setInputHeight(inputContainerRef.current.offsetHeight);
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, []);
+
+    const prevInputHeight = useRef(0);
+
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        const diff = inputHeight - prevInputHeight.current;
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+
+        if (isNearBottom && diff > 0) {
+            container.scrollTop += diff; // 입력창 높이 변동만큼 스크롤 내리기
+        }
+
+        prevInputHeight.current = inputHeight;
+    }, [inputHeight]);
+
     return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0 z-[80]"
                 style={{
                     height: '100dvh',
@@ -499,8 +535,10 @@ export default () => {
         {/* 메시지 영역 */}
         <div 
             ref={scrollContainerRef} 
-            className="flex flex-col flex-1 overflow-y-auto lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 transition-transform duration-[300ms] ease-ou "
-
+            className="mb-15 flex flex-col flex-1 overflow-y-auto lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 transition-transform duration-[300ms] ease-ou "
+            style={{
+                paddingBottom: inputHeight,  // 여기 동적 paddingBottom 적용
+            }}
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
@@ -523,18 +561,17 @@ export default () => {
             ref={inputContainerRef}
             className="py-1 px-[5%] min-h-0 bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 lg:pb-1  transition-transform duration-[800ms] ease-out z-[80]"
         >
-            <Box className="flex flex-col w-full">
+            <Box className="flex flex-col w-full h-full">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
                                                             message={messages.find(msg => msg.id === replyMessageId)}></MessageReplyBar> : <></>}
                 <div className="flex gap-2 items-center">
-                    <TextArea
-                        size="2"
-                        placeholder=""
-                        className="flex-1"
-                        ref={textAreaRef}
+                    <div
+                        contentEditable
+                        className="flex-1 min-h-[40px] max-h-30 overflow-auto border-2 rounded focus:outline-none border-b-amber-50 overflow-auto px-2 py-1"
+                         ref={textAreaRef}
                     />
 
-                    <Button 
+                    <Button
                         type="button"
                         onClick={(e) => {
                             e.preventDefault();
