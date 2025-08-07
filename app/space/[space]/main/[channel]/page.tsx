@@ -563,7 +563,10 @@ export default () => {
         {/* 입력창 영역 */}
         <div 
             ref={inputContainerRef}
-            className="py-1 px-[5%] min-h-0 bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 lg:pb-1  transition-transform duration-[800ms] ease-out z-[80]"
+            className="py-1 px-[5%] min-h-0 bg-white border-t border-gray-200 fixed left-0 right-0 lg:pb-1  transition-transform duration-[800ms] ease-out z-[80]"
+            style={{
+                bottom: `${keyboardHeight}px`, // ✅ 키보드 높이만큼 띄우기
+            }}
         >
             <Box className="flex flex-col w-full h-full">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
