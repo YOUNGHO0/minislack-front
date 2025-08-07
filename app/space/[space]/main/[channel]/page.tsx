@@ -563,9 +563,7 @@ export default () => {
         <div 
             ref={scrollContainerRef}
             className="mb-15 flex flex-col flex-1 overflow-y-auto lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 transition-transform duration-[300ms] ease-out "
-            style={{
-                height: `${viewportHeight - inputHeight - keyboardHeight}px`,
-            }}
+            style={{ height: '755px' }}
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
