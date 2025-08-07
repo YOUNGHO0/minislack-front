@@ -515,6 +515,15 @@ export default () => {
         prevInputHeight.current = inputHeight;
     }, [inputHeight]);
 
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        // getComputedStyle을 통해 렌더링된 height를 가져옴
+        const computedStyle = window.getComputedStyle(container);
+        console.log("스크롤 컨테이너 height:", computedStyle.height);
+    }, [inputHeight, keyboardHeight]); // 두 값이 변경될 때마다 다시 계산
+
     return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0 z-[80]">
         <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2 flex-shrink-0 lg:static fixed top-0 left-0 right-0 z-[70]">
             {channelName}
