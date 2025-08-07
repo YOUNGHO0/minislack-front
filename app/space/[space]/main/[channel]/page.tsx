@@ -544,10 +544,7 @@ export default () => {
         if (keyboardHeight > 0) {
             // 키보드 올라왔을 때, 스크롤을 키보드 높이만큼 올림
             // 현재 스크롤 위치에 키보드 높이를 더해줌 (더 위로 올려야 하니까)
-            container.scrollTop += keyboardHeight;
-        } else {
-            // 키보드 내려갔을 때, 메시지 목록 최하단으로 스크롤
-            container.scrollTop = container.scrollHeight;
+            container.scrollTop -= keyboardHeight;
         }
     }, [keyboardHeight]);
 
