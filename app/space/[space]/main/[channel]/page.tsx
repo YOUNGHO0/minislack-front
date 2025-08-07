@@ -515,12 +515,7 @@ export default () => {
         prevInputHeight.current = inputHeight;
     }, [inputHeight]);
 
-    return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0 z-[80]"
-                style={{
-                    height: '100dvh',
-                    transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : 'translateY(0)'
-                }}
-    >
+    return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0 z-[80]">
         <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2 flex-shrink-0 lg:static fixed top-0 left-0 right-0 z-[70]">
             {channelName}
             <ChannelSetting mine={mine} openWindow={() => {
@@ -537,7 +532,7 @@ export default () => {
             ref={scrollContainerRef} 
             className="mb-15 flex flex-col flex-1 overflow-y-auto lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 transition-transform duration-[300ms] ease-ou "
             style={{
-                paddingBottom: inputHeight,  // 여기 동적 paddingBottom 적용
+                height: `calc(100% - ${inputHeight}px - ${keyboardHeight}px)`, // ✅ 동적으로 설정
             }}
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
