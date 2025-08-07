@@ -524,6 +524,28 @@ export default () => {
         console.log("스크롤 컨테이너 height:", computedStyle.height);
     }, [inputHeight, keyboardHeight]); // 두 값이 변경될 때마다 다시 계산
 
+    const [viewportHeight, setViewportHeight] = useState(window.visualViewport?.height || window.innerHeight);
+
+    useEffect(() => {
+        const onResize = () => {
+            setViewportHeight(window.visualViewport?.height || window.innerHeight);
+        };
+
+        if(window.visualViewport) {
+            window.visualViewport.addEventListener('resize', onResize);
+        } else {
+            window.addEventListener('resize', onResize);
+        }
+
+        return () => {
+            if(window.visualViewport) {
+                window.visualViewport.removeEventListener('resize', onResize);
+            } else {
+                window.removeEventListener('resize', onResize);
+            }
+        }
+    }, []);
+
     return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0 z-[80]">
         <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2 flex-shrink-0 lg:static fixed top-0 left-0 right-0 z-[70]">
             {channelName}
@@ -539,9 +561,9 @@ export default () => {
         {/* 메시지 영역 */}
         <div 
             ref={scrollContainerRef} 
-            className="mb-15 flex flex-col flex-1 overflow-y-scroll lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 transition-transform duration-[300ms] ease-ou "
+            className="mb-15 flex flex-col flex-1 overflow-y- lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 transition-transform duration-[300ms] ease-ou "
             style={{
-                height: `calc(100% - ${inputHeight}px - ${keyboardHeight}px)`, // ✅ 동적으로 설정
+                height: `${viewportHeight - inputHeight - keyboardHeight}px`,
             }}
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
