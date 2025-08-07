@@ -31,34 +31,34 @@ const useKeyboardDetection = () => {
         initialViewportHeight.current = window.innerHeight;
 
         const handleResize = () => {
+            // iOS Safari의 경우 visual viewport 사용
             const viewport = window.visualViewport;
             if (viewport) {
                 const heightDiff = initialViewportHeight.current - viewport.height;
-                const isOpen = heightDiff > 150;
+                const isOpen = heightDiff > 150; // 최소 키보드 높이
+
                 setKeyboardHeight(isOpen ? heightDiff : 0);
                 setIsKeyboardOpen(isOpen);
             } else {
+                // Android Chrome 등 다른 브라우저 대응
                 const heightDiff = initialViewportHeight.current - window.innerHeight;
                 const isOpen = heightDiff > 150;
+
                 setKeyboardHeight(isOpen ? heightDiff : 0);
                 setIsKeyboardOpen(isOpen);
             }
         };
 
+        // 초기값 설정
         handleResize();
 
-        const viewport = window.visualViewport;
-        if (viewport) {
-            viewport.addEventListener('resize', handleResize);
-            return () => {
-                // ✅ 여기서도 viewport가 여전히 존재하는지 확인
-                viewport.removeEventListener('resize', handleResize);
-            };
+        // Visual Viewport API 지원 여부에 따라 이벤트 리스너 설정
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', handleResize);
+            return () => window.visualViewport.removeEventListener('resize', handleResize);
         } else {
             window.addEventListener('resize', handleResize);
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
+            return () => window.removeEventListener('resize', handleResize);
         }
     }, []);
 
@@ -66,7 +66,7 @@ const useKeyboardDetection = () => {
 };
 
 // 스크롤 위치를 관리하는 커스텀 훅
-const useScrollManager = (scrollContainerRef: React.RefObject<HTMLDivElement | null>) => {
+const useScrollManager = (scrollContainerRef: React.RefObject<HTMLDivElement>) => {
     const [isNearBottom, setIsNearBottom] = useState(true);
     const [shouldMaintainScroll, setShouldMaintainScroll] = useState(false);
     const lastScrollTop = useRef(0);
@@ -712,6 +712,7 @@ export default () => {
                                 whiteSpace: 'pre-wrap'
                             }}
                             ref={textAreaRef}
+                            placeholder="메시지를 입력하세요..."
                             data-placeholder="메시지를 입력하세요..."
                             suppressContentEditableWarning={true}
                             onFocus={() => {
