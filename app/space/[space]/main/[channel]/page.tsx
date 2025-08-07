@@ -539,7 +539,7 @@ export default () => {
 
 
 
-    return <div className=""
+    return <div className="overflow-y-hidden"
         style={{  height: `calc(100dvh - ${keyboardHeight}px)`,}}
     >
         <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2  top-0 left-0 right-0 z-[80]"
