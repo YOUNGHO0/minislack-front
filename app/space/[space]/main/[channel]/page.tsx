@@ -2,7 +2,7 @@
 import {useParams, useRouter} from "next/navigation";
 import MessageCard from "@/app/component/message/MessageCard";
 import {Box, Button, TextArea} from "@radix-ui/themes";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import emitter from '@/WebSocket/Emitter'
 import {JsonReceivedMessageInfo} from "@/types/webSocketType";
 import {ChannelInfo, MessagePageResponse, ReceivedMessage} from "@/types/type";
@@ -105,11 +105,15 @@ export default () => {
         }
     }, []);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (firstLoadRef.current && messages.length > 0) {
             firstLoadRef.current = false;
-            if (bottomRef.current) {
-                bottomRef.current.scrollIntoView({behavior: 'auto'});
+            const container = scrollContainerRef.current;
+            if (container) {
+                container.scrollTo({
+                    top: container.scrollHeight,
+                    behavior: 'instant',
+                });
             }
         }
     }, [messages]);
