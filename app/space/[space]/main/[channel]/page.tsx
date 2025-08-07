@@ -36,7 +36,7 @@ export default () => {
     const [totalPageNumber, setTotalPageNumber] = useState<number | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const {sendMessage} = useWebSocket();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // useState로 변경
     const firstLoadRef = useRef(true);
     const topSentinelRef = useRef<HTMLDivElement>(null);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -45,13 +45,6 @@ export default () => {
     const [inputHeight, setInputHeight] = useState(0);
     const channelHeaderRef = useRef<HTMLDivElement>(null);
     const [channelHeaderHeight, setChannelHeaderHeight] = useState(0);
-
-    // 높이 변경 전후 스크롤 위치 추적을 위한 ref
-    const prevHeights = useRef({
-        input: 0,
-        keyboard: 0,
-        header: 0
-    });
 
     const scrollToBottom = () => {
         const container = scrollContainerRef.current;
@@ -90,8 +83,9 @@ export default () => {
             textAreaRef.current.innerText = "";
         }
         setReplyMessageId(null);
-    }
 
+
+    }
     const bottomRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -102,9 +96,9 @@ export default () => {
                 textArea.style.height = "auto";
                 textArea.style.height = `${textArea.scrollHeight}px`;
             };
-
+            
             textArea.addEventListener('input', handleInput);
-
+            
             return () => {
                 textArea.removeEventListener('input', handleInput);
             };
@@ -173,7 +167,7 @@ export default () => {
                 mine: message.mine
             }
             setMessages((prevData) => [...prevData, chatMessage]);
-
+            
             // chatCreate 이벤트로 인한 메시지 추가임을 표시
             setShouldScrollToBottom(true);
         }
@@ -404,8 +398,33 @@ export default () => {
             console.error(e);
         } finally {
             setIsLoading(false);
+            // 로딩 완료 후 지연을 주어 연속 로딩 방지
+            setTimeout(() => {
+
+            },);
         }
     };
+
+    useEffect(() => {
+        const scrollContainer = scrollContainerRef.current;
+        if (!scrollContainer) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            // 기본 스크롤을 막지 않고, 델타 값만 조절
+            const originalDelta = e.deltaY;
+            const reducedDelta = originalDelta * 0.3; // 민감도 조절
+
+            // 기본 이벤트는 막지 않고, 스크롤 속도만 조절
+            e.preventDefault();
+            scrollContainer.scrollTop += reducedDelta;
+        };
+
+        scrollContainer.addEventListener('wheel', handleWheel, {passive: false});
+
+        return () => {
+            scrollContainer.removeEventListener('wheel', handleWheel);
+        };
+    }, []);
 
     useEffect(() => {
         const scrollContainer = scrollContainerRef.current;
@@ -467,7 +486,7 @@ export default () => {
         }
     }, []);
 
-    // 입력창 높이 관찰
+
     useEffect(() => {
         const resizeObserver = new ResizeObserver(() => {
             if (inputContainerRef.current) {
@@ -486,7 +505,22 @@ export default () => {
         };
     }, []);
 
-    // 채널 헤더 높이 관찰
+    const prevInputHeight = useRef(0);
+
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        const diff = inputHeight - prevInputHeight.current;
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+
+        if (isNearBottom && diff > 0) {
+            container.scrollTop += diff; // 입력창 높이 변동만큼 스크롤 내리기
+        }
+
+        prevInputHeight.current = inputHeight;
+    }, [inputHeight]);
+
     useEffect(() => {
         const observer = new ResizeObserver(() => {
             if (channelHeaderRef.current) {
@@ -503,55 +537,10 @@ export default () => {
         return () => observer.disconnect();
     }, []);
 
-    // 입력창 높이 변경 시 스크롤 위치 고정
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container || prevHeights.current.input === inputHeight) return;
 
-        const currentScrollTop = container.scrollTop;
-        prevHeights.current.input = inputHeight;
-
-        // 브라우저의 기본 스크롤 조정을 막기 위해 즉시 실행
-        container.scrollTop = currentScrollTop;
-
-        // 추가 보장을 위해 다음 프레임에서도 실행
-        requestAnimationFrame(() => {
-            container.scrollTop = currentScrollTop;
-        });
-    }, [inputHeight]);
-
-    // 키보드 높이 변경 시 스크롤 위치 고정
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container || prevHeights.current.keyboard === keyboardHeight) return;
-
-        const currentScrollTop = container.scrollTop;
-        prevHeights.current.keyboard = keyboardHeight;
-
-        container.scrollTop = currentScrollTop;
-
-        requestAnimationFrame(() => {
-            container.scrollTop = currentScrollTop;
-        });
-    }, [keyboardHeight]);
-
-    // 헤더 높이 변경 시 스크롤 위치 고정
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container || prevHeights.current.header === channelHeaderHeight) return;
-
-        const currentScrollTop = container.scrollTop;
-        prevHeights.current.header = channelHeaderHeight;
-
-        container.scrollTop = currentScrollTop;
-
-        requestAnimationFrame(() => {
-            container.scrollTop = currentScrollTop;
-        });
-    }, [channelHeaderHeight]);
 
     return <div className="">
-        <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2 top-0 left-0 right-0 z-[80]"
+        <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2  top-0 left-0 right-0 z-[80]"
              ref={channelHeaderRef}
         >
             {channelName}
@@ -565,13 +554,11 @@ export default () => {
         {showJoinDialog && <JoinDialog getMessage={getMessage} close={() => setShowJoinDialog(false)}/>}
 
         {/* 메시지 영역 */}
-        <div
+        <div 
             ref={scrollContainerRef}
             className="overflow-y-auto"
             style={{
-                height: `calc(100dvh - ${channelHeaderHeight}px - ${inputHeight}px - ${keyboardHeight}px)`,
-                overflowAnchor: 'none',  // 스크롤 앵커링 비활성화
-                scrollBehavior: 'auto'   // smooth 제거하여 즉각적인 반응
+                height: `calc(100dvh - ${channelHeaderHeight}px - ${inputHeight}px - ${keyboardHeight}px)`
             }}
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
@@ -591,9 +578,9 @@ export default () => {
         </div>
 
         {/* 입력창 영역 */}
-        <div
+        <div 
             ref={inputContainerRef}
-            className="bg-white h-full transition-transform duration-[800ms] ease-out"
+            className="bg-white h-full  transition-transform duration-[800ms] ease-out"
         >
             <Box className="flex flex-col w-full h-full px-2 py-2">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
@@ -601,8 +588,8 @@ export default () => {
                 <div className="flex gap-2 items-center">
                     <div
                         contentEditable
-                        className="flex-1 min-h-13 max-h-30 border-2 rounded focus:outline-none overflow-auto px-2 py-1"
-                        ref={textAreaRef}
+                        className="flex-1 min-h-13 max-h-30 border-2 rounded focus:outline-none  overflow-auto px-2 py-1"
+                         ref={textAreaRef}
                     />
 
                     <Button
