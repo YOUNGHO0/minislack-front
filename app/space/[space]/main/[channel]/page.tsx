@@ -558,6 +558,7 @@ export default () => {
             ref={scrollContainerRef}
             className="overflow-y-auto"
             style={{
+                height: `calc(100dvh - ${channelHeaderHeight}px - ${inputHeight}px` ,
                 paddingBottom: `${keyboardHeight}px`,
             }}
         >
@@ -567,7 +568,7 @@ export default () => {
             )}
 
             {messages.map((message) => (
-                <div key={message.id} className="message-row w-full flex-shrink-0">
+                <div key={message.id} className="message-row w-full">
                     <MessageCard scrollContainerRef={scrollContainerRef} scroll={scroll}
                                  refCallback={(el) => messageRefs.current[message.id] = el}
                                  parentMessage={message.parentMessage === null ? undefined : message.parentMessage}
@@ -580,7 +581,7 @@ export default () => {
         {/* 입력창 영역 */}
         <div 
             ref={inputContainerRef}
-            className="sticky bg-white h-full transition-transform duration-[800ms] ease-out"
+            className="bg-white transition-transform duration-[800ms] ease-out"
             style={{bottom : `${keyboardHeight}px`,}}
         >
             <Box className="flex flex-col w-full h-full px-2 py-2">
