@@ -2,7 +2,7 @@
 import {useParams, useRouter} from "next/navigation";
 import MessageCard from "@/app/component/message/MessageCard";
 import {Box, Button, TextArea} from "@radix-ui/themes";
-import {useEffect, useLayoutEffect, useRef, useState, useCallback} from "react";
+import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import emitter from '@/WebSocket/Emitter'
 import {JsonReceivedMessageInfo} from "@/types/webSocketType";
 import {ChannelInfo, MessagePageResponse, ReceivedMessage} from "@/types/type";
@@ -13,114 +13,11 @@ import {
     ChannelDeleteReceiveEvent,
     ChannelUpdateReceiveEvent,
     ChatCreateReceiveEvent,
-    ChatCreateSendEvent,
-    ChatDeleteReceiveEvent,
-    ChatUpdateReceiveEvent
+    ChatCreateSendEvent, ChatDeleteReceiveEvent, ChatUpdateReceiveEvent
 } from "@/types/events";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import JoinDialog from "@/app/component/channel/joindialog/JoinDialog";
 import MessageReplyBar from "@/app/component/message/MessageReplyBar";
-
-// 키보드 상태를 관리하는 커스텀 훅
-const useKeyboardDetection = () => {
-    const [keyboardHeight, setKeyboardHeight] = useState(0);
-    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
-    const initialViewportHeight = useRef(window.innerHeight);
-
-    useEffect(() => {
-        initialViewportHeight.current = window.innerHeight;
-
-        const handleResize = () => {
-            // iOS Safari의 경우 visual viewport 사용
-            const viewport = window.visualViewport;
-            if (viewport) {
-                const heightDiff = initialViewportHeight.current - viewport.height;
-                const isOpen = heightDiff > 150; // 최소 키보드 높이
-
-                setKeyboardHeight(isOpen ? heightDiff : 0);
-                setIsKeyboardOpen(isOpen);
-            } else {
-                // Android Chrome 등 다른 브라우저 대응
-                const heightDiff = initialViewportHeight.current - window.innerHeight;
-                const isOpen = heightDiff > 150;
-
-                setKeyboardHeight(isOpen ? heightDiff : 0);
-                setIsKeyboardOpen(isOpen);
-            }
-        };
-
-        // 초기값 설정
-        handleResize();
-
-        // Visual Viewport API 지원 여부에 따라 이벤트 리스너 설정
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', handleResize);
-            return () => window.visualViewport.removeEventListener('resize', handleResize);
-        } else {
-            window.addEventListener('resize', handleResize);
-            return () => window.removeEventListener('resize', handleResize);
-        }
-    }, []);
-
-    return { keyboardHeight, isKeyboardOpen };
-};
-
-// 스크롤 위치를 관리하는 커스텀 훅
-const useScrollManager = (scrollContainerRef: React.RefObject<HTMLDivElement>) => {
-    const [isNearBottom, setIsNearBottom] = useState(true);
-    const [shouldMaintainScroll, setShouldMaintainScroll] = useState(false);
-    const lastScrollTop = useRef(0);
-
-    const checkIfNearBottom = useCallback(() => {
-        const container = scrollContainerRef.current;
-        if (!container) return false;
-
-        const threshold = 100;
-        const isNear = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
-        setIsNearBottom(isNear);
-        return isNear;
-    }, []);
-
-    const scrollToBottom = useCallback((behavior: 'smooth' | 'instant' = 'smooth') => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        requestAnimationFrame(() => {
-            container.scrollTo({
-                top: container.scrollHeight,
-                behavior
-            });
-        });
-    }, []);
-
-    const maintainScrollPosition = useCallback(() => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        lastScrollTop.current = container.scrollTop;
-        setShouldMaintainScroll(true);
-    }, []);
-
-    const restoreScrollPosition = useCallback(() => {
-        if (!shouldMaintainScroll) return;
-
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        requestAnimationFrame(() => {
-            container.scrollTop = lastScrollTop.current;
-            setShouldMaintainScroll(false);
-        });
-    }, [shouldMaintainScroll]);
-
-    return {
-        isNearBottom,
-        scrollToBottom,
-        checkIfNearBottom,
-        maintainScrollPosition,
-        restoreScrollPosition
-    };
-};
 
 export default () => {
     const messageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
@@ -139,143 +36,99 @@ export default () => {
     const [totalPageNumber, setTotalPageNumber] = useState<number | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const {sendMessage} = useWebSocket();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // useState로 변경
     const firstLoadRef = useRef(true);
     const topSentinelRef = useRef<HTMLDivElement>(null);
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
     const inputContainerRef = useRef<HTMLDivElement>(null);
     const isUserTouchingRef = useRef(false);
     const [inputHeight, setInputHeight] = useState(0);
     const channelHeaderRef = useRef<HTMLDivElement>(null);
     const [channelHeaderHeight, setChannelHeaderHeight] = useState(0);
+
+    const scrollToBottom = () => {
+        const container = scrollContainerRef.current;
+        if (container) {
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: 'smooth',
+            });
+        }
+    };
+
+    // chatCreate 이벤트로 인한 스크롤 플래그
     const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
 
-    // 커스텀 훅들 사용
-    const { keyboardHeight, isKeyboardOpen } = useKeyboardDetection();
-    const { isNearBottom, scrollToBottom, checkIfNearBottom, maintainScrollPosition, restoreScrollPosition } = useScrollManager(scrollContainerRef);
-
-    // 키보드 열릴 때 처리
-    useEffect(() => {
-        if (isKeyboardOpen) {
-            // 키보드가 열릴 때 하단에 있었다면 스크롤 유지
-            if (isNearBottom) {
-                requestAnimationFrame(() => {
-                    scrollToBottom('instant');
-                });
-            }
-
-            // 입력창에 포커스 유지
-            if (textAreaRef.current) {
-                setTimeout(() => {
-                    textAreaRef.current?.focus();
-                }, 100);
-            }
-        }
-    }, [isKeyboardOpen, isNearBottom, scrollToBottom]);
-
-    // 텍스트 영역 자동 높이 조절
-    useEffect(() => {
-        const textArea = textAreaRef.current;
-        if (!textArea) return;
-
-        const handleInput = () => {
-            // 키보드가 열려있을 때 스크롤 위치 유지
-            if (isKeyboardOpen && isNearBottom) {
-                maintainScrollPosition();
-            }
-
-            textArea.style.height = "auto";
-            textArea.style.height = `${Math.min(textArea.scrollHeight, 120)}px`; // 최대 높이 제한
-
-            // 스크롤 위치 복원
-            if (isKeyboardOpen && isNearBottom) {
-                setTimeout(() => {
-                    restoreScrollPosition();
-                    scrollToBottom('instant');
-                }, 0);
-            }
-        };
-
-        const handleKeyDown = (e: KeyboardEvent) => {
-            // Enter 키 처리 (Shift+Enter는 줄바꿈)
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                createChat();
-            }
-        };
-
-        textArea.addEventListener('input', handleInput);
-        textArea.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            textArea.removeEventListener('input', handleInput);
-            textArea.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [isKeyboardOpen, isNearBottom]);
-
-    const createChat = useCallback(() => {
+    const createChat = () => {
         const inputValue = textAreaRef.current?.innerText || "";
-        if (inputValue.trim() === "") return;
+        if (inputValue === "") return;
+
+        // 키보드가 열려있을 때만 포커스 유지
+        if (keyboardHeight > 0 && textAreaRef.current) {
+            console.log("keyboardHeight : ", keyboardHeight);
+            textAreaRef.current.focus();
+        }
 
         let parent = 0;
         if (replyMessageId !== null) parent = replyMessageId;
-
         const chatCreateSendEvent: ChatCreateSendEvent = {
-            message: {channelId: Number(channelId), parent: parent, text: inputValue.trim()},
+            message: {channelId: Number(channelId), parent: parent, text: inputValue},
             type: "chatCreate"
         }
 
         sendMessage(JSON.stringify(chatCreateSendEvent));
-
+        
         // 입력창 비우기
         if (textAreaRef.current) {
             textAreaRef.current.innerText = "";
-            textAreaRef.current.style.height = "auto";
         }
         setReplyMessageId(null);
 
-        // 메시지 전송 후 스크롤
-        setShouldScrollToBottom(true);
 
-        // 포커스 유지 (키보드가 열려있을 때만)
-        if (isKeyboardOpen) {
-            setTimeout(() => {
-                textAreaRef.current?.focus();
-            }, 50);
-        }
-    }, [channelId, replyMessageId, sendMessage, isKeyboardOpen]);
-
+    }
     const bottomRef = useRef<HTMLDivElement>(null);
 
-    // 첫 로딩시 하단으로 스크롤
+    useEffect(() => {
+        const textArea = textAreaRef.current;
+        if (textArea) {
+            // input 이벤트 리스너 추가
+            const handleInput = () => {
+                textArea.style.height = "auto";
+                textArea.style.height = `${textArea.scrollHeight}px`;
+            };
+            
+            textArea.addEventListener('input', handleInput);
+            
+            return () => {
+                textArea.removeEventListener('input', handleInput);
+            };
+        }
+    }, []);
+
     useLayoutEffect(() => {
         if (firstLoadRef.current && messages.length > 0) {
             firstLoadRef.current = false;
-            scrollToBottom('instant');
+            const container = scrollContainerRef.current;
+            if (container) {
+                container.scrollTo({
+                    top: container.scrollHeight,
+                    behavior: 'instant',
+                });
+            }
         }
-    }, [messages, scrollToBottom]);
+    }, [messages]);
 
-    // 새 메시지 도착시 스크롤 처리
+    // chatCreate 이벤트로 인한 메시지 추가 시에만 스크롤 처리
     useEffect(() => {
         if (shouldScrollToBottom) {
-            if (!isUserTouchingRef.current && isNearBottom) {
-                scrollToBottom('smooth');
+            if(isUserTouchingRef.current == false){
+                requestAnimationFrame(() => {
+                    scrollToBottom();
+                });
             }
-            setShouldScrollToBottom(false);
+            setShouldScrollToBottom(false); // 다시 초기화
         }
-    }, [shouldScrollToBottom, isNearBottom, scrollToBottom]);
-
-    // 스크롤 이벤트 리스너
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        const handleScroll = () => {
-            checkIfNearBottom();
-        };
-
-        container.addEventListener('scroll', handleScroll, { passive: true });
-        return () => container.removeEventListener('scroll', handleScroll);
-    }, [checkIfNearBottom]);
+    }, [shouldScrollToBottom]);
 
     // 채널 관련 UseEffect
     useEffect(() => {
@@ -294,20 +147,16 @@ export default () => {
 
         const handleChatCreate = (message: ChatCreateReceiveEvent) => {
             if (Number(channelId) !== message.channelId) return;
-
             let parentMessage: ReceivedMessage | null = null;
-            if (message.parentMessage !== null) {
-                parentMessage = {
-                    createdDate: message.parentMessage.createdDate,
-                    flushed: false,
-                    id: message.parentMessage.id,
-                    parentMessage: null,
-                    text: message.parentMessage.chatMessage,
-                    user: message.parentMessage.user,
-                    mine: message.mine
-                }
+            if (message.parentMessage !== null) parentMessage = {
+                createdDate: message.parentMessage.createdDate,
+                flushed: false,
+                id: message.parentMessage.id,
+                parentMessage: null,
+                text: message.parentMessage.chatMessage,
+                user: message.parentMessage.user,
+                mine: message.mine
             }
-
             const chatMessage: ReceivedMessage = {
                 id: message.id,
                 text: message.chatMessage,
@@ -317,8 +166,9 @@ export default () => {
                 flushed: false,
                 mine: message.mine
             }
-
             setMessages((prevData) => [...prevData, chatMessage]);
+            
+            // chatCreate 이벤트로 인한 메시지 추가임을 표시
             setShouldScrollToBottom(true);
         }
 
@@ -326,12 +176,12 @@ export default () => {
             if (message.channelId === Number(channelId)) {
                 setMessages((prevData) =>
                     prevData.map((data) => {
-                        if (data.id === message.id) {
-                            data.text = message.text;
+                            if (data.id === message.id) {
+                                data.text = message.text;
+                            }
+                            return data;
                         }
-                        return data;
-                    })
-                )
+                    ))
             }
         }
 
@@ -388,7 +238,7 @@ export default () => {
             });
     }
 
-    // 채팅 메세지 데이터 가져오기 useEffect
+    //채팅 메세지 데이터 가져오기 useEffect
     useEffect(() => {
         getMessage();
     }, []);
@@ -469,21 +319,23 @@ export default () => {
 
         const observer = new IntersectionObserver(
             ([entry]) => {
+                // 더 엄격한 조건 체크
                 if (entry.isIntersecting &&
                     minPageNumber !== null &&
                     minPageNumber > 0 &&
                     !isLoading &&
-                    entry.intersectionRatio > 0.5) {
+                    entry.intersectionRatio > 0.5) { // 50% 이상 보일 때만 트리거
                     loadPreviousMessages(minPageNumber - 1);
                 }
             },
             {
                 root: scrollContainerRef.current,
-                rootMargin: '20px 0px 0px 0px',
-                threshold: [0.5, 1.0]
+                rootMargin: '20px 0px 0px 0px', // 여유 공간 줄임
+                threshold: [0.5, 1.0] // 50% 이상 보일 때만 트리거
             }
         );
 
+        // 로딩 중이 아닐 때만 observe
         if (!isLoading) {
             observer.observe(sentinel);
         }
@@ -494,6 +346,7 @@ export default () => {
     const loadPreviousMessages = async (pageNumber: number) => {
         if (isLoading) return;
 
+        // 추가 보안: 같은 페이지를 다시 로드하지 않도록
         if (minPageNumber !== null && pageNumber >= minPageNumber) return;
 
         setIsLoading(true);
@@ -504,6 +357,7 @@ export default () => {
             return;
         }
 
+        // 현재 스크롤 위치와 높이 저장
         const prevScrollHeight = container.scrollHeight;
         const prevScrollTop = container.scrollTop;
 
@@ -516,20 +370,27 @@ export default () => {
             if (res.status === 200) {
                 const newMessages = res.data.messageList;
 
+                // 새 메시지가 없으면 로딩 종료
                 if (newMessages.length === 0) {
                     setIsLoading(false);
                     return;
                 }
 
+                // 스크롤 위치를 부드럽게 유지하기 위해 CSS로 스크롤 고정
                 container.style.overflow = 'hidden';
 
                 setMessages(prev => [...newMessages, ...prev]);
                 setMinPageNumber(res.data.currentPageNumber);
 
+                // 다음 렌더링 사이클에서 스크롤 위치 조정
                 requestAnimationFrame(() => {
                     const newScrollHeight = container.scrollHeight;
                     const heightDiff = newScrollHeight - prevScrollHeight;
+
+                    // 스크롤 위치를 새로운 컨텐츠 높이만큼 조정
                     container.scrollTop = prevScrollTop + heightDiff;
+
+                    // 스크롤 복원
                     container.style.overflow = 'auto';
                 });
             }
@@ -537,28 +398,59 @@ export default () => {
             console.error(e);
         } finally {
             setIsLoading(false);
+            // 로딩 완료 후 지연을 주어 연속 로딩 방지
+            setTimeout(() => {
+
+            },);
         }
     };
 
-    // 터치 및 휠 이벤트 처리
     useEffect(() => {
         const scrollContainer = scrollContainerRef.current;
         if (!scrollContainer) return;
 
         const handleWheel = (e: WheelEvent) => {
+            // 기본 스크롤을 막지 않고, 델타 값만 조절
             const originalDelta = e.deltaY;
-            const reducedDelta = originalDelta * 0.3;
+            const reducedDelta = originalDelta * 0.3; // 민감도 조절
+
+            // 기본 이벤트는 막지 않고, 스크롤 속도만 조절
             e.preventDefault();
             scrollContainer.scrollTop += reducedDelta;
         };
 
+        scrollContainer.addEventListener('wheel', handleWheel, {passive: false});
+
+        return () => {
+            scrollContainer.removeEventListener('wheel', handleWheel);
+        };
+    }, []);
+
+    useEffect(() => {
+        const scrollContainer = scrollContainerRef.current;
+        if (!scrollContainer) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            // 기본 스크롤을 막지 않고, 델타 값만 조절
+            const originalDelta = e.deltaY;
+            const reducedDelta = originalDelta * 0.3; // 민감도 조절
+
+            // 기본 이벤트는 막지 않고, 스크롤 속도만 조절
+            e.preventDefault();
+            scrollContainer.scrollTop += reducedDelta;
+        };
+
+        // 터치 이벤트 핸들러
         const handleTouchStart = () => {
             isUserTouchingRef.current = true;
+            console.log("touch true");
         };
 
         const handleTouchEnd = () => {
+            // 터치 종료 후 잠시 대기 후 플래그 해제
             setTimeout(() => {
                 isUserTouchingRef.current = false;
+                console.log("no touch state");
             }, 150);
         };
 
@@ -575,33 +467,60 @@ export default () => {
         };
     }, []);
 
-    // 입력 컨테이너 높이 측정
+    // 키보드 높이 감지
+    useEffect(() => {
+        const visualViewport = window.visualViewport;
+
+        const handleResize = () => {
+            if (!visualViewport) return;
+            const heightDiff = window.innerHeight - visualViewport.height;
+            const threshold = 150;
+            setKeyboardHeight(heightDiff > threshold ? heightDiff : 0);
+        };
+
+        if (visualViewport) {
+            visualViewport.addEventListener("resize", handleResize);
+            return () => {
+                visualViewport.removeEventListener("resize", handleResize);
+            };
+        }
+    }, []);
+
+
     useEffect(() => {
         const resizeObserver = new ResizeObserver(() => {
             if (inputContainerRef.current) {
-                const newHeight = inputContainerRef.current.offsetHeight;
-                setInputHeight(newHeight);
-
-                // 높이 변화시 하단에 있다면 스크롤 조정
-                if (isNearBottom) {
-                    setTimeout(() => {
-                        scrollToBottom('instant');
-                    }, 0);
-                }
+                setInputHeight(inputContainerRef.current.offsetHeight);
             }
         });
 
         if (inputContainerRef.current) {
             resizeObserver.observe(inputContainerRef.current);
+            // 초기값 세팅
             setInputHeight(inputContainerRef.current.offsetHeight);
         }
 
         return () => {
             resizeObserver.disconnect();
         };
-    }, [isNearBottom, scrollToBottom]);
+    }, []);
 
-    // 헤더 높이 측정
+    const prevInputHeight = useRef(0);
+
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        const diff = inputHeight - prevInputHeight.current;
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+
+        if (isNearBottom && diff > 0) {
+            container.scrollTop += diff; // 입력창 높이 변동만큼 스크롤 내리기
+        }
+
+        prevInputHeight.current = inputHeight;
+    }, [inputHeight]);
+
     useEffect(() => {
         const observer = new ResizeObserver(() => {
             if (channelHeaderRef.current) {
@@ -611,156 +530,80 @@ export default () => {
 
         if (channelHeaderRef.current) {
             observer.observe(channelHeaderRef.current);
+            // 초기값도 세팅
             setChannelHeaderHeight(channelHeaderRef.current.offsetHeight);
         }
 
         return () => observer.disconnect();
     }, []);
 
-    return (
-        <div
-            className="overflow-y-hidden bg-white"
-            style={{ height: `100dvh` }}
-        >
-            {/* 채널 헤더 */}
-            <div
-                className="flex bg-nav py-1 px-2 font-bold items-center gap-2 top-0 left-0 right-0 z-[80]"
-                ref={channelHeaderRef}
-            >
-                {channelName}
-                <ChannelSetting
-                    mine={mine}
-                    openWindow={() => setIsUpdateShow(true)}
-                    closeWindow={() => setIsUpdateShow(false)}
-                    channelId={Number(channelId)}
-                />
-            </div>
 
-            {showJoinDialog && (
-                <JoinDialog
-                    getMessage={getMessage}
-                    close={() => setShowJoinDialog(false)}
-                />
+
+    return <div className="overflow-y-hidden"
+        style={{  height: `calc(100dvh - ${keyboardHeight}px)`,}}
+    >
+        <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2  top-0 left-0 right-0 z-[80]"
+             ref={channelHeaderRef}
+        >
+            {channelName}
+            <ChannelSetting mine={mine} openWindow={() => {
+                setIsUpdateShow(true)
+            }} closeWindow={() => {
+                setIsUpdateShow(false)
+            }} channelId={Number(channelId)}></ChannelSetting>
+        </div>
+
+        {showJoinDialog && <JoinDialog getMessage={getMessage} close={() => setShowJoinDialog(false)}/>}
+
+        {/* 메시지 영역 */}
+        <div 
+            ref={scrollContainerRef}
+            className="overflow-y-auto"
+            style={{
+                height: `calc(100dvh - ${channelHeaderHeight}px - ${inputHeight}px - ${keyboardHeight}px)`,
+            }}
+        >
+            {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
+            {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
+                <div ref={topSentinelRef} className="h-10 w-full flex-shrink-0"/>
             )}
 
-            {/* 메시지 영역 */}
-            <div
-                ref={scrollContainerRef}
-                className="overflow-y-auto scrollbar-hide"
-                style={{
-                    height: `calc(100dvh - ${channelHeaderHeight}px - ${inputHeight}px)`,
-                    // iOS Safari의 bounce 효과 방지
-                    overscrollBehavior: 'none',
-                    WebkitOverflowScrolling: 'touch'
-                }}
-            >
-                {/* 상단 센티넬 */}
-                {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
-                    <div ref={topSentinelRef} className="h-10 w-full flex-shrink-0"/>
-                )}
-
-                {/* 메시지 목록 */}
-                {messages.map((message) => (
-                    <div key={message.id} className="message-row w-full">
-                        <MessageCard
-                            scrollContainerRef={scrollContainerRef}
-                            scroll={scroll}
-                            refCallback={(el) => messageRefs.current[message.id] = el}
-                            parentMessage={message.parentMessage === null ? undefined : message.parentMessage}
-                            data={message}
-                            setMessageId={(messageId: number) => setReplyMessageId(messageId)}
-                        />
-                    </div>
-                ))}
-                <div ref={bottomRef}/>
-            </div>
-
-            {/* 입력창 영역 */}
-            <div
-                ref={inputContainerRef}
-                className="bg-white border-t border-gray-200"
-                style={{
-                    // 키보드가 열릴 때 하단에 고정
-                    position: isKeyboardOpen ? 'fixed' : 'relative',
-                    bottom: isKeyboardOpen ? `${keyboardHeight}px` : 'auto',
-                    left: isKeyboardOpen ? 0 : 'auto',
-                    right: isKeyboardOpen ? 0 : 'auto',
-                    zIndex: isKeyboardOpen ? 100 : 'auto',
-                    transform: isKeyboardOpen ? 'translate3d(0, 0, 0)' : 'none',
-                    // 부드러운 애니메이션
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                }}
-            >
-                <Box className="flex flex-col w-full h-full px-2 py-2">
-                    {/* 답장 바 */}
-                    {replyMessageId !== null && (
-                        <MessageReplyBar
-                            onCancel={() => setReplyMessageId(null)}
-                            message={messages.find(msg => msg.id === replyMessageId)}
-                        />
-                    )}
-
-                    {/* 입력 영역 */}
-                    <div className="flex gap-2 items-end">
-                        <div
-                            contentEditable
-                            className="flex-1 min-h-[40px] max-h-[120px] border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 overflow-auto px-3 py-2 text-base"
-                            style={{
-                                fontSize: '16px', // iOS에서 줌 방지
-                                lineHeight: '1.4',
-                                wordBreak: 'break-word',
-                                whiteSpace: 'pre-wrap'
-                            }}
-                            ref={textAreaRef}
-                            placeholder="메시지를 입력하세요..."
-                            data-placeholder="메시지를 입력하세요..."
-                            suppressContentEditableWarning={true}
-                            onFocus={() => {
-                                // 포커스시 하단으로 스크롤
-                                if (isNearBottom) {
-                                    setTimeout(() => scrollToBottom('smooth'), 300);
-                                }
-                            }}
-                        />
-
-                        <Button
-                            type="button"
-                            className="flex-shrink-0 px-4 py-2"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                createChat();
-                            }}
-                        >
-                            전송
-                        </Button>
-                    </div>
-                </Box>
-            </div>
-
-            {/* 스타일 추가 */}
-            <style jsx>{`
-                .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                }
-                .scrollbar-hide {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-                
-                /* contentEditable placeholder 스타일 */
-                [contenteditable]:empty:before {
-                    content: attr(data-placeholder);
-                    color: #9ca3af;
-                    pointer-events: none;
-                }
-                
-                /* iOS에서 입력창 확대 방지 */
-                [contenteditable] {
-                    -webkit-user-select: auto;
-                    -webkit-touch-callout: default;
-                }
-            `}</style>
+            {messages.map((message) => (
+                <div key={message.id} className="message-row w-full">
+                    <MessageCard scrollContainerRef={scrollContainerRef} scroll={scroll}
+                                 refCallback={(el) => messageRefs.current[message.id] = el}
+                                 parentMessage={message.parentMessage === null ? undefined : message.parentMessage}
+                                 data={message} setMessageId={(messageId: number) => setReplyMessageId(messageId)}/>
+                </div>
+            ))}
+            <div ref={bottomRef}/>
         </div>
-    );
+
+        {/* 입력창 영역 */}
+        <div 
+            ref={inputContainerRef}
+            className="bg-white transition-transform duration-[800ms] ease-out"
+        >
+            <Box className="flex flex-col w-full h-full px-2 py-2">
+                {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
+                                                            message={messages.find(msg => msg.id === replyMessageId)}></MessageReplyBar> : <></>}
+                <div className="flex gap-2 items-center">
+                    <div
+                        contentEditable
+                        className="flex-1 min-h-13 max-h-30 border-2 rounded focus:outline-none  overflow-auto px-2 py-1"
+                         ref={textAreaRef}
+                    />
+
+                    <Button
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            createChat();
+                        }}
+                    >전송</Button>
+                </div>
+            </Box>
+        </div>
+    </div>
 }
