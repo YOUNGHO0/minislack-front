@@ -576,9 +576,6 @@ export default () => {
         <div 
             ref={inputContainerRef}
             className="bg-white h-full  transition-transform duration-[800ms] ease-out"
-            style={{
-                bottom: `${keyboardHeight}px`, // ✅ 키보드 높이만큼 띄우기
-            }}
         >
             <Box className="flex flex-col w-full h-full px-2 py-2">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
