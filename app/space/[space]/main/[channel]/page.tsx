@@ -539,7 +539,7 @@ export default () => {
         {/* 메시지 영역 */}
         <div 
             ref={scrollContainerRef} 
-            className="mb-15 flex flex-col flex-1 overflow-y-auto lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 transition-transform duration-[300ms] ease-ou "
+            className="mb-15 flex flex-col flex-1 overflow-y-scroll lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 transition-transform duration-[300ms] ease-ou "
             style={{
                 height: `calc(100% - ${inputHeight}px - ${keyboardHeight}px)`, // ✅ 동적으로 설정
             }}
