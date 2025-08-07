@@ -558,7 +558,7 @@ export default () => {
             ref={scrollContainerRef}
             className="overflow-y-auto"
             style={{
-                height: `calc(100dvh - ${channelHeaderHeight}px - ${inputHeight}px - ${keyboardHeight}px)`
+                paddingBottom: `${keyboardHeight}px`,
             }}
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
@@ -580,7 +580,8 @@ export default () => {
         {/* 입력창 영역 */}
         <div 
             ref={inputContainerRef}
-            className="bg-white h-full  transition-transform duration-[800ms] ease-out"
+            className="sticky bg-white h-full transition-transform duration-[800ms] ease-out"
+            style={{bottom : `${keyboardHeight}px`,}}
         >
             <Box className="flex flex-col w-full h-full px-2 py-2">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
