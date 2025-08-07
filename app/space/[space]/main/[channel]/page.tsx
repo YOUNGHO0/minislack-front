@@ -558,7 +558,8 @@ export default () => {
             ref={scrollContainerRef}
             className="overflow-y-auto"
             style={{
-                height: `calc(100dvh - ${channelHeaderHeight}px - ${inputHeight}px - ${keyboardHeight}px)`
+                height: `calc(100dvh - ${channelHeaderHeight}px - ${inputHeight}px - ${keyboardHeight}px)`,
+                paddingBottom: `${keyboardHeight}px`,
             }}
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
