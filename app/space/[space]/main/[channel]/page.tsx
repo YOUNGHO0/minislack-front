@@ -529,6 +529,7 @@ export default () => {
     useEffect(() => {
         const onResize = () => {
             setViewportHeight(window.visualViewport?.height || window.innerHeight);
+            console.log("resize " + `${viewportHeight - inputHeight - keyboardHeight}px`);
         };
 
         if(window.visualViewport) {
