@@ -539,10 +539,12 @@ export default () => {
 
 
 
-    return <div className="overflow-y-hidden"
-        style={{  height: `calc(100dvh - ${keyboardHeight}px)`,}}
+    return <div className="flex flex-col"
+                style={{
+                    height: `calc(100dvh - ${keyboardHeight}px)`,
+                }}
     >
-        <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2  top-0 left-0 right-0 z-[80]"
+        <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2"
              ref={channelHeaderRef}
         >
             {channelName}
@@ -558,10 +560,7 @@ export default () => {
         {/* 메시지 영역 */}
         <div 
             ref={scrollContainerRef}
-            className="overflow-y-auto"
-            style={{
-                height: `calc(100dvh - ${channelHeaderHeight}px - ${inputHeight}px - ${keyboardHeight}px)`,
-            }}
+            className="flex-4 overflow-y-auto h-full"
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
