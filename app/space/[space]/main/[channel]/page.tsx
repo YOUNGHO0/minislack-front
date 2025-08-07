@@ -575,7 +575,7 @@ export default () => {
         {/* 입력창 영역 */}
         <div 
             ref={inputContainerRef}
-            className="sticky z-[40] bg-white h-full  transition-transform duration-[800ms] ease-out"
+            className="bg-white h-full  transition-transform duration-[800ms] ease-out"
             style={{
                 bottom: `${keyboardHeight}px`, // ✅ 키보드 높이만큼 띄우기
             }}
