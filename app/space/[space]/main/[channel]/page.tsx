@@ -43,6 +43,8 @@ export default () => {
     const inputContainerRef = useRef<HTMLDivElement>(null);
     const isUserTouchingRef = useRef(false);
     const [inputHeight, setInputHeight] = useState(0);
+    const channelHeaderRef = useRef<HTMLDivElement>(null);
+    const [channelHeaderHeight, setChannelHeaderHeight] = useState(0);
 
     const scrollToBottom = () => {
         const container = scrollContainerRef.current;
@@ -516,39 +518,26 @@ export default () => {
     }, [inputHeight]);
 
     useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        // getComputedStyle을 통해 렌더링된 height를 가져옴
-        const computedStyle = window.getComputedStyle(container);
-        console.log("스크롤 컨테이너 height:", computedStyle.height);
-    }, [inputHeight, keyboardHeight]); // 두 값이 변경될 때마다 다시 계산
-
-    const [viewportHeight, setViewportHeight] = useState(window.visualViewport?.height || window.innerHeight);
-
-    useEffect(() => {
-        const onResize = () => {
-            setViewportHeight(window.visualViewport?.height || window.innerHeight);
-            console.log("resize " + `${viewportHeight - inputHeight - keyboardHeight}px`);
-        };
-
-        if(window.visualViewport) {
-            window.visualViewport.addEventListener('resize', onResize);
-        } else {
-            window.addEventListener('resize', onResize);
-        }
-
-        return () => {
-            if(window.visualViewport) {
-                window.visualViewport.removeEventListener('resize', onResize);
-            } else {
-                window.removeEventListener('resize', onResize);
+        const observer = new ResizeObserver(() => {
+            if (channelHeaderRef.current) {
+                setChannelHeaderHeight(channelHeaderRef.current.offsetHeight);
             }
+        });
+
+        if (channelHeaderRef.current) {
+            observer.observe(channelHeaderRef.current);
+            // 초기값도 세팅
+            setChannelHeaderHeight(channelHeaderRef.current.offsetHeight);
         }
+
+        return () => observer.disconnect();
     }, []);
 
-    return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0 z-[80]">
-        <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2 flex-shrink-0 lg:static fixed top-0 left-0 right-0 z-[70]">
+
+    return <div className="">
+        <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2  top-0 left-0 right-0 z-[80]"
+             ref={channelHeaderRef}
+        >
             {channelName}
             <ChannelSetting mine={mine} openWindow={() => {
                 setIsUpdateShow(true)
@@ -562,8 +551,10 @@ export default () => {
         {/* 메시지 영역 */}
         <div 
             ref={scrollContainerRef}
-            className="mb-15 flex flex-col flex-1 overflow-y-auto lg:p-2 p-2 min-h-0 overscroll-contain lg:pb-0  lg:pt-0 pt-12 transition-transform duration-[300ms] ease-out "
-            style={{ height: '755px' }}
+            className="overflow-y-auto"
+            style={{
+                height: `calc(100dvh - ${channelHeaderHeight}px - ${inputHeight}px - ${keyboardHeight}px)`
+            }}
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
@@ -584,18 +575,18 @@ export default () => {
         {/* 입력창 영역 */}
         <div 
             ref={inputContainerRef}
-            className="py-1 px-[5%] min-h-0 bg-white border-t border-gray-200 fixed left-0 right-0 lg:pb-1  transition-transform duration-[800ms] ease-out z-[80]"
+            className="sticky z-[40] bg-white h-full  transition-transform duration-[800ms] ease-out"
             style={{
                 bottom: `${keyboardHeight}px`, // ✅ 키보드 높이만큼 띄우기
             }}
         >
-            <Box className="flex flex-col w-full h-full">
+            <Box className="flex flex-col w-full h-full px-2 py-2">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
                                                             message={messages.find(msg => msg.id === replyMessageId)}></MessageReplyBar> : <></>}
                 <div className="flex gap-2 items-center">
                     <div
                         contentEditable
-                        className="flex-1 min-h-[40px] max-h-30 overflow-auto border-2 rounded focus:outline-none border-b-amber-50 overflow-auto px-2 py-1"
+                        className="flex-1 min-h-13 max-h-30 border-2 rounded focus:outline-none  overflow-auto px-2 py-1"
                          ref={textAreaRef}
                     />
 
