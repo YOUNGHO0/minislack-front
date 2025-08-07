@@ -539,7 +539,9 @@ export default () => {
 
 
 
-    return <div className="">
+    return <div className=""
+        style={{  height: `calc(100dvh - ${keyboardHeight}px)`,}}
+    >
         <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2  top-0 left-0 right-0 z-[80]"
              ref={channelHeaderRef}
         >
@@ -581,7 +583,6 @@ export default () => {
         <div 
             ref={inputContainerRef}
             className="bg-white transition-transform duration-[800ms] ease-out"
-            style={{bottom : `${keyboardHeight}px`,}}
         >
             <Box className="flex flex-col w-full h-full px-2 py-2">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
