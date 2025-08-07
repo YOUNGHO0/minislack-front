@@ -537,16 +537,6 @@ export default () => {
         return () => observer.disconnect();
     }, []);
 
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        if (keyboardHeight > 0) {
-            // 키보드 올라왔을 때, 스크롤을 키보드 높이만큼 올림
-            // 현재 스크롤 위치에 키보드 높이를 더해줌 (더 위로 올려야 하니까)
-            container.scrollTop -= keyboardHeight;
-        }
-    }, [keyboardHeight]);
 
 
     return <div className="">
