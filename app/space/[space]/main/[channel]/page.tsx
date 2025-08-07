@@ -560,7 +560,7 @@ export default () => {
         {/* 메시지 영역 */}
         <div 
             ref={scrollContainerRef}
-            className="flex-4 overflow-y-auto h-full"
+            className="flex-4 overflow-y-auto h-full pb-4"
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
