@@ -524,7 +524,7 @@ export default () => {
         console.log("스크롤 컨테이너 height:", computedStyle.height);
     }, [inputHeight, keyboardHeight]); // 두 값이 변경될 때마다 다시 계산
 
-    return <div className="flex flex-col w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0 z-[80]">
+    return <div className="flex flex-col relative w-full h-screen min-h-0 overflow-hidden lg:relative fixed inset-0 z-[80]">
         <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2 flex-shrink-0 lg:static fixed top-0 left-0 right-0 z-[70]">
             {channelName}
             <ChannelSetting mine={mine} openWindow={() => {
@@ -563,7 +563,7 @@ export default () => {
         {/* 입력창 영역 */}
         <div 
             ref={inputContainerRef}
-            className="py-1 px-[5%] min-h-0 bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 lg:pb-1  transition-transform duration-[800ms] ease-out z-[80]"
+            className="py-1 px-[5%] min-h-0 bg-white border-t border-gray-200 absolute bottom-0 left-0 right-0 lg:pb-1  transition-transform duration-[800ms] ease-out z-[80]"
         >
             <Box className="flex flex-col w-full h-full">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
