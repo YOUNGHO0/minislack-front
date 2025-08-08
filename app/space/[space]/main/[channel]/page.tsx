@@ -605,7 +605,8 @@ export default () => {
         {/* 입력창 영역 */}
         <div 
             ref={inputContainerRef}
-            className="bg-white transition-transform duration-[800ms] ease-out"
+            className=" lg:static fixed left-0 right-0 bg-white transition-transform duration-[800ms] ease-out"
+            style={{bottom:keyboardHeight}}
         >
             <Box className="flex flex-col w-full h-full px-2 py-2">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
