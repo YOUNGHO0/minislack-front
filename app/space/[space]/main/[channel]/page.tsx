@@ -470,18 +470,30 @@ export default () => {
     // 키보드 높이 감지
     useEffect(() => {
         const visualViewport = window.visualViewport;
+        let debounceTimeout: NodeJS.Timeout | null = null;
 
         const handleResize = () => {
             if (!visualViewport) return;
             const heightDiff = window.innerHeight - visualViewport.height;
             const threshold = 150;
-            setKeyboardHeight(heightDiff > threshold ? heightDiff : 0);
+
+            if (debounceTimeout) clearTimeout(debounceTimeout);
+
+            // 키보드가 올라오는 중에 debounce
+            debounceTimeout = setTimeout(() => {
+                if (heightDiff > threshold) {
+                    setKeyboardHeight(heightDiff);
+                } else {
+                    setKeyboardHeight(0);
+                }
+            }, 1000); // 200ms 동안 이벤트 없으면 실행
         };
 
         if (visualViewport) {
             visualViewport.addEventListener("resize", handleResize);
             return () => {
                 visualViewport.removeEventListener("resize", handleResize);
+                if (debounceTimeout) clearTimeout(debounceTimeout);
             };
         }
     }, []);
