@@ -472,8 +472,8 @@ export default () => {
         const container = scrollContainerRef.current;
         if (container) {
             container.scrollTo({
-                top: container.scrollTop -=100,
-                behavior: 'smooth',
+                top: container.scrollTop +=100,
+                behavior: 'auto',
             });
         }
 
