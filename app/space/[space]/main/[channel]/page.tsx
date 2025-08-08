@@ -1,7 +1,7 @@
 'use client'
 import {useParams, useRouter} from "next/navigation";
 import MessageCard from "@/app/component/message/MessageCard";
-import {Box, Button, TextArea} from "@radix-ui/themes";
+import {Box, Button, Section, TextArea} from "@radix-ui/themes";
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import emitter from '@/WebSocket/Emitter'
 import {JsonReceivedMessageInfo} from "@/types/webSocketType";
@@ -558,7 +558,7 @@ export default () => {
         {showJoinDialog && <JoinDialog getMessage={getMessage} close={() => setShowJoinDialog(false)}/>}
 
         {/* 메시지 영역 */}
-        <div 
+        <Section
             ref={scrollContainerRef}
             className="flex-4 overflow-y-auto h-full pb-4"
         >
@@ -576,7 +576,7 @@ export default () => {
                 </div>
             ))}
             <div ref={bottomRef}/>
-        </div>
+        </Section>
 
         {/* 입력창 영역 */}
         <div 
