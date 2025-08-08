@@ -471,23 +471,28 @@ export default () => {
 
     // 키보드 높이 감지
     useEffect(() => {
-        const visualViewport = window.visualViewport;
-
         const handleResize = () => {
-            if (!visualViewport) return;
-            const heightDiff = window.innerHeight - visualViewport.height;
-            const threshold = 150;
-            setKeyboardHeight(heightDiff > threshold ? heightDiff : 0);
+            if (window.visualViewport) {
+                const viewportHeight = window.visualViewport.height;
+                const fullHeight = window.innerHeight;
+                const keyboardHeight = fullHeight - viewportHeight;
+
+                setKeyboardHeight(keyboardHeight > 0 ? keyboardHeight : 0);
+            }
         };
 
-        if (visualViewport) {
-            visualViewport.addEventListener("resize", handleResize);
-            return () => {
-                visualViewport.removeEventListener("resize", handleResize);
-            };
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener("resize", handleResize);
+            window.visualViewport.addEventListener("scroll", handleResize); // iOS 대응
         }
-    }, []);
 
+        return () => {
+            if (window.visualViewport) {
+                window.visualViewport.removeEventListener("resize", handleResize);
+                window.visualViewport.removeEventListener("scroll", handleResize);
+            }
+        };
+    }, []);
 
     useEffect(() => {
         const resizeObserver = new ResizeObserver(() => {
