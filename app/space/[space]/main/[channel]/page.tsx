@@ -18,6 +18,7 @@ import {
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import JoinDialog from "@/app/component/channel/joindialog/JoinDialog";
 import MessageReplyBar from "@/app/component/message/MessageReplyBar";
+import Container from "@mui/material/Container";
 
 export default () => {
     const messageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
@@ -561,11 +562,34 @@ export default () => {
         return () => observer.disconnect();
     }, []);
 
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Enter" && event.shiftKey) {
+                console.log("Shift + Enter 눌림 (화면 어디서든)");
+                myFunction();
+            }
+        };
 
+        window.addEventListener("keydown", handleKeyDown);
 
-    return <div className="flex flex-col"
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
+
+    const myFunction = () => {
+        if(keyboardHeight == 0){
+            setKeyboardHeight(300);
+        }
+        else{
+            setKeyboardHeight(0);
+        }
+    };
+
+    return <div className="flex flex-col h-screen"
                 style={{
-                    height: `calc(100dvh - ${keyboardHeight}px)`,
+                    height: `calc(100dvh - ${ keyboardHeight}px)`,
+                    transition: "height 1s ease",
                 }}
     >
         <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2"
@@ -582,9 +606,10 @@ export default () => {
         {showJoinDialog && <JoinDialog getMessage={getMessage} close={() => setShowJoinDialog(false)}/>}
 
         {/* 메시지 영역 */}
-        <Section
+        <Container
             ref={scrollContainerRef}
-            className="flex-4 overflow-y-auto h-full pb-4"
+            className="flex-4 overflow-y-auto "
+
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
@@ -600,15 +625,14 @@ export default () => {
                 </div>
             ))}
             <div ref={bottomRef}/>
-        </Section>
+        </Container>
 
         {/* 입력창 영역 */}
         <div 
             ref={inputContainerRef}
-            className=" lg:static fixed left-0 right-0 bg-white transition-transform duration-[800ms] ease-out"
-            style={{bottom:keyboardHeight}}
+            className=" bg-white"
         >
-            <Box className="flex flex-col w-full h-full px-2 py-2">
+            <Box className="flex flex-col w-full px-2 py-2">
                 {replyMessageId !== null ? <MessageReplyBar onCancel={() => setReplyMessageId(null)}
                                                             message={messages.find(msg => msg.id === replyMessageId)}></MessageReplyBar> : <></>}
                 <div className="flex gap-2 items-center">
