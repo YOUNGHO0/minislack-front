@@ -467,6 +467,18 @@ export default () => {
         };
     }, []);
 
+    useEffect(() => {
+
+        const container = scrollContainerRef.current;
+        if (container) {
+            container.scrollTo({
+                top: container.scrollTop -=100,
+                behavior: 'smooth',
+            });
+        }
+
+    }, [keyboardHeight]);
+
     // 키보드 높이 감지
     useEffect(() => {
         const visualViewport = window.visualViewport;
@@ -486,7 +498,7 @@ export default () => {
                 } else {
                     setKeyboardHeight(0);
                 }
-            }, 1000); // 200ms 동안 이벤트 없으면 실행
+            }, 100); // 200ms 동안 이벤트 없으면 실행
         };
 
         if (visualViewport) {
