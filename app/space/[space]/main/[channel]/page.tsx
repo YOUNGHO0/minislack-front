@@ -568,7 +568,7 @@ export default () => {
         }
     };
 
-    return <div className="flex flex-col h-screen"
+    return <div className="flex flex-col h-screen overflow-y-hidden"
                 style={{
                     height: `calc(100dvh - ${ keyboardHeight}px)`,
                     transition: "height 0.4s ease",
