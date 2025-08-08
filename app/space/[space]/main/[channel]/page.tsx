@@ -538,6 +538,28 @@ export default () => {
     }, []);
 
 
+    useEffect(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+
+        const onScroll = () => {
+            const paddingHeight = window.innerHeight; // 100dvh 정도 (px 단위)
+
+            const scrollBottom = el.scrollTop + el.clientHeight;
+            const maxScrollWithoutPadding = el.scrollHeight - paddingHeight - el.clientHeight;
+
+// 현재 스크롤 위치가 패딩 영역 안으로 들어오려 하면 강제로 다시 위치 조정
+            if (el.scrollTop > maxScrollWithoutPadding) {
+                el.scrollTop = maxScrollWithoutPadding;
+            }
+        };
+
+        el.addEventListener('scroll', onScroll);
+
+        return () => el.removeEventListener('scroll', onScroll);
+    }, []);
+
+
 
     return <div className="flex flex-col"
                 style={{
@@ -561,6 +583,7 @@ export default () => {
         <div 
             ref={scrollContainerRef}
             className="flex-4 overflow-y-auto h-full pb-4"
+
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
             {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
@@ -576,6 +599,9 @@ export default () => {
                 </div>
             ))}
             <div ref={bottomRef}/>
+            <div
+                style={{paddingBottom: '100dvh'}}
+            ></div>
         </div>
 
         {/* 입력창 영역 */}
