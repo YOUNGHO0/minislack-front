@@ -129,7 +129,7 @@ export default function RootLayout({
                         </button>
                     </div>
                     <button
-                        onClick={() => router.push("main/create")}
+                        onClick={() => router.push(`/space/${space}/main/create`)}
                         className="inline-flex  items-center justify-center rounded font-medium leading-none  outline-none outline-offset-1 hover:bg-mauve3 focus-visible:outline-2 focus-visible:outline-violet6 select-none">
                         <PlusIcon className={"w-6 "}/>
                     </button>
