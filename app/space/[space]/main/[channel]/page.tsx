@@ -471,28 +471,35 @@ export default () => {
 
     // 키보드 높이 감지
     useEffect(() => {
+        const visualViewport = window.visualViewport;
+        let debounceTimeout: NodeJS.Timeout | null = null;
+
         const handleResize = () => {
-            if (window.visualViewport) {
-                const viewportHeight = window.visualViewport.height;
-                const fullHeight = window.innerHeight;
-                const keyboardHeight = fullHeight - viewportHeight;
+            if (!visualViewport) return;
+            const heightDiff = window.innerHeight - visualViewport.height;
+            const threshold = 150;
 
-                setKeyboardHeight(keyboardHeight > 0 ? keyboardHeight : 0);
-            }
+            if (debounceTimeout) clearTimeout(debounceTimeout);
+
+            // 키보드가 올라오는 중에 debounce
+            debounceTimeout = setTimeout(() => {
+                if (heightDiff > threshold) {
+                    setKeyboardHeight(heightDiff);
+                } else {
+                    setKeyboardHeight(0);
+                }
+            }, 100); // 200ms 동안 이벤트 없으면 실행
         };
 
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener("resize", handleResize);
-            window.visualViewport.addEventListener("scroll", handleResize); // iOS 대응
+        if (visualViewport) {
+            visualViewport.addEventListener("resize", handleResize);
+            return () => {
+                visualViewport.removeEventListener("resize", handleResize);
+                if (debounceTimeout) clearTimeout(debounceTimeout);
+            };
         }
-
-        return () => {
-            if (window.visualViewport) {
-                window.visualViewport.removeEventListener("resize", handleResize);
-                window.visualViewport.removeEventListener("scroll", handleResize);
-            }
-        };
     }, []);
+
 
     useEffect(() => {
         const resizeObserver = new ResizeObserver(() => {
