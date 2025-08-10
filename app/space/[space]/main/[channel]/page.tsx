@@ -1,24 +1,27 @@
 'use client'
 import {useParams, useRouter} from "next/navigation";
 import MessageCard from "@/app/component/message/MessageCard";
-import {Box, Button, Section, TextArea} from "@radix-ui/themes";
+import {Box} from "@radix-ui/themes";
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import emitter from '@/WebSocket/Emitter'
 import {JsonReceivedMessageInfo} from "@/types/webSocketType";
 import {ChannelInfo, MessagePageResponse, ReceivedMessage} from "@/types/type";
 import axios from "axios";
 import ChannelSetting from "@/app/component/channel/ChannelSetting";
-import ChannelUpdateDialog from "@/app/component/channel/ChannelUpdateDialog";
 import {
     ChannelDeleteReceiveEvent,
     ChannelUpdateReceiveEvent,
     ChatCreateReceiveEvent,
-    ChatCreateSendEvent, ChatDeleteReceiveEvent, ChatUpdateReceiveEvent
+    ChatCreateSendEvent,
+    ChatDeleteReceiveEvent,
+    ChatUpdateReceiveEvent
 } from "@/types/events";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import JoinDialog from "@/app/component/channel/joindialog/JoinDialog";
 import MessageReplyBar from "@/app/component/message/MessageReplyBar";
 import Container from "@mui/material/Container";
+import './style.css'
+import {text} from "node:stream/consumers";
 
 export default () => {
     const messageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
@@ -82,6 +85,10 @@ export default () => {
         // 입력창 비우기
         if (textAreaRef.current) {
             textAreaRef.current.innerText = "";
+            textAreaRef.current.innerHTML = "";
+            void textAreaRef.current.offsetHeight; // 강제 reflow
+            console.log("log : " + (textAreaRef.current.innerText));
+
         }
         setReplyMessageId(null);
 
@@ -551,6 +558,62 @@ export default () => {
         return () => observer.disconnect();
     }, []);
 
+    useEffect(() => {
+        const textArea = textAreaRef.current;
+        if (!textArea) return;
+
+        const isLgUp = window.innerWidth >= 1024;
+        if (!isLgUp) return;
+
+        let canSend = true;
+        let isComposing = false;
+
+        // 한글 조합 시작
+        const handleCompositionStart = () => {
+            console.log("컴포징 시작 " + textArea.innerText);
+            isComposing = true;
+        };
+
+        // 한글 조합 종료
+        const handleCompositionEnd = () => {
+            console.log("컴포징 종료 :" + textArea.innerText)
+            isComposing = false;
+        };
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                console.log("엔터 입력")
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (isComposing) return; // 조합 중일 땐 전송 금지
+                if (!canSend) return;
+
+                textArea.blur(); // IME 합성 종료 시도
+                setTimeout(() => textArea.focus(), 0);
+
+                createChat(); // 전송
+                canSend = false;
+
+                setTimeout(() => {
+                    canSend = true;
+                }, 500);
+            }
+        };
+
+        textArea.addEventListener("compositionstart", handleCompositionStart);
+        textArea.addEventListener("compositionend", handleCompositionEnd);
+        textArea.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            textArea.removeEventListener("compositionstart", handleCompositionStart);
+            textArea.removeEventListener("compositionend", handleCompositionEnd);
+            textArea.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
+
+
+
     return <div className="flex flex-col"
                 style={{
                     // height: `calc(100dvh - ${ keyboardHeight}px)`,
@@ -615,7 +678,7 @@ export default () => {
                             e.stopPropagation();
                             createChat();
                         }}
-                    >전송</Button>
+                    />
                 </div>
             </Box>
         </div>
