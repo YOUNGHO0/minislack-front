@@ -667,12 +667,14 @@ export default () => {
                 <div className="flex gap-2 items-center">
                     <div
                         contentEditable
-                        className="flex-1 min-h-13 max-h-30 border-2 rounded focus:outline-none  overflow-auto px-2 py-1"
-                         ref={textAreaRef}
+                        data-placeholder="여기에 입력하세요..."
+                        className="placeholder relative flex-1 min-h-13 max-h-30 border-2 rounded focus:outline-none overflow-auto px-2 py-1"
+                        ref={textAreaRef}
                     />
-
-                    <Button
+                    <input
                         type="button"
+                        value="전송"
+                        className="block lg:hidden px-4 py-2 bg-blue-600 text-white rounded"
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
