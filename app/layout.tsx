@@ -32,9 +32,10 @@ export default function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable}`}
         >
         <Theme>
-            <div className={"flex flex-col"}
+            <div className={"flex flex-col min-h-0 overflow-y-hidden"}
                  style={{
                      height: `100dvh`,
+                     maxHeight:`100dvh`,
                  }}
             >
                 <HomeAppBar></HomeAppBar>

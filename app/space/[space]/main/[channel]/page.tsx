@@ -575,9 +575,10 @@ export default () => {
         }
     };
 
-    return <div className="flex flex-col h-screen overflow-y-hidden"
+    return <div className="flex flex-col"
                 style={{
                     // height: `calc(100dvh - ${ keyboardHeight}px)`,
+                    height: `100dvh`,
                     transition: "height 0.4s ease",
                 }}
     >
@@ -597,7 +598,7 @@ export default () => {
         {/* 메시지 영역 */}
         <Container
             ref={scrollContainerRef}
-            className="flex-4 overflow-y-auto h-full "
+            className="flex-4 h-30 overflow-y-scroll "
 
         >
             {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
