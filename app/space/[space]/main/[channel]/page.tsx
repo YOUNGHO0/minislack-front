@@ -551,30 +551,6 @@ export default () => {
         return () => observer.disconnect();
     }, []);
 
-    useEffect(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Enter" && event.shiftKey) {
-                console.log("Shift + Enter 눌림 (화면 어디서든)");
-                myFunction();
-            }
-        };
-
-        window.addEventListener("keydown", handleKeyDown);
-
-        return () => {
-            window.removeEventListener("keydown", handleKeyDown);
-        };
-    }, []);
-
-    const myFunction = () => {
-        if(keyboardHeight == 0){
-            setKeyboardHeight(300);
-        }
-        else{
-            setKeyboardHeight(0);
-        }
-    };
-
     return <div className="flex flex-col"
                 style={{
                     // height: `calc(100dvh - ${ keyboardHeight}px)`,
