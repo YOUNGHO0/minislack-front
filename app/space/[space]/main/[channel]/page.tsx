@@ -570,19 +570,16 @@ export default () => {
 
         // 한글 조합 시작
         const handleCompositionStart = () => {
-            console.log("컴포징 시작 " + textArea.innerText);
             isComposing = true;
         };
 
         // 한글 조합 종료
         const handleCompositionEnd = () => {
-            console.log("컴포징 종료 :" + textArea.innerText)
             isComposing = false;
         };
 
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter" && !e.shiftKey) {
-                console.log("엔터 입력")
                 e.preventDefault();
                 e.stopPropagation();
 
