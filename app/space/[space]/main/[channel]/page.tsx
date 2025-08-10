@@ -558,7 +558,7 @@ export default () => {
                     transition: "height 1s ease",
                 }}
     >
-        <div className="flex fixed top-0 left-0 right-0 lg:static z-[80] bg-nav py-1 px-2 font-bold items-center gap-2"
+        <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2"
              ref={channelHeaderRef}
         >
             {channelName}
