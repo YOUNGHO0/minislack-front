@@ -579,7 +579,7 @@ export default () => {
                 style={{
                     // height: `calc(100dvh - ${ keyboardHeight}px)`,
                     height: `100dvh`,
-                    transition: "height 0.4s ease",
+                    transition: "height 1s ease",
                 }}
     >
         <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2"
