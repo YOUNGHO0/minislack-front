@@ -18,6 +18,7 @@ export default ({
                         setReplyMessageId: React.Dispatch<React.SetStateAction<number | null>>
                     }) => {
 
+    const replyMessageIdRef = useRef(replyMessageId);
     const inputContainerRef = useRef<HTMLDivElement>(null);
     const [inputHeight, setInputHeight] = useState(0);
     const prevInputHeight = useRef(0);
@@ -28,6 +29,11 @@ export default ({
     const channelId = params.channel;
     const space = params.space;
     const {sendMessage} = useWebSocket();
+
+    useEffect(() => {
+        replyMessageIdRef.current = replyMessageId;
+    }, [replyMessageId]);
+
     useEffect(() => {
         const textArea = textAreaRef.current;
         if (!textArea) return;
@@ -138,7 +144,8 @@ export default ({
         }
 
         let parent = 0;
-        if (replyMessageId !== null) parent = replyMessageId;
+        if (replyMessageIdRef.current) parent = replyMessageIdRef.current;
+        console.log(replyMessageId)
         const chatCreateSendEvent: ChatCreateSendEvent = {
             message: {channelId: Number(channelId), parent: parent, text: inputValue},
             type: "chatCreate"
@@ -155,8 +162,6 @@ export default ({
 
         }
         setReplyMessageId(null);
-
-
     }
 
     useEffect(() => {

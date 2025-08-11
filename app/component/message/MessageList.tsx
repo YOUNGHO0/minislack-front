@@ -19,7 +19,7 @@ export default ({
                     messages:ReceivedMessage[],
                     setMessages: React.Dispatch<React.SetStateAction<ReceivedMessage[]>>;
                     replyMessageId:number|null,
-                    setReplyMessageId : (messageId:number)=>void}) =>{
+                    setReplyMessageId: React.Dispatch<React.SetStateAction<number | null>>}) =>{
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState(false); // useState로 변경
@@ -408,7 +408,7 @@ export default ({
                 <MessageCard scrollContainerRef={scrollContainerRef} scroll={scroll}
                              refCallback={(el) => messageRefs.current[message.id] = el}
                              parentMessage={message.parentMessage === null ? undefined : message.parentMessage}
-                             data={message} setMessageId={(messageId: number) => setReplyMessageId(messageId)}/>
+                             data={message} setMessageId={setReplyMessageId}/>
             </div>
         ))}
     </Container>
