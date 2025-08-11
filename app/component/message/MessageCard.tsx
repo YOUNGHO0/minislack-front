@@ -6,6 +6,7 @@ import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {MessageDeleteSendEvent, MessageEditSendEvent} from "@/types/events";
 import {useParams} from "next/navigation";
 import MessageReply from "@/app/component/message/MessageReply";
+import DOMPurify from 'dompurify';
 
 
 export default function MessageCard(props: {  scrollContainerRef?: React.RefObject<HTMLDivElement | null> ,scroll : (id:number)=>void , refCallback?: (el: HTMLDivElement | null) => void, parentMessage:ReceivedMessage|undefined, data: ReceivedMessage, setMessageId : (messageId:number) =>void }) {
@@ -23,6 +24,18 @@ export default function MessageCard(props: {  scrollContainerRef?: React.RefObje
     const contextMenuRef = useRef<HTMLDivElement>(null);
     const {sendMessage} = useWebSocket();
     const {space,channel} = useParams();
+    const [safeHtml, setSafeHtml] = useState<string>('');
+
+    useEffect(() => {
+        // 서버에서 받은 HTML을 DOMPurify로 정제
+        const clean = DOMPurify.sanitize(props.data.text, {
+            ALLOWED_TAGS: ['span', 'b', 'i', 'u', 'a', 'br'],
+            ALLOWED_ATTR: ['class', 'href']
+        });
+        setSafeHtml(clean);
+    }, [props.data.text]);
+
+
     useEffect(() => {
         if (!isEditing) {
             setEditText(props.data.text);
@@ -218,11 +231,14 @@ export default function MessageCard(props: {  scrollContainerRef?: React.RefObje
                             </div>
                         ) : (
                             <>
-                            {props.parentMessage !==  undefined ?
-                                <MessageReply scroll={props.scroll} message={props.parentMessage}></MessageReply
-                               >
-                                : <></>}
-                            <div className="text-gray-900 whitespace-pre-line break-words">{editText}</div>
+                                {props.parentMessage !== undefined ?
+                                    <MessageReply scroll={props.scroll} message={props.parentMessage}></MessageReply
+                                    >
+                                    : <></>}
+                                <div
+                                    className="text-gray-900 whitespace-pre-line break-words"
+                                    dangerouslySetInnerHTML={{__html: safeHtml}}
+                                />
                             </>
                         )}
                     </div>
