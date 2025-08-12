@@ -22,25 +22,71 @@ export default ({
     const params = useParams();
     const channelId = params.channel;
     const { sendMessage } = useWebSocket();
+    const [mentionOpen,setMentionOpen] = useState(false);
+    const atValues = [
+        { id: 1, value: "Fredrik Sundqvist" },
+        { id: 2, value: "Patrik Sjölin" }
+    ];
+    const hashValues = [
+        { id: 3, value: "Fredrik Sundqvist 2" },
+        { id: 4, value: "Patrik Sjölin 2" }
+    ];
 
     const [isQuillReady, setIsQuillReady] = useState(false);
 
     useEffect(() => {
         if (!editorRef.current) return;
 
-        // 클라이언트 사이드에서만 import하기 위해 useEffect 안에서 import
         import('quill').then((QuillModule) => {
-            const quill = new QuillModule.default(editorRef.current!, {
-                theme: 'snow',
-                modules:{
-                    toolbar:false,
+            import('quill-mention').then((MentionModule) => {
+                const { Mention, MentionBlot } = MentionModule;
 
-                }
+                QuillModule.default.register({
+                    'blots/mention': MentionBlot,
+                    'modules/mention': Mention,
+                });
+
+                const quill = new QuillModule.default(editorRef.current!, {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: false,
+                        mention: {
+                            allowedChars: /^[\w\s가-힣]*$/,
+                            mentionDenotationChars: ['@', '#'],
+                            isolateCharacter: false,
+                            allowInlineMentionChar: false,
+                            showDenotationChar: true,
+                            onOpen: () => setMentionOpen(true),
+                            onClose: () => setTimeout(() => setMentionOpen(false), 150),
+                            renderItem: function (item: any, searchTerm: string) {
+                                return `${item.value}`;
+                            },
+                            source: function (
+                                searchTerm: string,
+                                renderList: (items: { id: number; value: string }[], searchTerm: string) => void,
+                                mentionChar: string
+                            ) {
+                                let values = mentionChar === '@' ? atValues : hashValues;
+
+                                if (searchTerm.length === 0) {
+                                    renderList(values, searchTerm);
+                                } else {
+                                    const matches = values.filter(v =>
+                                        v.value.toLowerCase().includes(searchTerm.toLowerCase())
+                                    );
+                                    renderList(matches, searchTerm);
+                                }
+                            },
+                        },
+                    },
+                });
+
+                quillRef.current = quill;
+                setIsQuillReady(true);
             });
-            quillRef.current = quill;
-            setIsQuillReady(true);
         });
     }, []);
+
 
 
     const createChat = () => {
@@ -77,21 +123,28 @@ export default ({
                 )}
             </div>
 
-            <div className={"px-2 flex w-full items-center"}>
+            <div className={"px-2 flex w-full items-center"}
+                 onKeyDownCapture={(e) => {
+                     if (e.code === 'Enter') {
+                         if (mentionOpen) return;
+                         e.preventDefault()
+                     }
+                 }}
+            >
                 <div
                     className="w-full min-h-13 max-h-30 px-2 py-1 rounded border-2"
-                    style={{ height: 'auto', overflowY: 'auto' }}
+                    style={{height: 'auto', overflowY: 'auto'}}
                     ref={editorRef}
-                    onKeyDownCapture={(e) => {
-                        if (e.code === 'Enter') {
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
                             e.preventDefault();
                         }
                     }}
-                    onKeyUp={(e)=>{
-                        if(e.key == 'Enter' && !e.shiftKey){
-                            e.preventDefault();
-                            createChat();
-                            return;
+                    onKeyUp={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            if (!mentionOpen) {
+                                createChat();
+                            }
                         }
                     }}
                 />
@@ -106,6 +159,81 @@ export default ({
                     }}
                 />
             </div>
+            <style jsx global>{`
+                .ql-mention-list-container {
+                    position: absolute !important;
+                    z-index: 90;
+                    background: white !important;
+                    border: 1px solid #e5e7eb !important;
+                    border-radius: 6px !important;
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+                    max-height: 200px !important;
+                    overflow-y: auto !important;
+                    min-width: 200px !important;
+                }
+
+                .ql-mention-list {
+                    padding: 4px 0 !important;
+                    margin: 0 !important;
+                    list-style: none !important;
+                }
+
+                .ql-mention-list-item {
+                    padding: 8px 12px !important;
+                    cursor: pointer !important;
+                    border: none !important;
+                    background: none !important;
+                    width: 100% !important;
+                    text-align: left !important;
+                    color: #374151 !important;
+                    font-size: 14px !important;
+                    transition: background-color 0.15s ease-in-out !important;
+                }
+
+                .ql-mention-list-item:hover,
+                .ql-mention-list-item.selected {
+                    background-color: #f3f4f6 !important;
+                    color: #111827 !important;
+                }
+
+                .ql-mention-list-item.selected {
+                    background-color: #dbeafe !important;
+                    color: #1e40af !important;
+                }
+
+                .mention-item {
+                    display: block;
+                    width: 100%;
+                }
+
+                /* Quill 컨테이너의 overflow 문제 해결 */
+                .ql-container {
+                    overflow: visible !important;
+                }
+
+                .ql-editor {
+                    overflow-y: auto;
+                }
+
+                .mention {
+                    background-color: #e6f3ff; /* 연한 파란 배경 */
+                    border-radius: 4px;
+                    padding: 2px 4px;
+                    color: #0366d6; /* 파란 글자 */
+                    font-weight: bold;
+                    cursor: pointer;
+                }
+
+                /* 멘션 앞의 @ 기호 스타일 */
+                .mention .ql-mention-denotation-char {
+                    color: #0055aa;
+                }
+
+                /* 마우스 오버 시 효과 */
+                .mention:hover {
+                    background-color: #d0e8ff;
+                }
+            `}</style>
         </div>
     );
 };
