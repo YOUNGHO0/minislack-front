@@ -63,7 +63,7 @@ export default ({
                         toolbar: false,
                         mention: {
                             allowedChars: /^[\w\s가-힣]*$/,
-                            mentionDenotationChars: ['@', '#'],
+                            mentionDenotationChars: ['@',],
                             isolateCharacter: true,
                             allowInlineMentionChar: false,
                             showDenotationChar: true,
