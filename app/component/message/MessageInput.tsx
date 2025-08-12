@@ -32,6 +32,12 @@ export default ({
     const {sendMessage} = useWebSocket();
     const [userListPosition, setUserListPosition] = useState<{ x: number, y: number } | null>(null);
     const savedRangeRef = useRef<Range | null>(null);
+    const [mentionSearchTerm, setMentionSearchTerm] = useState("");
+
+    useEffect(() => {
+
+        console.log("showUserList : " + showUserList)
+    }, [showUserList]);
 
     useEffect(() => {
         replyMessageIdRef.current = replyMessageId;
@@ -183,19 +189,42 @@ export default ({
         };
     }, []);
 
-
-    const handleTyping = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const handleKeyUp = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === '@') {
             const coords = getCaretCoordinates();
             if (!coords) return;
-            // 좌표를 활용해서 팝업 위치 조정 등 가능
-            setUserListPosition({ x: coords.x, y: coords.y + coords.height }); // y에 커서 아래쪽으로 약간 띄우기
+            setUserListPosition({ x: coords.x, y: coords.y + coords.height });
+            setMentionSearchTerm(""); // 새로 시작
             setShowUserList(true);
-
+        } else if (showUserList) {
+            // @ 모드일 때만 실시간 검색어 업데이트
+            const mentionText = getAtMentionText();
+            console.log(mentionText)
+            setMentionSearchTerm(mentionText);
         }
+
         if (e.key === 'Escape') {
             setShowUserList(false);
         }
+    };
+
+    const getAtMentionText = () => {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return "";
+
+        const range = selection.getRangeAt(0);
+        const node = range.startContainer;
+        if (node.nodeType !== Node.TEXT_NODE) return "";
+
+        const text = (node as Text).data;
+        const cursorPos = range.startOffset;
+
+        // '@'가 커서 앞에 없으면 빈 문자열
+        const atPos = text.lastIndexOf('@', cursorPos - 1);
+        if (atPos === -1) return "";
+
+        // '@' 이후 커서까지의 문자열 추출
+        return text.substring(atPos + 1, cursorPos);
     };
 
     const getCaretCoordinates = () => {
@@ -250,8 +279,6 @@ export default ({
 
         const range = selection.getRangeAt(0);
 
-        // 1. '@' 문자 지우기 시도
-        // 커서 기준 바로 앞 글자가 '@'면 삭제
         const startContainer = range.startContainer;
         const startOffset = range.startOffset;
 
@@ -259,48 +286,71 @@ export default ({
             const textNode = startContainer as Text;
             const text = textNode.data;
 
-            // 커서 바로 앞 글자가 '@'인지 체크
-            if (startOffset > 0 && text[startOffset - 1] === '@') {
-                // '@' 문자 제거
-                const newText =
-                    text.slice(0, startOffset - 1) +
-                    text.slice(startOffset);
+            // 마지막 @를 찾고 @를 포함하는 이후의 문자를 전부 지운다
+            const atIndex = text.lastIndexOf("@", startOffset - 1);
+            if (atIndex !== -1) {
 
-                textNode.data = newText;
-
-                // 커서 위치를 '@' 문자가 있던 자리로 한 칸 이동
-                const newOffset = startOffset - 1;
-                range.setStart(textNode, newOffset);
+                // @부터 커서까지 삭제하기 위해 Range 조정
+                range.setStart(textNode, atIndex);
+                range.setEnd(textNode, startOffset);
+                range.deleteContents();
+                console.log("start :" ,atIndex + "end : " + startOffset)
+                // caret 위치를 @ 삭제한 지점으로 이동
+                range.setStart(textNode, atIndex);
                 range.collapse(true);
-
-                selection.removeAllRanges();
-                selection.addRange(range);
             }
-        } else {
-            // 만약 커서가 텍스트 노드가 아닌 경우, 다른 방식으로 처리 필요 (복잡하니 우선 이 경우는 넘어갑니다)
+
+            // 지우고 난 뒤에 해당 span 태그를 삽입한다
+            const userSpan = document.createElement("span");
+            userSpan.textContent = userName;
+            userSpan.contentEditable = "false";
+            userSpan.className = "bg-gray-200 rounded px-1.5 py-0.5 mr-1 select-none";
+
+            range.insertNode(userSpan);
+
+            const spaceText = document.createTextNode("\u00A0");
+            userSpan.after(spaceText);
+
+            range.setStartAfter(spaceText);
+            range.collapse(true);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            savedRangeRef.current = range.cloneRange();
+
         }
-
-        // 2. 사용자 이름 span 삽입 (위에서 만든 코드 그대로)
-        const userSpan = document.createElement("span");
-        userSpan.textContent = userName;
-        userSpan.contentEditable = "false";
-        userSpan.className = "bg-gray-200 rounded px-1.5 py-0.5 mr-1 select-none";
-
-        range.insertNode(userSpan);
-
-        const spaceText = document.createTextNode("\u00A0");
-        userSpan.after(spaceText);
-
-        range.setStartAfter(spaceText);
-        range.collapse(true);
-
-        selection.removeAllRanges();
-        selection.addRange(range);
-
-        savedRangeRef.current = range.cloneRange();
     };
 
 
+    // 커서 바로 앞에 @ 문자가 있는지 체크하는 함수
+    const removedCharacterWasSymbol = () => {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return false;
+
+        const range = selection.getRangeAt(0);
+        const startContainer = range.startContainer;
+
+        if (startContainer.nodeType === Node.TEXT_NODE) {
+            const textNode = startContainer as Text;
+            const text = textNode.data;
+            const cursorPos = range.startOffset;
+            console.log("cursorPod : " , range.startOffset)
+            console.log("text : ", text);
+            // 1) 커서 바로 왼쪽이 '@'인지
+            console.log(cursorPos > 0 && text[cursorPos - 1] === '@')
+            return cursorPos > 0 && text[cursorPos - 1] === '@'
+        }
+        return false;
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>)=>{
+
+        if (e.key === 'Backspace' && removedCharacterWasSymbol()) {
+            setShowUserList(false);
+        }
+        return;
+    }
 
 
 
@@ -319,8 +369,12 @@ export default ({
                     data-placeholder="여기에 입력하세요..."
                     className="placeholder relative flex-1 min-h-13 max-h-30 border-2 rounded focus:outline-none overflow-auto px-2 py-1"
                     ref={textAreaRef}
-                    onKeyDown={handleTyping}
-                    onKeyUp={()=>{savedRangeRef.current = saveCaretPosition();}}
+                    onKeyDown={(event)=>{
+                        handleKeyDown(event);
+                    }}
+                    onKeyUp={(event)=>{
+                        handleKeyUp(event);
+                        savedRangeRef.current = saveCaretPosition();}}
                 />
                 {showUserList && userListPosition && (
                     <div
@@ -333,7 +387,7 @@ export default ({
                         }}
                         style={{position: 'absolute', zIndex: 9999}}
                     >
-                        <UserTagPage onSelectUser={(user) => {
+                        <UserTagPage searchTerm={mentionSearchTerm} onSelectUser={(user) => {
                             insertUserName(user.nickName);
                             setShowUserList(false);
                         }}/>

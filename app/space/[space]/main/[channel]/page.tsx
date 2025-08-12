@@ -24,6 +24,7 @@ import './style.css'
 import {text} from "node:stream/consumers";
 import MessageList from "@/app/component/message/MessageList";
 import MessageInput from "@/app/component/message/MessageInput";
+import TextEditor from "@/app/component/message/quill/TextEditor";
 
 export default () => {
 
@@ -120,6 +121,6 @@ export default () => {
         <MessageList messages={messages} setMessages={setMessages} replyMessageId={replyMessageId} setReplyMessageId={(number)=>setReplyMessageId(number)}></MessageList>
 
         {/* 입력창 영역 */}
-        <MessageInput messages={messages} setReplyMessageId={setReplyMessageId} replyMessageId={replyMessageId}></MessageInput>
+        <TextEditor replyMessageId={replyMessageId} setReplyMessageId={setReplyMessageId} messages={messages}></TextEditor>
     </div>
 }

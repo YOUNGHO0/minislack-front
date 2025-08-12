@@ -5,20 +5,29 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Avatar } from "@radix-ui/themes";
 import { useParams } from "next/navigation";
 
-export default function UserTagPage({ onSelectUser }: { onSelectUser: (user: User) => void }) {
+export default function UserTagPage({ onSelectUser, searchTerm }: { onSelectUser: (user: User) => void, searchTerm:string }) {
     const [userList, setUserList] = useState<User[]>([]);
-    const [searchTerm, setSearchTerm] = useState("");
     const { space } = useParams();
 
+    // useEffect(() => {
+    //     axios
+    //         .get<User[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, {
+    //             withCredentials: true,
+    //         })
+    //         .then((res) => {
+    //             setUserList(res.data);
+    //         });ㄴ
+    // }, [space]);
+
     useEffect(() => {
-        axios
-            .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, {
-                withCredentials: true,
-            })
-            .then((res) => {
-                setUserList(res.data);
-            });
-    }, [space]);
+        // 샘플 데이터 20개 생성
+        const sampleData: User[] = Array.from({ length: 20 }, (_, i) => ({
+            id: i + 1,
+            profile: i + 1,
+            nickName: `사용자${i + 1}`,
+        }));
+        setUserList(sampleData);
+    }, []);
 
     // 검색어에 맞는 사용자만 필터링
     const filteredUsers = userList.filter((user) =>
@@ -27,14 +36,6 @@ export default function UserTagPage({ onSelectUser }: { onSelectUser: (user: Use
 
     return (
         <div className="min-w-[220px] bg-white rounded-md border border-gray-200 shadow-lg p-2 z-50">
-            <input
-                type="text"
-                placeholder="사용자 검색..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full mb-2 px-2 py-1 border border-gray-300 rounded"
-            />
-
             {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
                     <div
