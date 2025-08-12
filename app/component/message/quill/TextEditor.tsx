@@ -1,11 +1,12 @@
 'use cline'
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {useParams} from "next/navigation";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
-import {ReceivedMessage} from "@/types/type";
+import {ReceivedMessage, User} from "@/types/type";
 import MessageReplyBar from "@/app/component/message/MessageReplyBar";
 import "quill/dist/quill.snow.css";
 import Quill from "quill";
+import axios from "axios";
 
 export default ({
                     messages,
@@ -20,13 +21,23 @@ export default ({
     const editorRef = useRef<HTMLDivElement>(null);
     const quillRef = useRef<Quill>(null);
     const params = useParams();
+    const space = params.space;
     const channelId = params.channel;
     const { sendMessage } = useWebSocket();
     const [mentionOpen,setMentionOpen] = useState(false);
-    const atValues = [
-        { id: 1, value: "Fredrik Sundqvist" },
-        { id: 2, value: "Patrik Sjölin" }
-    ];
+
+    useLayoutEffect(() => {
+        axios
+            .get<User[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, {
+                withCredentials: true,
+            })
+            .then((res) => {
+               setAtValues(res.data)
+            });
+    }, []);
+
+    const [atValues,setAtValues] = useState<User[]>([]);
+
     const hashValues = [
         { id: 3, value: "Fredrik Sundqvist 2" },
         { id: 4, value: "Patrik Sjölin 2" }
@@ -47,27 +58,49 @@ export default ({
                 });
 
                 const quill = new QuillModule.default(editorRef.current!, {
-                    theme: 'snow',
+                    theme: 'bubble',
                     modules: {
                         toolbar: false,
                         mention: {
                             allowedChars: /^[\w\s가-힣]*$/,
                             mentionDenotationChars: ['@', '#'],
-                            isolateCharacter: false,
+                            isolateCharacter: true,
                             allowInlineMentionChar: false,
                             showDenotationChar: true,
                             onOpen: () => setMentionOpen(true),
                             onClose: () => setTimeout(() => setMentionOpen(false), 150),
-                            renderItem: function (item: any, searchTerm: string) {
-                                return `${item.value}`;
+                            renderItem: function (item: User, searchTerm: string) {
+                                const wrapper = document.createElement("div");
+                                wrapper.className = "flex items-center gap-2";
+                                // 아바타 컨테이너
+                                const avatar = document.createElement("div");
+                                avatar.style.width = "32px";
+                                avatar.style.height = "32px";
+                                avatar.style.borderRadius = "50%";
+                                avatar.style.backgroundColor = "#ccc";
+                                avatar.style.display = "flex";
+                                avatar.style.alignItems = "center";
+                                avatar.style.justifyContent = "center";
+                                avatar.textContent = item.nickName[0]; // 첫 글자 fallback
+
+                                // 닉네임
+                                const name = document.createElement("div");
+                                name.textContent = item.nickName;
+
+                                wrapper.appendChild(avatar);
+                                wrapper.appendChild(name);
+
+                                return wrapper;
                             },
                             source: function (
                                 searchTerm: string,
-                                renderList: (items: { id: number; value: string }[], searchTerm: string) => void,
+                                renderList: (items: any[], searchTerm: string) => void,
                                 mentionChar: string
                             ) {
-                                let values = mentionChar === '@' ? atValues : hashValues;
-
+                                let values = mentionChar === '@'
+                                    ? atValues.map(user => ({ ...user, value: user.nickName }))
+                                    : hashValues;
+                                console.log(atValues)
                                 if (searchTerm.length === 0) {
                                     renderList(values, searchTerm);
                                 } else {
@@ -77,6 +110,7 @@ export default ({
                                     renderList(matches, searchTerm);
                                 }
                             },
+
                         },
                     },
                 });
@@ -85,7 +119,7 @@ export default ({
                 setIsQuillReady(true);
             });
         });
-    }, []);
+    }, [atValues]);
 
 
 
