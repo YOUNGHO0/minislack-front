@@ -1,9 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from "next/navigation";
-import { useWebSocket } from "@/WebSocket/WebSocketProvider";
-import { ReceivedMessage } from "@/types/type";
+'use cline'
+import React, {useEffect, useRef, useState} from 'react';
+import {useParams} from "next/navigation";
+import {useWebSocket} from "@/WebSocket/WebSocketProvider";
+import {ReceivedMessage} from "@/types/type";
 import MessageReplyBar from "@/app/component/message/MessageReplyBar";
-import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import Quill from "quill";
+
 export default ({
                     messages,
                     replyMessageId,
@@ -14,61 +17,31 @@ export default ({
     setReplyMessageId: React.Dispatch<React.SetStateAction<number | null>>
 }) => {
     const [value, setValue] = useState('');
-    const replyMessageIdRef = useRef(replyMessageId);
     const editorRef = useRef<HTMLDivElement>(null);
-    const quillRef = useRef<any>(null); // Quill 타입 임포트 안 해서 any
-
+    const quillRef = useRef<Quill>(null);
     const params = useParams();
     const channelId = params.channel;
     const { sendMessage } = useWebSocket();
 
-    useEffect(() => {
-        replyMessageIdRef.current = replyMessageId;
-    }, [replyMessageId]);
+    const [isQuillReady, setIsQuillReady] = useState(false);
 
     useEffect(() => {
-        let Quill: any;
-        let quillInstance: any;
+        if (!editorRef.current) return;
 
-        async function setupQuill() {
-            if (!editorRef.current) return;
-
-            // 동적 import - 클라이언트에서만
-            Quill = (await import('quill')).default;
-
-            quillInstance = new Quill(editorRef.current, {
+        // 클라이언트 사이드에서만 import하기 위해 useEffect 안에서 import
+        import('quill').then((QuillModule) => {
+            const quill = new QuillModule.default(editorRef.current!, {
                 theme: 'snow',
-                modules: { toolbar: false },
-                mentions:{
+                modules:{
+                    toolbar:false,
 
                 }
             });
-
-            quillInstance.on('text-change', () => {
-                setValue(quillInstance.root.innerHTML);
-            });
-
-            const handleKeyDown = (e: KeyboardEvent) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    createChat();
-                }
-            };
-
-            quillInstance.root.addEventListener('keyup', handleKeyDown);
-
-            quillRef.current = quillInstance;
-        }
-
-        setupQuill();
-
-        return () => {
-            if (quillRef.current) {
-                quillRef.current.root.removeEventListener('keyup', createChat);
-                quillRef.current = null;
-            }
-        };
+            quillRef.current = quill;
+            setIsQuillReady(true);
+        });
     }, []);
+
 
     const createChat = () => {
         const plainText = quillRef.current?.getText().trim() || '';
@@ -79,7 +52,7 @@ export default ({
             return;
         }
 
-        const parent = replyMessageIdRef.current || 0;
+        const parent = replyMessageId
 
         const chatCreateSendEvent = {
             message: { channelId: Number(channelId), parent, text: quillRef.current?.root.innerHTML || '' },
@@ -111,7 +84,14 @@ export default ({
                     ref={editorRef}
                     onKeyDownCapture={(e) => {
                         if (e.code === 'Enter') {
-                            e.preventDefault()
+                            e.preventDefault();
+                        }
+                    }}
+                    onKeyUp={(e)=>{
+                        if(e.key == 'Enter' && !e.shiftKey){
+                            e.preventDefault();
+                            createChat();
+                            return;
                         }
                     }}
                 />
