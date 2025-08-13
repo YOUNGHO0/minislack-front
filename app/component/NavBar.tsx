@@ -65,7 +65,7 @@ const ImprovedNavbar = () => {
                                 }`}
                             >
                                 <span className={`text-xs mt-1 font-medium ${
-                                    activeMenu === id ? 'text-blue-600' : 'text-gray-500'
+                                    activeMenu === id ? 'text-white' : 'text-gray-500'
                                 }`}>
                                     {id === 'home' ? '홈' : '프로필'}
                                 </span>
