@@ -125,7 +125,10 @@ export default function RootLayout({
                 <div className="flex items-center justify-between p-4">
                     <div className=" text-white text-3sm font-extrabold flex align-middle items-center gap-2">
                         채널 목록
-                        <button onClick={() => setShowSidebar((prev) => !prev)}>
+                        <button
+                            onClick={() => setShowSidebar((prev) => !prev)}
+                            className="transition-all duration-200 hover:bg-white hover:text-neutral-600 rounded p-1"
+                        >
                             {renderToggleIcon()}
                         </button>
                     </div>
