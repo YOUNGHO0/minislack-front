@@ -16,6 +16,6 @@ export default (props: { channel: Channel }) => {
     };
 
 
-    return <div className={"font-bold"} onClick={handleClick}>{channelInfo.name}</div>;
+    return <div className={"text-white font-semibold"} onClick={handleClick}>{channelInfo.name}</div>;
 
 };

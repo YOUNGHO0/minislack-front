@@ -98,14 +98,14 @@ export default () => {
 
 
 
-    return <div className="flex flex-col"
+    return <div className="flex flex-col bg-white-100"
                 style={{
                     // height: `calc(100dvh - ${ keyboardHeight}px)`,
                     height: `100dvh`,
                     transition: "height 1s ease",
                 }}
     >
-        <div className="flex bg-nav py-1 px-2 font-bold items-center gap-2"
+        <div className="flex text-white text-xl bg-neutral-400 py-1 px-2 font-bold items-center gap-2"
              ref={channelHeaderRef}
         >
             {channelName}

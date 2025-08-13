@@ -26,20 +26,20 @@ const ImprovedNavbar = () => {
     return (
         <>
             {/* Desktop Navigation */}
-            <nav className="lg:order-first hidden lg:flex lg:flex-col p-1 lg:left-0 lg:top-0 lg:h-full lg:w-15 bg-white border-r shadow-sm z-50">
+            <nav className="bg-neutral-500 border-neutral-600 lg:order-first hidden lg:flex lg:flex-col p-1 lg:left-0 lg:top-0 lg:h-full lg:w-15  border-r shadow-sm z-50">
                 <div className="flex flex-col items-center pt-4 gap-3">
                     {menuItems.map(({ id, icon: Icon }) => (
                         <button
                             key={id}
                             onClick={() => handleClick(id, id === 'home' ? '' : id)}
-                            className={`p-3 rounded-lg transition-all duration-200 group ${
+                            className={`p-3 rounded-lg transition-all duration-200 group  ${
                                 activeMenu === id
-                                    ? 'bg-blue-50 text-blue-600 shadow-md'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                    ? 'transition-transform duration-200 stroke-transparent bg-blue-50 text-blue-600 shadow-md'
+                                    : 'text-white hover:bg-gray-50 hover:text-white-900'
                             }`}
                         >
                             <Icon
-                                className={`w-5 h-5 transition-transform duration-200 ${
+                                className={`w-5 h-5 transition-transform  duration-200 ${
                                     activeMenu === id ? 'scale-110' : 'group-hover:scale-105'
                                 }`}
                             />
@@ -51,7 +51,7 @@ const ImprovedNavbar = () => {
 
             {/* Mobile Navigation - 보여줄 경로 깊이만 허용 */}
             {isExactDepth && (
-                <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg pt-1 z-30">
+                <nav className="lg:hidden fixed bottom-0 left-0 right-0  border-t border-gray-200 shadow-lg pt-1 z-30">
                     <div className="flex items-center justify-around">
                         {menuItems.map(({ id, icon: Icon }) => (
                             <button
