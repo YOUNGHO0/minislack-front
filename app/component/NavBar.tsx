@@ -27,7 +27,7 @@ const ImprovedNavbar = () => {
     return (
         <>
             {/* Desktop Navigation */}
-            <nav className="bg-neutral-500 border-neutral-600 lg:order-first hidden lg:flex lg:flex-col p-1 lg:left-0 lg:top-0 lg:h-full lg:w-15 border-r shadow-sm z-50">
+            <nav className="bg-orange-500 border-orange-500 lg:order-first hidden lg:flex lg:flex-col p-1 lg:left-0 lg:top-0 lg:h-full lg:w-15 border-r shadow-sm z-50">
                 <div className="flex flex-col items-center pt-4 gap-3">
                     {menuItems.map(({ id, icon: Icon }) => (
                         <button

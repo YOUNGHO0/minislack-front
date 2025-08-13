@@ -105,7 +105,7 @@ export default () => {
                     transition: "height 1s ease",
                 }}
     >
-        <div className="flex text-white text-xl bg-neutral-400 py-1 px-2 font-bold items-center gap-2"
+        <div className="flex w-full text-white text-sm  bg-[#f77915] py-1 px-2 font-bold items-center gap-2"
              ref={channelHeaderRef}
         >
             {channelName}

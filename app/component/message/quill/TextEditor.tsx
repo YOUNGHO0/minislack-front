@@ -166,7 +166,7 @@ export default ({
                  }}
             >
                 <div
-                    className="focus:border-neutral-400 focus:shadow-md hover:border-neutral-400 hover:shadow-md w-full min-h-13 max-h-30 px-2 py-1 rounded border-3 transition-all duration-300 ease-in-out"
+                    className="focus:border-[#f77915] border-neutral-400 focus:shadow-md hover:border-[#f77915] hover:shadow-md w-full min-h-13 max-h-30 px-2 py-1 rounded border-3 transition-all duration-300 ease-in-out"
                     style={{height: 'auto', overflowY: 'auto'}}
                     ref={editorRef}
                     onKeyDown={(e) => {
@@ -244,9 +244,13 @@ export default ({
                 .ql-container {
                     overflow: visible !important;
                 }
+                .ql-container:focus-within {
+                    border-color: #f77915;
+                }
 
                 .ql-editor {
                     overflow-y: auto;
+                  
                 }
 
                 .mention {
