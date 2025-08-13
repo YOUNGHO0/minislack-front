@@ -1,62 +1,69 @@
 // WebSocketContext.tsx
 'use client'
 
-import {createContext, useContext, useEffect, useRef} from 'react'
+import { createContext, useContext, useEffect, useRef } from 'react'
 import emitter from '../WebSocket/Emitter'
-import {useParams} from "next/navigation";
-// WebSocket 타입 정의
+import { useParams } from "next/navigation"
+import ReconnectingWebSocket from 'reconnecting-websocket'
+
 type WebSocketContextType = {
     sendMessage: (msg: string) => void
 }
 
-// 기본값 (초기값에서 함수를 넣어야 타입 오류 방지)
+// 초기값에 함수 넣어 타입 오류 방지
 const WebSocketContext = createContext<WebSocketContextType>({
     sendMessage: () => console.warn("WebSocket not initialized"),
 })
 
-// Provider 정의
-export const  WebSocketProvider =({ children }: { children: React.ReactNode }) => {
-    const socketRef = useRef<WebSocket | null>(null)
-    const {space} = useParams();
+export const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
+    const wsRef = useRef<ReconnectingWebSocket | null>(null)
+    const { space } = useParams()
+
     useEffect(() => {
-        const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}?space=${space}`);
-        socketRef.current = ws
+        const url = `${process.env.NEXT_PUBLIC_WS_URL}?space=${space}`
 
-        ws.onopen = () => {
+        const rws = new ReconnectingWebSocket(url, [], {
+            minReconnectionDelay: 1000,   // 재접속 시도 간격 (1초)
+            maxReconnectionDelay: 10000,  // 최대 재접속 대기 시간 (10초)
+            maxRetries: 10,               // 최대 재접속 시도 횟수
+            debug: false,                 // 디버그 로그 출력 여부
+        })
+
+        wsRef.current = rws
+
+        rws.addEventListener('open', () => {
             console.log('[WebSocket] Connected')
-        }
+        })
 
-        ws.onmessage = (event) => {
+        rws.addEventListener('message', (event) => {
             try {
-                const data = JSON.parse(event.data);
+                const data = JSON.parse(event.data)
                 if (data.type) {
-                    console.log("type :" + data.type + " data : " + JSON.stringify(data));
-                    // type이 Events 타입에 포함되어 있으면 emit 가능
-                    emitter.emit(data.type, data);
-                    console.log('[WebSocket] Received message ', data.payload);
-
+                    console.log("type :" + data.type + " data : " + JSON.stringify(data))
+                    emitter.emit(data.type, data)
+                    console.log('[WebSocket] Received message ', data.payload)
                 }
             } catch (err) {
-                console.error('JSON 파싱 에러', err);
+                console.error('JSON 파싱 에러', err)
             }
-        };
+        })
 
-        ws.onclose = () => {
+        rws.addEventListener('close', () => {
             console.log('[WebSocket] Closed')
-        }
+        })
 
-        ws.onerror = (err) => {
+        rws.addEventListener('error', (err) => {
             console.error('[WebSocket] Error:', err)
-        }
+        })
 
         return () => {
-            ws.close()
+            rws.close()
         }
-    }, [])
+    }, [space])
 
     const sendMessage = (msg: string) => {
-        if (socketRef.current?.readyState === WebSocket.OPEN) {
-            socketRef.current.send(msg)
+        if (wsRef.current?.readyState === WebSocket.OPEN) {
+            wsRef.current.send(msg)
         } else {
             console.warn('WebSocket is not open')
         }
@@ -69,5 +76,4 @@ export const  WebSocketProvider =({ children }: { children: React.ReactNode }) =
     )
 }
 
-// custom hook
-export const useWebSocket = ()=> useContext(WebSocketContext)
+export const useWebSocket = () => useContext(WebSocketContext)
