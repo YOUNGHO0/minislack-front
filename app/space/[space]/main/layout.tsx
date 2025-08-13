@@ -115,7 +115,7 @@ export default function RootLayout({
             <div className={`${parentComponentStyle} w-full rounded-br-md md:w-80 bg-neutral-400 flex flex-col`}>
 
                 {/*방 정보*/}
-                <div className="flex p-4  items-center gap-2">
+                <div className=" rounded-md flex p-4  items-center gap-2">
                     <div className="text-white text-center font-bold text-2xl mb-1">{userSpaceInfo?.name}</div>
                     <SpaceInfo isUser={userSpaceInfo?.mine === true ? true : false }/>
                 </div>
@@ -147,7 +147,7 @@ export default function RootLayout({
             <div className={`${childComponentStyle} flex-4 min-h-0 overflow-y-hidden`}>{children}</div>
 
             {/* 사용자 목록 컴포넌트 */}
-            <div className={`${parentComponentStyle} flex-1 w-full h-full bg-neutral-400 rounded-bl-md rounded-br-md flex flex-col`}>
+            <div className={`${parentComponentStyle} flex-1 w-full h-full bg-neutral-300 rounded-bl-md rounded-br-md flex flex-col`}>
                 {/* 헤더: 사용자 목록 제목 + 토글 버튼 */}
                 <div className="flex items-center justify-between p-4">
                     <div className="text-white text-lg font-extrabold">사용자 목록</div>
