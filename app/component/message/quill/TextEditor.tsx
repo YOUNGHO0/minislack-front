@@ -148,7 +148,7 @@ export default ({
 
     return (
         <div className={"w-full flex flex-col"}>
-            <div className={"w-full mx-2"}>
+            <div className={"w-full"}>
                 {replyMessageId !== null && (
                     <MessageReplyBar
                         onCancel={() => setReplyMessageId(null)}
