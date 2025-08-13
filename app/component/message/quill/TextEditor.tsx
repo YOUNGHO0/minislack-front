@@ -166,7 +166,7 @@ export default ({
                  }}
             >
                 <div
-                    className="w-full min-h-13 max-h-30 px-2 py-1 rounded border-2"
+                    className="focus:border-neutral-400 focus:shadow-md hover:border-neutral-400 hover:shadow-md w-full min-h-13 max-h-30 px-2 py-1 rounded border-3 transition-all duration-300 ease-in-out"
                     style={{height: 'auto', overflowY: 'auto'}}
                     ref={editorRef}
                     onKeyDown={(e) => {
@@ -185,7 +185,7 @@ export default ({
                 <input
                     type="button"
                     value="전송"
-                    className="m-2 h-10 lg:hidden px-4 py-2 bg-blue-600 text-white rounded"
+                    className="m-2 h-10 lg:hidden px-4 py-2 bg-blue-700 text-white rounded"
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
