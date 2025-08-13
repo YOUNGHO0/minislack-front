@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Channel, Space} from "@/types/channel";
 import ChannelList from "@/app/component/channellist/ChannelList";
 import ChannelAndAddButton from "@/app/component/channellist/ChannelAddDialog";
@@ -34,6 +34,7 @@ export default function RootLayout({
     const [currentEnrolledUserList , setCurrentEnrolledUserList] = React.useState<User[]>([]);
     const [showUserList, setShowUserList] = useState(true);
     const [userSpaceInfo , setUserSpaceInfo] = useState<Space>();
+    const contentRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
 
         emitter.on('spaceJoin', (message: SpaceJoinReceiveEvent)=>
@@ -94,13 +95,13 @@ export default function RootLayout({
     }, []);
 
 
-    // PC/모바일 구분 없이 위아래 화살표로 통일
+    // PC/모바일 구분 없이 위아래 화살표로 통일 - 애니메이션 효과 추가
     const renderToggleIcon = () => {
-        const baseClass = "w-5 h-5";
+        const baseClass = "w-5 h-5 transition-transform duration-300 ease-in-out";
         return showSidebar ? (
-            <ChevronDoubleUpIcon className={baseClass} />
+            <ChevronDoubleUpIcon className={`${baseClass} transform rotate-0`} />
         ) : (
-            <ChevronDoubleDownIcon className={baseClass} />
+            <ChevronDoubleDownIcon className={`${baseClass} transform rotate-0`} />
         );
     };
 
@@ -136,11 +137,22 @@ export default function RootLayout({
                 </div>
 
                 {/* 본문 */}
-                {showSidebar && (
-                    <div className="px-4 pb-4 flex-grow overflow-auto min-h-50">
+                <div
+                    ref={contentRef}
+                    className={`px-4 pb-4 overflow-hidden transition-all duration-500 ease-in-out ${
+                        showSidebar
+                            ? 'max-h-96 opacity-100'
+                            : 'max-h-0 opacity-0'
+                    }`}
+                    style={{
+                        transform: showSidebar ? 'translateY(0)' : 'translateY(-20px)',
+                        transition: 'all 0.3s ease-in-out'
+                    }}
+                >
+                    <div className="overflow-auto min-h-50">
                         <ChannelList data={data}/>
                     </div>
-                )}
+                </div>
             </div>
 
             {/* 메인 콘텐츠 */}
