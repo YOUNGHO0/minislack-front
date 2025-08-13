@@ -46,7 +46,7 @@ export default ({isUser } : {isUser:boolean}) => {
             <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
                     <button
-                        className="font-bold text-white flex items-center justify-center w-8 h-8 rounded items-center">
+                        className="hover:bg-gray-200 hover:shadow-md font-bold text-white flex items-center justify-center w-8 h-8 rounded items-center">
                         <HamburgerMenuIcon className="w-6 h-6" />
                     </button>
                 </DropdownMenu.Trigger>

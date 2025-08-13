@@ -94,7 +94,10 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
             <ChannelAdminChange open={changeAdminState} closeWindow={()=>setChangeAdminState(false)}></ChannelAdminChange>
             <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
-                    <DotsVerticalIcon className="w-4 h-4 font-bold"/>
+                    <div className={"hover:shadow-md hover:bg-gray-200"}>
+                        <DotsVerticalIcon className=" w-4 h-4 font-bold"/>
+                    </div>
+
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                     <DropdownMenu.Item
