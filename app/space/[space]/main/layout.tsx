@@ -112,7 +112,7 @@ export default function RootLayout({
 
         <div className={`w-full h-full flex flex-col md:flex-row`}>
             {/* 사이드바 전체 */}
-            <div className={`${parentComponentStyle} w-full md:w-80 bg-neutral-300 flex flex-col`}>
+            <div className={`${parentComponentStyle} w-full rounded-br-md md:w-80 bg-neutral-300 flex flex-col`}>
 
                 {/*방 정보*/}
                 <div className="flex p-4  items-center gap-2">
@@ -122,7 +122,7 @@ export default function RootLayout({
 
                 {/* 헤더 */}
                 <div className="flex items-center justify-between p-4">
-                    <div className="text-3sm  font-extrabold flex align-middle items-center gap-2">
+                    <div className="text-3sm font-extrabold flex align-middle items-center gap-2">
                         채널 목록
                         <button onClick={() => setShowSidebar((prev) => !prev)}>
                             {renderToggleIcon()}
@@ -147,7 +147,7 @@ export default function RootLayout({
             <div className={`${childComponentStyle} flex-4 min-h-0 overflow-y-hidden`}>{children}</div>
 
             {/* 사용자 목록 컴포넌트 */}
-            <div className={`${parentComponentStyle} flex-1 w-full h-full bg-neutral-200 flex flex-col`}>
+            <div className={`${parentComponentStyle} flex-1 w-full h-full bg-neutral-200 rounded-bl-md rounded-br-md flex flex-col`}>
                 {/* 헤더: 사용자 목록 제목 + 토글 버튼 */}
                 <div className="flex items-center justify-between p-4">
                     <div className="text-lg font-extrabold">사용자 목록</div>
