@@ -30,11 +30,11 @@ const items = [
   },
   {
     icon: <DevicesRoundedIcon />,
-    title: '채팅방 검색 On OFF',
+    title: '사용자 멘션',
     description:
-      '채팅방의 검색 여부를 설정할 수 있습니다. 검색을 허용하지 않으면 초대링크로만 입장 가능합니다',
-      imageLight: `url(/images/createRoom.png)`,
-      imageDark: `url(/images/createRoom.png)`,
+      '채팅에 참여한 사용자를 쉽게 멘션할 수 있습니다',
+      imageLight: `url(/images/mention.png)`,
+      imageDark: `url(/images/mention.png)`,
   },
 ];
 

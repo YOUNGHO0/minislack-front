@@ -30,7 +30,9 @@ const StyledBox = styled('div')(({ theme }) => ({
     borderColor: (theme.vars || theme).palette.grey[200],
     boxShadow: '0 0 12px 8px hsla(30, 100%, 80%, 0.2)',
     backgroundImage: `url(/images/full.png)`,
-    backgroundSize: 'cover',
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
     [theme.breakpoints.up('sm')]: {
         marginTop: theme.spacing(10),
         height: 700,
