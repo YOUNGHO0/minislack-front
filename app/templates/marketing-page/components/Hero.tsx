@@ -5,45 +5,37 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
+import {styled} from "@mui/material/styles";
 
-// 테마 오렌지색 적용
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: '#f77915',
-        },
-    },
-});
-
-// StyledBox 정의
-const StyledBox = styled('div')(({ theme }) => ({
-    alignSelf: 'center',
-    width: '100%',
-    height: 400,
-    marginTop: theme.spacing(8),
-    borderRadius: (theme.vars || theme).shape.borderRadius,
-    outline: '6px solid',
-    outlineColor: 'hsla(30, 100%, 80%, 0.2)',
-    border: '1px solid',
-    borderColor: (theme.vars || theme).palette.grey[200],
-    boxShadow: '0 0 12px 8px hsla(30, 100%, 80%, 0.2)',
-    backgroundImage: `url(/images/full.png)`,
-    backgroundSize: 'contain',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-    [theme.breakpoints.up('sm')]: {
-        marginTop: theme.spacing(10),
-        height: 700,
-    },
-}));
 
 export default function Hero() {
     const router = useRouter();
 
+    // StyledBox 정의
+    const StyledBox = styled('div')(({ theme }) => ({
+        alignSelf: 'center',
+        width: '100%',
+        height: 400,
+        marginTop: theme.spacing(8),
+        borderRadius: (theme.vars || theme).shape.borderRadius,
+        outline: '6px solid',
+        outlineColor: 'hsla(30, 100%, 80%, 0.2)',
+        border: '1px solid',
+        borderColor: (theme.vars || theme).palette.grey[200],
+        boxShadow: '0 0 12px 8px hsla(30, 100%, 80%, 0.2)',
+        backgroundImage: `url(/images/full.png)`,
+        backgroundSize: 'contain',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        [theme.breakpoints.up('sm')]: {
+            marginTop: theme.spacing(10),
+            height: 700,
+        },
+    }));
+
     return (
-        <ThemeProvider theme={theme}>
+
             <Box
                 id="hero"
                 sx={{
@@ -119,11 +111,9 @@ export default function Hero() {
                                 시작하기
                             </Button>
                         </Stack>
+                        <StyledBox id="image" />
                     </Stack>
-
-                    <StyledBox id="image" />
                 </Container>
             </Box>
-        </ThemeProvider>
     );
 }

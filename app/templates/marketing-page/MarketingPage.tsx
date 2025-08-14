@@ -11,16 +11,35 @@ import Testimonials from './components/Testimonials';
 
 import Footer from './components/Footer';
 import FAQ from "@/app/templates/marketing-page/components/FAQ";
+import {createTheme, styled, ThemeProvider} from "@mui/material/styles";
 
 export default function MarketingPage(props: { disableCustomTheme?: boolean }) {
-  return (
+
+    // 테마 오렌지색 적용
+    const theme = createTheme({
+        palette: {
+            primary: {
+                main: '#f77915',
+            },
+        },
+    });
+
+
+
+    return (
+
     <AppTheme {...props}>
+        <ThemeProvider theme={theme}>
       <CssBaseline enableColorScheme />
       <Hero />
       <div>
         <Features />
         <Footer />
       </div>
+
+        </ThemeProvider>
     </AppTheme>
+
+
   );
 }

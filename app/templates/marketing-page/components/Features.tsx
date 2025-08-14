@@ -130,7 +130,7 @@ export default function Features() {
     const selectedFeature = items[selectedItemIndex];
 
     return (
-        <Container id="features" sx={{ py: { xs: 8, sm: 16 } }}>
+        <Container id="features" sx={{ py: { xs: 8, sm: 16 }  }}>
             <Box sx={{ width: { sm: '100%', md: '60%' } }}>
                 <Typography
                     component="h2"
