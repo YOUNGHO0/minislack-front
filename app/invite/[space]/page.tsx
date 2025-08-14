@@ -78,9 +78,9 @@ export default  ()=> {
                         setOpenCodeDialog(false);
                     }}
                 />
-                <Heading className="pb-5">채팅방 초대</Heading>
+                <Heading className="pb-5">{userSpaceInfo?.name}</Heading>
                 <div className={"flex"}>
-                    입장하기를 클릭하면
+                    클릭하면
                     <div className={"font-bold pl-2 pr-2"}>{userSpaceInfo?.name}</div>
                     에 입장합니다
                 </div>
