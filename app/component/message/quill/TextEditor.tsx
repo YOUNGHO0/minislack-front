@@ -185,7 +185,7 @@ export default ({
                 <input
                     type="button"
                     value="전송"
-                    className="m-2 h-10 lg:hidden px-4 py-2 bg-blue-700 text-white rounded"
+                    className="bg-[#f77915] m-2 h-10 lg:hidden px-4 py-2  text-white rounded"
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();

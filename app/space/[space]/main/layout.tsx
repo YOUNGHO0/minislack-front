@@ -162,7 +162,7 @@ export default function RootLayout({
             <div className={`${childComponentStyle} flex-4 min-h-0 overflow-y-hidden`}>{children}</div>
 
             {/* 사용자 목록 컴포넌트 */}
-            <div className={`${parentComponentStyle} border-l-2 border-l-[#f77915] flex-1 w-full h-full bg-neutral-200 flex flex-col`}>
+            <div className={`${parentComponentStyle} flex-1 w-full h-full bg-neutral-200 flex flex-col`}>
                 {/* 헤더: 사용자 목록 제목 + 토글 버튼 */}
                 <div className="flex items-center justify-between p-4">
                     <div className="text-black text-lg font-extrabold">사용자 목록</div>

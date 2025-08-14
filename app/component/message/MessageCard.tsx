@@ -181,7 +181,7 @@ export default function MessageCard(props: {  scrollContainerRef?: React.RefObje
         <>
             <div
                 ref={props.refCallback}
-                className="m-2 p-2 flex min-w-60 w-fit rounded-lg border border-gray-200 hover:bg-gray-50 relative"
+                className="m-2 p-2 flex min-w-60 w-fit rounded-l shadow-sm rounded-lg hover:bg-gray-50 relative"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onContextMenu={handleContextMenu}
