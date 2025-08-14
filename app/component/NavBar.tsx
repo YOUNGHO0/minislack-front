@@ -35,7 +35,7 @@ const ImprovedNavbar = () => {
                             onClick={() => handleClick(id, id === 'home' ? '' : id)}
                             className={`p-3 rounded-lg transition-all duration-200 group ${
                                 activeMenu === id
-                                    ? 'transition-transform duration-200 stroke-transparent bg-blue-50 text-blue-600 shadow-md'
+                                    ? 'transition-transform duration-200 stroke-transparent bg-white text-black shadow-md'
                                     : 'text-white hover:bg-gray-50 hover:text-white-900'
                             }`}
                         >
