@@ -89,7 +89,7 @@ export default function HomeAppBar() {
 
     return (
         <Box>
-            <AppBar position="static">
+            <AppBar position="static" style={{ background: "#f77915" }}>
                 <Toolbar>
                     <IconButton
                         size="large"
