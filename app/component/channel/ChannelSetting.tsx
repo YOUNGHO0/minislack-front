@@ -95,7 +95,7 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
             <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
                     <div className={"hover:shadow-md hover:bg-gray-200"}>
-                        <DotsVerticalIcon className=" w-4 h-4 font-bold"/>
+                        <DotsVerticalIcon className="text-white w-4 h-4 font-bold"/>
                     </div>
 
                 </DropdownMenu.Trigger>

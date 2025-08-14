@@ -52,7 +52,7 @@ const ImprovedNavbar = () => {
 
             {/* Mobile Navigation */}
             {isExactDepth && (
-                <nav className="bg-neutral-500 border-neutral-600 lg:hidden fixed bottom-0 left-0 right-0 border-t border-gray-200 shadow-lg pt-1 z-30">
+                <nav className="bg-orange-500 border-orange-500 lg:hidden fixed bottom-0 left-0 right-0 border-t border-gray-200 shadow-lg pt-1 z-30">
                     <div className="flex items-center justify-around">
                         {menuItems.map(({ id, icon: Icon }) => (
                             <button
@@ -65,7 +65,7 @@ const ImprovedNavbar = () => {
                                 }`}
                             >
                                 <span className={`text-xs mt-1 font-medium ${
-                                    activeMenu === id ? 'text-white' : 'text-gray-500'
+                                    activeMenu === id ? 'text-white' : 'text-orange-500'
                                 }`}>
                                     {id === 'home' ? '홈' : '프로필'}
                                 </span>
