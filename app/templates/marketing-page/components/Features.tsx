@@ -87,15 +87,21 @@ export function MobileLayout({
                     />
                 ))}
             </Box>
-            <Card variant="outlined">
+            <Card
+                variant="outlined"
+                sx={{
+                    backgroundColor: '#fff', // 다크모드에서도 흰색 유지
+                }}
+            >
                 <Box
                     sx={{
                         mb: 2,
+                        minHeight: 280,
                         backgroundSize: 'contain',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
-                        minHeight: 280,
                         backgroundImage: items[selectedItemIndex].image,
+                        backgroundColor: '#fff', // 이미지 영역도 흰색 유지
                     }}
                 />
                 <Box sx={{ px: 2, pb: 2 }}>
@@ -137,8 +143,7 @@ export default function Features() {
                 <Typography
                     variant="body1"
                     sx={{ color: 'text.secondary', mb: { xs: 2, sm: 4 } }}
-                >
-                </Typography>
+                />
             </Box>
             <Box
                 sx={{
@@ -193,7 +198,6 @@ export default function Features() {
                                     ]}
                                 >
                                     {icon}
-
                                     <Typography variant="h6">{title}</Typography>
                                     <Typography variant="body2">{description}</Typography>
                                 </Box>
@@ -220,6 +224,7 @@ export default function Features() {
                             width: '100%',
                             display: { xs: 'none', sm: 'flex' },
                             pointerEvents: 'none',
+                            backgroundColor: '#fff', // 다크모드에서도 흰색 유지
                         }}
                     >
                         <Box
@@ -231,6 +236,7 @@ export default function Features() {
                                 backgroundRepeat: 'no-repeat',
                                 backgroundPosition: 'center',
                                 backgroundImage: items[selectedItemIndex].image,
+                                backgroundColor: '#fff', // 이미지 영역도 흰색 유지
                             }}
                         />
                     </Card>
