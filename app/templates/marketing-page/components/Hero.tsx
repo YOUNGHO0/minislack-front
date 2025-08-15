@@ -100,7 +100,7 @@ export default function Hero() {
                             sx={{ pt: 2, width: { xs: '100%', sm: '350px' } }}
                         >
                             <Button
-                                onClick={() => router.push("/login")}
+                                onClick={() => router.push("/space")}
                                 className={"w-full"}
                                 variant="contained"
                                 color="primary"
