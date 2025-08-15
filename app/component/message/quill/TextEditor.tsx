@@ -243,6 +243,7 @@ export default ({
                 /* Quill 컨테이너의 overflow 문제 해결 */
                 .ql-container {
                     overflow: visible !important;
+                    border-color: rgba(247, 121, 21, 0.3);
                 }
                 .ql-container:focus-within {
                     border-color: #f77915;
