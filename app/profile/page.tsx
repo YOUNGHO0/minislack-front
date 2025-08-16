@@ -22,12 +22,6 @@ export default function ProfilePage() {
         router.push("/profile/change/nickname");
     };
 
-    const handleDeleteAccount = () => {
-        if (confirm("정말 탈퇴하시겠습니까?")) {
-            alert("탈퇴 처리 중...");
-        }
-    };
-
     useEffect(() => {
         axios.get<UserInfo>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/info`,{withCredentials : true}).then((res)=>{
             setNickname(res.data.nickName);
@@ -69,7 +63,7 @@ export default function ProfilePage() {
             {/* 탈퇴 버튼 */}
             <button className="flex text-xs">
 
-                <Text color={"red"} onClick={handleDeleteAccount}>
+                <Text color={"red"} onClick={()=>router.push("/delete")}>
                     탈퇴하기
                 </Text>
             </button>
