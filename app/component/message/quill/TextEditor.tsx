@@ -30,16 +30,6 @@ export default ({
     const { sendMessage } = useWebSocket();
     const [mentionOpen,setMentionOpen] = useState(false);
 
-    useLayoutEffect(() => {
-        axios
-            .get<User[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, {
-                withCredentials: true,
-            })
-            .then((res) => {
-               setAtValues(res.data)
-            });
-    }, []);
-
     const [atValues,setAtValues] = useState<User[]>([]);
 
     const hashValues = [
@@ -50,24 +40,34 @@ export default ({
     const [isQuillReady, setIsQuillReady] = useState(false);
 
     useEffect(() => {
-        if (!editorRef.current) return;
+        const fetchUsersAndInitQuill = async () => {
+            try {
+                const res = await axios.get<User[]>(
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`,
+                    { withCredentials: true }
+                );
+                setAtValues(res.data);
 
-        import('quill').then((QuillModule) => {
-            import('quill-mention').then((MentionModule) => {
+                // Quill 및 Mention 임포트
+                const QuillModule = (await import('quill')).default;
+                const MentionModule = await import('quill-mention');
                 const { Mention, MentionBlot } = MentionModule;
 
-                QuillModule.default.register({
-                    'blots/mention': MentionBlot,
-                    'modules/mention': Mention,
-                });
+                // 한 번만 등록
+                if (!QuillModule.imports['blots/mention']) {
+                    QuillModule.register({
+                        'blots/mention': MentionBlot,
+                        'modules/mention': Mention,
+                    });
+                }
 
-                const quill = new QuillModule.default(editorRef.current!, {
+                const quill = new QuillModule(editorRef.current!, {
                     theme: 'bubble',
                     modules: {
                         toolbar: false,
                         mention: {
                             allowedChars: /^[\w\s가-힣]*$/,
-                            mentionDenotationChars: ['@',],
+                            mentionDenotationChars: ['@'],
                             isolateCharacter: true,
                             allowInlineMentionChar: false,
                             showDenotationChar: true,
@@ -99,12 +99,12 @@ export default ({
                             source: function (
                                 searchTerm: string,
                                 renderList: (items: any[], searchTerm: string) => void,
-                                mentionChar: string
-                            ) {
-                                let values = mentionChar === '@'
-                                    ? atValues.map(user => ({ ...user, value: user.nickName }))
-                                    : hashValues;
-                                console.log(atValues)
+                                mentionChar: string){
+                                let values =
+                                    mentionChar === '@'
+                                        ? res.data.map(u => ({ ...u, value: u.nickName }))
+                                        : hashValues;
+
                                 if (searchTerm.length === 0) {
                                     renderList(values, searchTerm);
                                 } else {
@@ -114,16 +114,20 @@ export default ({
                                     renderList(matches, searchTerm);
                                 }
                             },
-
                         },
                     },
                 });
 
                 quillRef.current = quill;
                 setIsQuillReady(true);
-            });
-        });
-    }, [atValues]);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchUsersAndInitQuill();
+    }, []);
+
 
 
 
