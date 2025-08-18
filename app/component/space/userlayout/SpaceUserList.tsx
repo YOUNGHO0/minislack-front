@@ -7,7 +7,7 @@ export default ({ userList }: { userList: User[] }) => {
     return (
         <div className="flex flex-col gap-2 p-4 ">
             {userList.map((user) => (
-                <div key={user.id} className="text-white flex gap-2 gap-x-4 items-center rounded  text-sm bg-white/10 p-2">
+                <div key={user.id} className="text-white flex gap-2 gap-x-4 items-center rounded text-sm p-2">
                     <ChatAvatar
                         size={"1"}
                         variant="solid"
