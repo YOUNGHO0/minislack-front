@@ -106,10 +106,15 @@ export default function MessageCard(props: {
     };
 
     const formatTime = (isoString: string) => {
-        const date = new Date(isoString);
-        return date.toLocaleString('ko-KR', {
-            year: 'numeric', month: '2-digit', day: '2-digit',
-            hour: '2-digit', minute: '2-digit'
+        if (!isoString) return "";
+        const date = new Date(isoString); // 여기서 isoString은 UTC 기준
+        return date.toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: "Asia/Seoul",
         });
     };
 
