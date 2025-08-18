@@ -114,6 +114,7 @@ export default function MessageCard(props: {
             day: "2-digit",
             hour: "2-digit",
             minute: "2-digit",
+            timeZone: "Asia/Seoul",
         });
     };
 
