@@ -1,16 +1,17 @@
 import {User} from "@/types/type";
 import {Avatar} from "@radix-ui/themes";
 import React from "react";
+import ChatAvatar from "@/app/component/avatar/ChatAvatar";
 
 export default ({ userList }: { userList: User[] }) => {
     return (
-        <div className="flex flex-col gap-2 p-4">
+        <div className="flex flex-col gap-2 p-4 ">
             {userList.map((user) => (
-                <div key={user.id} className="text-white flex gap-2 gap-x-4 items-center text-sm">
-                    <Avatar
-                        size={"2"}
+                <div key={user.id} className="text-white flex gap-2 gap-x-4 items-center rounded  text-sm bg-white/10 p-2">
+                    <ChatAvatar
+                        size={"1"}
                         variant="solid"
-                        fallback={user?.nickName[0] || 'U'}
+                        name={user?.nickName[0]}
                         className="w-3 h-3" // 크기 조절
                     />
                     <div className="text-white font-bold">{user.nickName}</div>

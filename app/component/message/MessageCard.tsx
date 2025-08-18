@@ -175,7 +175,7 @@ export default function MessageCard(props: {
                 onContextMenu={handleContextMenu}
             >
                 <div className="w-fit p-1 flex flex-col">
-                    <Avatar variant="solid" fallback={props.data.user?.nickName[0]||'U'} />
+                    <ChatAvatar name={props.data.user?.nickName[0]}/>
                 </div>
 
                 <div className="ml-4 flex-col p-0 flex-1">

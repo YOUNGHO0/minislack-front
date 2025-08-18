@@ -136,12 +136,6 @@ export default ({
             return;
         }
 
-        // 키보드가 열려있을 때만 포커스 유지
-        if (keyboardHeight > 0 && quillRef.current) {
-            console.log("keyboardHeight : ", keyboardHeight);
-            quillRef.current.focus();
-        }
-
         const parent = replyMessageId
 
         const chatCreateSendEvent = {
@@ -188,6 +182,12 @@ export default ({
                         if (e.key === 'Enter' && !e.shiftKey) {
                             if (!mentionOpen) {
                                 createChat();
+                                if(quillRef.current){
+                                    quillRef.current.focus();
+                                    // 2. 커서를 마지막으로 이동
+                                    const length = quillRef.current.getLength(); // 현재 내용 길이
+                                    quillRef.current.setSelection(length, 0);   // (index, length) -> length: 0이면 커서만 위치
+                                }
                             }
                         }
                     }}
@@ -200,6 +200,14 @@ export default ({
                         e.preventDefault();
                         e.stopPropagation();
                         createChat();
+
+                        // 키보드가 열려있을 때만 포커스 유지
+                        if (keyboardHeight > 0 && quillRef.current) {
+                            quillRef.current.focus();
+                            // 2. 커서를 마지막으로 이동
+                            const length = quillRef.current.getLength(); // 현재 내용 길이
+                            quillRef.current.setSelection(length, 0);   // (index, length) -> length: 0이면 커서만 위치
+                        }
                     }}
                 />
             </div>
@@ -261,6 +269,7 @@ export default ({
 
                 .ql-editor {
                     overflow-y: auto;
+                    padding: 0px;
                   
                 }
 
