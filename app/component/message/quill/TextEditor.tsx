@@ -184,9 +184,6 @@ export default ({
                                 createChat();
                                 if(quillRef.current){
                                     quillRef.current.focus();
-                                    // 2. 커서를 마지막으로 이동
-                                    const length = quillRef.current.getLength(); // 현재 내용 길이
-                                    quillRef.current.setSelection(length, 0);   // (index, length) -> length: 0이면 커서만 위치
                                 }
                             }
                         }
@@ -204,9 +201,6 @@ export default ({
                         // 키보드가 열려있을 때만 포커스 유지
                         if (keyboardHeight > 0 && quillRef.current) {
                             quillRef.current.focus();
-                            // 2. 커서를 마지막으로 이동
-                            const length = quillRef.current.getLength(); // 현재 내용 길이
-                            quillRef.current.setSelection(length, 0);   // (index, length) -> length: 0이면 커서만 위치
                         }
                     }}
                 />

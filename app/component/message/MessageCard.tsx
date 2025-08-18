@@ -50,8 +50,10 @@ export default function MessageCard(props: {
 
             if (props.data.text) {
                 const safeHTML = DOMPurify.sanitize(props.data.text);
-                quillRef.current.clipboard.dangerouslyPasteHTML(safeHTML);
+                if(quillRef.current)
+                editorRef.current.innerHTML = safeHTML;
             }
+
         });
     }, []);
 
