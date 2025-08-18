@@ -11,8 +11,12 @@ import axios from "axios";
 export default ({
                     messages,
                     replyMessageId,
-                    setReplyMessageId
+                    setReplyMessageId,
+                    keyboardHeight,
+                    setKeyboardHeight,
                 }: {
+    keyboardHeight:number,
+    setKeyboardHeight: React.Dispatch<React.SetStateAction<number>>,
     messages: ReceivedMessage[],
     replyMessageId: number | null,
     setReplyMessageId: React.Dispatch<React.SetStateAction<number | null>>
@@ -130,6 +134,12 @@ export default ({
             quillRef.current?.setText('');
             setValue('');
             return;
+        }
+
+        // 키보드가 열려있을 때만 포커스 유지
+        if (keyboardHeight > 0 && quillRef.current) {
+            console.log("keyboardHeight : ", keyboardHeight);
+            quillRef.current.focus();
         }
 
         const parent = replyMessageId

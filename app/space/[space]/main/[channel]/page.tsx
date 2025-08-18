@@ -37,7 +37,7 @@ export default () => {
     const router = useRouter();
     const [mine, setMine] = useState(false)
     const [replyMessageId, setReplyMessageId] = useState<number | null>(null);
-
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
     const channelHeaderRef = useRef<HTMLDivElement>(null);
     const [channelHeaderHeight, setChannelHeaderHeight] = useState(0);
 
@@ -96,6 +96,37 @@ export default () => {
     }, []);
 
 
+    // 키보드 높이 감지
+    useEffect(() => {
+        const visualViewport = window.visualViewport;
+        let debounceTimeout: NodeJS.Timeout | null = null;
+
+        const handleResize = () => {
+            if (!visualViewport) return;
+            const heightDiff = window.innerHeight - visualViewport.height;
+            const threshold = 150;
+
+            if (debounceTimeout) clearTimeout(debounceTimeout);
+
+            // 키보드가 올라오는 중에 debounce
+            debounceTimeout = setTimeout(() => {
+                if (heightDiff > threshold) {
+                    setKeyboardHeight(heightDiff);
+                } else {
+                    setKeyboardHeight(0);
+                }
+            }, 100); // 200ms 동안 이벤트 없으면 실행
+        };
+
+        if (visualViewport) {
+            visualViewport.addEventListener("resize", handleResize);
+            return () => {
+                visualViewport.removeEventListener("resize", handleResize);
+                if (debounceTimeout) clearTimeout(debounceTimeout);
+            };
+        }
+    }, []);
+
 
 
     return <div className="flex flex-col bg-white-100"
@@ -121,6 +152,6 @@ export default () => {
         <MessageList messages={messages} setMessages={setMessages} replyMessageId={replyMessageId} setReplyMessageId={(number)=>setReplyMessageId(number)}></MessageList>
 
         {/* 입력창 영역 */}
-        <TextEditor replyMessageId={replyMessageId} setReplyMessageId={setReplyMessageId} messages={messages}></TextEditor>
+        <TextEditor setKeyboardHeight={setKeyboardHeight} keyboardHeight={keyboardHeight} replyMessageId={replyMessageId} setReplyMessageId={setReplyMessageId} messages={messages}></TextEditor>
     </div>
 }

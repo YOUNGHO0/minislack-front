@@ -24,7 +24,7 @@ export default ({
     const [inputHeight, setInputHeight] = useState(0);
     const prevInputHeight = useRef(0);
     const textAreaRef = useRef<HTMLDivElement>(null);
-    const [keyboardHeight, setKeyboardHeight] = useState(0);
+
     const [showUserList, setShowUserList] = useState(false);
     const params = useParams();
     const channelId = params.channel;
@@ -94,36 +94,7 @@ export default ({
         };
     }, []);
 
-    // 키보드 높이 감지
-    useEffect(() => {
-        const visualViewport = window.visualViewport;
-        let debounceTimeout: NodeJS.Timeout | null = null;
 
-        const handleResize = () => {
-            if (!visualViewport) return;
-            const heightDiff = window.innerHeight - visualViewport.height;
-            const threshold = 150;
-
-            if (debounceTimeout) clearTimeout(debounceTimeout);
-
-            // 키보드가 올라오는 중에 debounce
-            debounceTimeout = setTimeout(() => {
-                if (heightDiff > threshold) {
-                    setKeyboardHeight(heightDiff);
-                } else {
-                    setKeyboardHeight(0);
-                }
-            }, 100); // 200ms 동안 이벤트 없으면 실행
-        };
-
-        if (visualViewport) {
-            visualViewport.addEventListener("resize", handleResize);
-            return () => {
-                visualViewport.removeEventListener("resize", handleResize);
-                if (debounceTimeout) clearTimeout(debounceTimeout);
-            };
-        }
-    }, []);
 
     useEffect(() => {
         const textArea = textAreaRef.current;
@@ -146,11 +117,7 @@ export default ({
         const inputValue = textAreaRef.current?.innerHTML || "";
         if (inputValue === "") return;
 
-        // 키보드가 열려있을 때만 포커스 유지
-        if (keyboardHeight > 0 && textAreaRef.current) {
-            console.log("keyboardHeight : ", keyboardHeight);
-            textAreaRef.current.focus();
-        }
+
 
         let parent = 0;
         if (replyMessageIdRef.current) parent = replyMessageIdRef.current;
