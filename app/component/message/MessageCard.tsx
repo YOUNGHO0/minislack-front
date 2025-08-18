@@ -9,6 +9,7 @@ import MessageReply from "@/app/component/message/MessageReply";
 import ChatAvatar from "@/app/component/avatar/ChatAvatar";
 import dynamic from "next/dynamic";
 import DOMPurify from 'dompurify';
+import MessageCardEdit from "@/app/component/message/MessageCardEdit";
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
@@ -25,49 +26,23 @@ export default function MessageCard(props: {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(props.data.text);
     const [textWidth, setTextWidth] = useState<number | null>(null);
-    const [commentText, setCommentText] = useState('');
+
     const [contextMenuPos, setContextMenuPos] = useState<{x: number, y: number} | null>(null);
 
     const menuRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const textRef = useRef<HTMLDivElement>(null);
     const contextMenuRef = useRef<HTMLDivElement>(null);
-    const quillRef = useRef<any>(null);
-    const editorRef = useRef<HTMLDivElement>(null);
     const {sendMessage} = useWebSocket();
     const {space,channel} = useParams();
-
-    // Quill 초기화
-    useEffect(() => {
-        import('quill').then((QuillModule)=>{
-            if (!editorRef.current) return;
-            const quill = new QuillModule.default(editorRef.current, {
-                theme: 'bubble',
-                readOnly: true,
-                modules: { toolbar: false }
-            });
-            quillRef.current = quill;
-
-            if (props.data.text) {
-                const safeHTML = DOMPurify.sanitize(props.data.text);
-                if(quillRef.current)
-                editorRef.current.innerHTML = safeHTML;
-            }
-
-        });
-    }, []);
-
+    const [safeHTML, setSafeHTML] = useState<string>("초기값");
     // 메시지 업데이트 시 Quill 내용 갱신
     useEffect(() => {
-        if (props.data.text && quillRef.current) {
-            const safeHTML = DOMPurify.sanitize(props.data.text);
-            quillRef.current.clipboard.dangerouslyPasteHTML(safeHTML);
+        if (props.data.text) {
+            setSafeHTML( DOMPurify.sanitize(props.data.text));
         }
-    }, [props.data.text]);
+    }, []);
 
-    useEffect(() => {
-        if (!isEditing) setEditText(props.data.text);
-    }, [props.data.text, isEditing]);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -109,19 +84,6 @@ export default function MessageCard(props: {
         });
     }, [showMenu]);
 
-    const handleCancelEdit = () => {
-        setIsEditing(false);
-        setEditText(props.data.text);
-    };
-
-    const handleSaveEdit = () => {
-        const message : MessageEditSendEvent = {
-            message: {channelId: Number(channel), chatId: props.data.id, text: editText},
-            type: "chatUpdate"
-        };
-        sendMessage(JSON.stringify(message));
-        setIsEditing(false);
-    };
 
     const handleDelete = () => {
         const message : MessageDeleteSendEvent = {message: {channelId: Number(channel), id: props.data.id}, type: "chatDelete"};
@@ -136,11 +98,6 @@ export default function MessageCard(props: {
         props.setMessageId(messageId);
     };
 
-    const handleSaveComment = () => {
-        if (commentText.trim()) setCommentText('');
-    };
-
-    const handleCancelComment = () => setCommentText('');
 
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -156,16 +113,11 @@ export default function MessageCard(props: {
         });
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSaveEdit(); }
-        else if (e.key === 'Escape') handleCancelEdit();
-    };
-
-    const handleCommentKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSaveComment(); }
-        else if (e.key === 'Escape') handleCancelComment();
-    };
-
+    useEffect(() => {
+        if (props.data.text) {
+            setSafeHTML(DOMPurify.sanitize(props.data.text));
+        }
+    }, [props.data.text]);
 
     return (
         <>
@@ -217,10 +169,13 @@ export default function MessageCard(props: {
                             <>
                                 {props.parentMessage &&
                                     <MessageReply scroll={props.scroll} message={props.parentMessage}/>}
-                                {/* Quill 렌더링 */}
-                                <div ref={editorRef} className="ql-container ql-bubble p-0"/>
+                                {/* 메세지 렌더링 */}
+                                <div
+                                    className="font-bold text-sm  whitespace-pre-line break-words"
+                                    dangerouslySetInnerHTML={{__html: safeHTML}}
+                                />
                             </>
-                        )}
+                        }
                     </div>
                 </div>
 
@@ -265,13 +220,6 @@ export default function MessageCard(props: {
                     </button>
                 </div>
             )}
-
-            <style jsx>{`
-                .ql-container {
-                    font-size: 14px;
-                    font-weight: 700;
-                }
-            `}</style>
 
         </>
     );
