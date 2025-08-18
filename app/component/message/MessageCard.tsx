@@ -145,27 +145,7 @@ export default function MessageCard(props: {
                     </div>
 
                     <div className="mt-1" ref={textRef}>
-                        {isEditing ? (
-                            <div className="space-y-2">
-                                <TextArea
-                                    ref={textareaRef}
-                                    value={editText}
-                                    onChange={(e) => setEditText(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                    className="text-xs w-full p-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    style={{width: textWidth ? `${textWidth}px` : 'auto'}}
-                                    rows={3}
-                                />
-                                <div className="flex justify-between gap-2">
-                                    <button onClick={handleCancelEdit}
-                                            className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-md transition-colors">취소
-                                    </button>
-                                    <button onClick={handleSaveEdit}
-                                            className="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors">저장
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
+                        {isEditing ? <MessageCardEdit isEditing={isEditing} setIsEditing={setIsEditing} channel={Number(channel)} data={props.data} />:
                             <>
                                 {props.parentMessage &&
                                     <MessageReply scroll={props.scroll} message={props.parentMessage}/>}
