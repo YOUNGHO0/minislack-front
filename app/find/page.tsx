@@ -17,6 +17,8 @@ export default () => {
     const [activeSpaceNumber, setActiveSpaceNumber] = useState(0);
     const [openCodeDialog, setOpenCodeDialog] = useState<boolean>(false);
 
+    spaceList.map(value => console.log(value));
+
     const fetchChannels = () => {
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/joinable`, {
             withCredentials: true // 쿠키 포함
@@ -53,27 +55,25 @@ export default () => {
         }
     };
 
-    const handleJoin = (index : number)=>{
-        setActiveSpaceNumber(index);
-        if(spaceList[index].codeRequired){
+    const handleJoin = (index: number) => {
+        if (spaceList[index].codeRequired) {
+            setActiveSpaceNumber(index);
             setOpenCodeDialog(true);
+        } else {
+            joinWithInviteCode("", index).catch(() => console.log("hello"));
         }
-        else{
-            joinWithInviteCode("").catch(()=>{console.log("hello")})
+    };
 
-        }
-    }
-
-
-    const joinWithInviteCode = (inviteCode: string): Promise<void> => {
+    const joinWithInviteCode = (inviteCode: string, index?: number): Promise<void> => {
+        const spaceIndex = index ?? activeSpaceNumber;
         return axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${spaceList[activeSpaceNumber].id}&inviteCode=${inviteCode}`
-        ,{withCredentials: true}).then(response => {
+            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${spaceList[spaceIndex].id}&inviteCode=${inviteCode}`
+            , { withCredentials: true }
+        ).then(response => {
             if (response.status === 200) {
-                router.push(`/space/${spaceList[activeSpaceNumber].id}/join?inviteCode=${inviteCode !== "" ? inviteCode : ''}`);
+                router.push(`/space/${spaceList[spaceIndex].id}/join?inviteCode=${inviteCode !== "" ? inviteCode : ''}`);
             }
         }).catch(error => {
-            // 호출한 쪽에서 catch로 처리할 수 있도록 다시 던져줌
             return Promise.reject(error);
         });
     };
