@@ -7,6 +7,7 @@ import {ChatCreateSendEvent} from "@/types/events";
 import {useParams} from "next/navigation";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import UserTagPage from "@/app/component/user/UserTagPage";
+import DOMPurify from "dompurify";
 
 export default ({
                     messages,
@@ -122,7 +123,7 @@ export default ({
         let parent = 0;
         if (replyMessageIdRef.current) parent = replyMessageIdRef.current;
         const chatCreateSendEvent: ChatCreateSendEvent = {
-            message: {channelId: Number(channelId), parent: parent, text: inputValue},
+            message: {channelId: Number(channelId), parent: parent, text: DOMPurify.sanitize(inputValue)},
             type: "chatCreate"
         }
 
