@@ -19,7 +19,25 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     title: "Elive chat",
     description: "쉽고 빠른 채팅",
-    icons:"/icon.ico"
+    icons: {
+        icon: "/icon.ico",
+    },
+    openGraph: {
+        title: "Elive chat",
+        description: "쉽고 빠른 채팅",
+        url: "https://elivechat.xyz",
+        siteName: "Elive chat",
+        images: [
+            {
+                url: "/images/logo.png", // 로고 (public/og-logo.png)
+                width: 800,
+                height: 600,
+                alt: "Elive Chat",
+            },
+        ],
+        locale: "ko_KR",
+        type: "website",
+    },
 };
 
 export default function RootLayout({
