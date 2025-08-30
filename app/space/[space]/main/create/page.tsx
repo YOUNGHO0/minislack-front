@@ -71,7 +71,7 @@ const ChannelCreatePage = () => {
                 {withCredentials : true})
                 .then(res =>{
                     const newPath = path.replace(/\/create$/, '') + "/" + res.data;
-                    router.push(newPath);
+                    router.replace(newPath);
                 })
         } else {
             console.error("채널 이름이 비어있거나 null입니다.");

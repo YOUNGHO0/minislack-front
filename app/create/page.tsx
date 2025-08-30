@@ -69,7 +69,7 @@ const SpaceCreatePage = () => {
             }
         ).then((response) => {
             if (response.status === 200) {
-                router.push(`/space/${response.data}/main`);
+                router.replace(`/space/${response.data}/main`);
             } else {
                 setHasError(true);
                 setError("채널 생성에 실패했습니다.");
