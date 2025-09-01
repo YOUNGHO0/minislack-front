@@ -1,23 +1,23 @@
 'use client'
 import * as React from "react";
+import {useEffect} from "react";
 import {Dialog} from "radix-ui";
 import {Cross2Icon} from "@radix-ui/react-icons";
 import {User} from "@/types/type";
 import axios from "axios";
 import {useParams} from "next/navigation";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
-import {useEffect} from "react";
 
-const AdminChangeDialog = ({open, closeWindow} : {open : boolean , closeWindow : ()=>void } ) => {
+const AdminChangeDialog = ({open, closeWindow}: { open: boolean, closeWindow: () => void }) => {
     const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
     const [searchQuery, setSearchQuery] = React.useState("");
     const [userList, setUserList] = React.useState<User[]>([]);
     const {sendMessage} = useWebSocket();
 
-    const { space } = useParams();
+    const {space} = useParams();
 
     const fetchUsers = () => {
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, { withCredentials: true })
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, {withCredentials: true})
             .then((res) => {
                 setUserList(res.data);
             });
@@ -51,14 +51,14 @@ const AdminChangeDialog = ({open, closeWindow} : {open : boolean , closeWindow :
         if (selectedUser) {
             axios.post(
                 `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/yield`,
-                {spaceId: space,userId: selectedUser.id}, // 사용자 입력값 사용
+                {spaceId: space, userId: selectedUser.id}, // 사용자 입력값 사용
                 {
                     withCredentials: true,
                     headers: {
                         "Content-Type": "application/json"
                     }
                 })
-                // .then(()=>)
+            // .then(()=>)
         }
     };
 
@@ -66,8 +66,9 @@ const AdminChangeDialog = ({open, closeWindow} : {open : boolean , closeWindow :
         <Dialog.Root open={open}
         >
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-gray-300/60 data-[state=open]:animate-overlayShow" />
-                <Dialog.Content className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray1 p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow">
+                <Dialog.Overlay className="fixed inset-0 bg-gray-300/60 data-[state=open]:animate-overlayShow"/>
+                <Dialog.Content
+                    className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray1 p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow">
                     <Dialog.Title className="m-0 text-[17px] font-medium text-mauve12">
                         관리자 변경
                     </Dialog.Title>
@@ -115,7 +116,8 @@ const AdminChangeDialog = ({open, closeWindow} : {open : boolean , closeWindow :
                                         <input
                                             type="radio"
                                             checked={isSelected}
-                                            onChange={() => {}}
+                                            onChange={() => {
+                                            }}
                                             className="w-4 h-4 accent-violet9"
                                         />
                                         <div className="flex-1">
@@ -137,8 +139,9 @@ const AdminChangeDialog = ({open, closeWindow} : {open : boolean , closeWindow :
                     {/* 버튼 영역 */}
                     <div className="mt-[25px] flex justify-end gap-2">
                         <Dialog.Close asChild>
-                            <button className="inline-flex h-[35px] items-center justify-center rounded bg-mauve4 px-[15px] font-medium leading-none text-mauve11 outline-none outline-offset-1 hover:bg-mauve5 focus-visible:outline-2 focus-visible:outline-mauve6 select-none"
-                            onClick={closeWindow}
+                            <button
+                                className="inline-flex h-[35px] items-center justify-center rounded bg-mauve4 px-[15px] font-medium leading-none text-mauve11 outline-none outline-offset-1 hover:bg-mauve5 focus-visible:outline-2 focus-visible:outline-mauve6 select-none"
+                                onClick={closeWindow}
                             >
                                 취소
                             </button>
@@ -159,7 +162,7 @@ const AdminChangeDialog = ({open, closeWindow} : {open : boolean , closeWindow :
                             className="absolute right-2.5 top-2.5 inline-flex size-[25px] appearance-none items-center justify-center rounded-full text-violet11 bg-gray3 hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 focus:outline-none"
                             aria-label="Close"
                         >
-                            <Cross2Icon />
+                            <Cross2Icon/>
                         </button>
                     </Dialog.Close>
                 </Dialog.Content>

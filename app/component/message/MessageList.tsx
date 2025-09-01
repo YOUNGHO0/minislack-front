@@ -14,12 +14,14 @@ export default ({
                     messages,
                     setMessages,
                     replyMessageId,
-                    setReplyMessageId}
-                    :{
-                    messages:ReceivedMessage[],
-                    setMessages: React.Dispatch<React.SetStateAction<ReceivedMessage[]>>;
-                    replyMessageId:number|null,
-                    setReplyMessageId: React.Dispatch<React.SetStateAction<number | null>>}) =>{
+                    setReplyMessageId
+                }
+                    : {
+    messages: ReceivedMessage[],
+    setMessages: React.Dispatch<React.SetStateAction<ReceivedMessage[]>>;
+    replyMessageId: number | null,
+    setReplyMessageId: React.Dispatch<React.SetStateAction<number | null>>
+}) => {
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState(false); // useState로 변경
@@ -38,9 +40,9 @@ export default ({
     const [showJoinDialog, setShowJoinDialog] = useState(false);
 
     //채팅 메세지 데이터 가져오기 useEffect
-        useEffect(() => {
-            getMessage();
-        }, []);
+    useEffect(() => {
+        getMessage();
+    }, []);
 
 
     const scrollToBottom = () => {
@@ -72,7 +74,7 @@ export default ({
     // chatCreate 이벤트로 인한 메시지 추가 시에만 스크롤 처리
     useEffect(() => {
         if (shouldScrollToBottom) {
-            if(isUserTouchingRef.current == false){
+            if (isUserTouchingRef.current == false) {
                 requestAnimationFrame(() => {
                     scrollToBottom();
                 });
@@ -264,7 +266,6 @@ export default ({
     }, [channelId]);
 
 
-
     useEffect(() => {
         const scrollContainer = scrollContainerRef.current;
         if (!scrollContainer) return;
@@ -393,25 +394,25 @@ export default ({
     };
 
     return <>
-    <Container
-        ref={scrollContainerRef}
-        className="flex-4 h-30 overflow-y-scroll "
+        <Container
+            ref={scrollContainerRef}
+            className="flex-4 h-30 overflow-y-scroll "
 
-    >
-        {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
-        {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
-            <div ref={topSentinelRef} className="h-10 w-full flex-shrink-0"/>
-        )}
+        >
+            {/* 상단 감지용 센티넬 - 로딩 중이 아니고 더 불러올 데이터가 있을 때만 보임 */}
+            {!isLoading && minPageNumber !== null && minPageNumber > 0 && (
+                <div ref={topSentinelRef} className="h-10 w-full flex-shrink-0"/>
+            )}
 
-        {messages.map((message) => (
-            <div key={message.id} className="message-row w-full">
-                <MessageCard scrollContainerRef={scrollContainerRef} scroll={scroll}
-                             refCallback={(el) => messageRefs.current[message.id] = el}
-                             parentMessage={message.parentMessage === null ? undefined : message.parentMessage}
-                             data={message} setMessageId={setReplyMessageId}/>
-            </div>
-        ))}
-    </Container>
+            {messages.map((message) => (
+                <div key={message.id} className="message-row w-full">
+                    <MessageCard scrollContainerRef={scrollContainerRef} scroll={scroll}
+                                 refCallback={(el) => messageRefs.current[message.id] = el}
+                                 parentMessage={message.parentMessage === null ? undefined : message.parentMessage}
+                                 data={message} setMessageId={setReplyMessageId}/>
+                </div>
+            ))}
+        </Container>
         {showJoinDialog && <JoinDialog getMessage={getMessage} close={() => setShowJoinDialog(false)}/>}
     </>
 

@@ -1,9 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {EllipsisHorizontalIcon} from '@heroicons/react/24/outline';
-import {TextArea} from '@radix-ui/themes';
 import {ReceivedMessage} from "@/types/type";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
-import {MessageDeleteSendEvent, MessageEditSendEvent} from "@/types/events";
+import {MessageDeleteSendEvent} from "@/types/events";
 import {useParams} from "next/navigation";
 import MessageReply from "@/app/component/message/MessageReply";
 import ChatAvatar from "@/app/component/avatar/ChatAvatar";
@@ -11,15 +10,15 @@ import dynamic from "next/dynamic";
 import DOMPurify from 'dompurify';
 import MessageCardEdit from "@/app/component/message/MessageCardEdit";
 
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill-new'), {ssr: false});
 
 export default function MessageCard(props: {
     scrollContainerRef?: React.RefObject<HTMLDivElement | null>,
-    scroll : (id:number)=>void,
+    scroll: (id: number) => void,
     refCallback?: (el: HTMLDivElement | null) => void,
-    parentMessage:ReceivedMessage|undefined,
+    parentMessage: ReceivedMessage | undefined,
     data: ReceivedMessage,
-    setMessageId : (messageId:number) =>void
+    setMessageId: (messageId: number) => void
 }) {
     const [showMenu, setShowMenu] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
@@ -27,19 +26,19 @@ export default function MessageCard(props: {
     const [editText, setEditText] = useState(props.data.text);
     const [textWidth, setTextWidth] = useState<number | null>(null);
 
-    const [contextMenuPos, setContextMenuPos] = useState<{x: number, y: number} | null>(null);
+    const [contextMenuPos, setContextMenuPos] = useState<{ x: number, y: number } | null>(null);
 
     const menuRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const textRef = useRef<HTMLDivElement>(null);
     const contextMenuRef = useRef<HTMLDivElement>(null);
     const {sendMessage} = useWebSocket();
-    const {space,channel} = useParams();
+    const {space, channel} = useParams();
     const [safeHTML, setSafeHTML] = useState<string>("초기값");
     // 메시지 업데이트 시 Quill 내용 갱신
     useEffect(() => {
         if (props.data.text) {
-            setSafeHTML( DOMPurify.sanitize(props.data.text));
+            setSafeHTML(DOMPurify.sanitize(props.data.text));
         }
     }, []);
 
@@ -53,6 +52,7 @@ export default function MessageCard(props: {
                 setContextMenuPos(null);
             }
         }
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
@@ -86,13 +86,16 @@ export default function MessageCard(props: {
 
 
     const handleDelete = () => {
-        const message : MessageDeleteSendEvent = {message: {channelId: Number(channel), id: props.data.id}, type: "chatDelete"};
+        const message: MessageDeleteSendEvent = {
+            message: {channelId: Number(channel), id: props.data.id},
+            type: "chatDelete"
+        };
         sendMessage(JSON.stringify(message));
         setShowMenu(false);
         setContextMenuPos(null);
     };
 
-    const handleAddComment = (messageId:number) => {
+    const handleAddComment = (messageId: number) => {
         setShowMenu(false);
         setContextMenuPos(null);
         props.setMessageId(messageId);
@@ -101,7 +104,7 @@ export default function MessageCard(props: {
 
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
-        setContextMenuPos({ x: e.clientX, y: e.clientY });
+        setContextMenuPos({x: e.clientX, y: e.clientY});
         setShowMenu(false);
     };
 
@@ -151,7 +154,9 @@ export default function MessageCard(props: {
                     </div>
 
                     <div className="mt-1" ref={textRef}>
-                        {isEditing ? <MessageCardEdit isEditing={isEditing} setIsEditing={setIsEditing} channel={Number(channel)} data={props.data} />:
+                        {isEditing ?
+                            <MessageCardEdit isEditing={isEditing} setIsEditing={setIsEditing} channel={Number(channel)}
+                                             data={props.data}/> :
                             <>
                                 {props.parentMessage &&
                                     <MessageReply scroll={props.scroll} message={props.parentMessage}/>}

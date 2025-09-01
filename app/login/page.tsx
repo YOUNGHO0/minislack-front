@@ -1,10 +1,10 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React, {Suspense} from 'react';
 import GoogleIcon from "@/app/login/GoogleIcon";
-import { Heading, Separator } from "@radix-ui/themes";
-import { useSearchParams } from "next/navigation";
-import {Text} from "@radix-ui/themes"
+import {Heading, Separator} from "@radix-ui/themes";
+import {useSearchParams} from "next/navigation";
+
 function LoginContent() {
     const searchParams = useSearchParams();
     const redirect = searchParams.get('redirect');

@@ -1,24 +1,17 @@
-import {Button, DropdownMenu, Separator} from "@radix-ui/themes";
-import {
-    DotsHorizontalIcon,
-    DotsVerticalIcon,
-    ExitIcon,
-    Pencil1Icon,
-    PersonIcon,
-    TrashIcon
-} from "@radix-ui/react-icons";
+import {DropdownMenu} from "@radix-ui/themes";
+import {DotsVerticalIcon, ExitIcon, Pencil1Icon, PersonIcon, TrashIcon} from "@radix-ui/react-icons";
 import * as React from "react";
+import {useState} from "react";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
-import {ChannelDeleteSendEvent, ChannelUpdateSendEvent} from "@/types/events";
+import {ChannelDeleteSendEvent} from "@/types/events";
 import ChannelLeaveDialog from "@/app/component/channel/ChannelLeaveDialog";
 import axios from "axios";
 import {useParams, usePathname, useRouter} from "next/navigation";
-import {useState} from "react";
 import ChannelLeaveErrorDialog from "@/app/component/error/ChannelLeaveErrorDialog";
 import ChannelAdminChange from "@/app/component/channel/ChannelAdminChange";
 
 
-function getUpdateAndDelete(goEdit:()=>void,setChangeAdminState:(flag:boolean)=>void, space:number, channelId:number, sendDeleteMessage: () => void) {
+function getUpdateAndDelete(goEdit: () => void, setChangeAdminState: (flag: boolean) => void, space: number, channelId: number, sendDeleteMessage: () => void) {
 
     return <>
 
@@ -29,12 +22,12 @@ function getUpdateAndDelete(goEdit:()=>void,setChangeAdminState:(flag:boolean)=>
                 setChangeAdminState(true);
             }}
         >
-            <PersonIcon className="w-4 h-4" />
+            <PersonIcon className="w-4 h-4"/>
             관리자 변경
         </DropdownMenu.Item>
 
         <DropdownMenu.Separator className="h-px bg-gray-200 my-1"/>
-        <DropdownMenu.Item onClick={()=> goEdit()}
+        <DropdownMenu.Item onClick={() => goEdit()}
                            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded cursor-pointer outline-none">
             <Pencil1Icon className="w-4 h-4"/>
             변경
@@ -50,7 +43,12 @@ function getUpdateAndDelete(goEdit:()=>void,setChangeAdminState:(flag:boolean)=>
     </>;
 }
 
-export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:number, closeWindow : ()=>void, openWindow:()=>void }) => {
+export default ({mine, openWindow, closeWindow, channelId}: {
+    mine: boolean,
+    channelId: number,
+    closeWindow: () => void,
+    openWindow: () => void
+}) => {
     const {sendMessage} = useWebSocket()
     const {space} = useParams();
     const [errorState, setErrorState] = useState(false);
@@ -58,18 +56,18 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
     const [channelOutState, setChannelOutState] = React.useState(false);
     const router = useRouter();
     const editLink = `${usePathname()}/edit`;
-    const sendDeleteMessage = ()=>{
-        let channelDeleteSendEvent :ChannelDeleteSendEvent = {message: {id: channelId}, type: "channelDelete"}
+    const sendDeleteMessage = () => {
+        let channelDeleteSendEvent: ChannelDeleteSendEvent = {message: {id: channelId}, type: "channelDelete"}
         sendMessage(JSON.stringify(channelDeleteSendEvent))
         console.log(channelDeleteSendEvent)
         closeWindow();
     }
 
 
-    const leaveChannel = ()=>{
+    const leaveChannel = () => {
         axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/channel/leave`,
-            {spaceId : space, channelId : channelId}, // 사용자 입력값 사용
+            {spaceId: space, channelId: channelId}, // 사용자 입력값 사용
             {
                 withCredentials: true,
                 headers: {
@@ -81,7 +79,7 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
             }
         })
             .catch(reason => {
-                if(reason.status === 403){
+                if (reason.status === 403) {
                     setErrorState(true);
                 }
             })
@@ -89,9 +87,12 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
 
     return (
         <div>
-            <ChannelLeaveErrorDialog alertState={errorState} closeWindow={()=>setErrorState(false)}></ChannelLeaveErrorDialog>
-            <ChannelLeaveDialog alertState={channelOutState} closeWindow={()=>setChannelOutState(false)} leave={leaveChannel}></ChannelLeaveDialog>
-            <ChannelAdminChange open={changeAdminState} closeWindow={()=>setChangeAdminState(false)}></ChannelAdminChange>
+            <ChannelLeaveErrorDialog alertState={errorState}
+                                     closeWindow={() => setErrorState(false)}></ChannelLeaveErrorDialog>
+            <ChannelLeaveDialog alertState={channelOutState} closeWindow={() => setChannelOutState(false)}
+                                leave={leaveChannel}></ChannelLeaveDialog>
+            <ChannelAdminChange open={changeAdminState}
+                                closeWindow={() => setChangeAdminState(false)}></ChannelAdminChange>
             <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
                     <div className={"hover:shadow-md hover:bg-gray-200"}>
@@ -106,11 +107,11 @@ export default ({mine,openWindow,closeWindow,channelId}:{mine:boolean,channelId:
                             setChannelOutState(true)
                         }}
                     >
-                        <ExitIcon className="w-4 h-4" />
+                        <ExitIcon className="w-4 h-4"/>
                         채널 나가기
                     </DropdownMenu.Item>
 
-                    {mine && getUpdateAndDelete(()=>router.push(editLink),setChangeAdminState,Number(space),channelId, sendDeleteMessage)}
+                    {mine && getUpdateAndDelete(() => router.push(editLink), setChangeAdminState, Number(space), channelId, sendDeleteMessage)}
                 </DropdownMenu.Content>
             </DropdownMenu.Root>
         </div>

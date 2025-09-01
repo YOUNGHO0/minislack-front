@@ -1,9 +1,13 @@
 import * as React from "react";
 import {AlertDialog, Button, Flex} from "@radix-ui/themes";
 
-export default ({alertState, closeWindow, leave} : {alertState : boolean, closeWindow : ()=>void, leave: ()=>void}) => {
+export default ({alertState, closeWindow, leave}: {
+    alertState: boolean,
+    closeWindow: () => void,
+    leave: () => void
+}) => {
     return (
-        <AlertDialog.Root open={alertState} >
+        <AlertDialog.Root open={alertState}>
             <AlertDialog.Content maxWidth="450px">
                 <AlertDialog.Title>Revoke access</AlertDialog.Title>
                 <AlertDialog.Description size="2">
@@ -13,13 +17,16 @@ export default ({alertState, closeWindow, leave} : {alertState : boolean, closeW
                 <Flex gap="3" mt="4" justify="end">
                     <AlertDialog.Cancel>
                         <Button variant="soft" color="gray"
-                            onClick={closeWindow}>
+                                onClick={closeWindow}>
                             취소
                         </Button>
                     </AlertDialog.Cancel>
                     <AlertDialog.Action>
                         <Button variant="solid" color="red"
-                            onClick={()=>{ closeWindow(); leave();}}>
+                                onClick={() => {
+                                    closeWindow();
+                                    leave();
+                                }}>
                             방 나가기
                         </Button>
                     </AlertDialog.Action>

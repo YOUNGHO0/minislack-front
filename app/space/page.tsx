@@ -1,18 +1,14 @@
 'use client'
 
+import * as React from "react";
 import {useEffect, useState} from "react";
 import {Button, Heading} from "@radix-ui/themes";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import {DotsVerticalIcon, Pencil1Icon, TrashIcon} from "@radix-ui/react-icons";
+import {DotsVerticalIcon, Pencil1Icon} from "@radix-ui/react-icons";
 import axios, {HttpStatusCode} from "axios";
-
-import SpaceCreateButton from "@/app/component/space/SpaceCreateButton";
-import {Channel, Space} from "@/types/channel";
-import {router} from "next/client";
+import {Space} from "@/types/channel";
 import {useRouter} from "next/navigation";
 import {SearchIcon} from "lucide-react";
-import SpaceUpdateButton from "@/app/component/space/SpaceUpdateButton";
-import * as React from "react";
 import {PlusCircleIcon} from "@heroicons/react/24/outline";
 
 export default () => {
@@ -41,10 +37,10 @@ export default () => {
         setUpdateShow(false);
     }
 
-    const leaveSpace = (space: number)=>{
+    const leaveSpace = (space: number) => {
         axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/leave`,
-            {spaceId : space}, // 사용자 입력값 사용
+            {spaceId: space}, // 사용자 입력값 사용
             {
                 withCredentials: true,
                 headers: {
@@ -53,19 +49,18 @@ export default () => {
             })
     }
 
-    const checkJoin = (space : number)=>{
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${space}&inviteCode=""`, { withCredentials: true })
+    const checkJoin = (space: number) => {
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${space}&inviteCode=""`, {withCredentials: true})
             .then((res) => {
 
-            }).catch( (res)=>{
-                if(res.status == HttpStatusCode.Forbidden){
+            }).catch((res) => {
+            if (res.status == HttpStatusCode.Forbidden) {
                 alert("삭제된 채팅방 입니다");
                 leaveSpace(space);
-                }
-                else{
-                    router.push(`/space/${space}`)
-                    return;
-                }
+            } else {
+                router.push(`/space/${space}`)
+                return;
+            }
 
         })
     }
@@ -126,7 +121,7 @@ export default () => {
                 <Heading className="flex-shrink-0 text-2xl font-semibold text-gray-900">
                     방 목록
                 </Heading>
-                <Button style={{background:"#f77915"}} onClick={() => {
+                <Button style={{background: "#f77915"}} onClick={() => {
                     router.push('/find')
                 }}
                         className="h-8 px-3 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 cursor-pointer">
@@ -138,11 +133,11 @@ export default () => {
 
             {/* 반응형 그리드 레이아웃 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                {spaceList.map((space: Space,index : number) => (
+                {spaceList.map((space: Space, index: number) => (
                     <div
                         key={space.id}
                         className="relative bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
-                        onClick={() => checkJoin(space.id) }
+                        onClick={() => checkJoin(space.id)}
                     >
                         {/* 채널 이름 */}
                         <div className="pr-8">
@@ -154,12 +149,14 @@ export default () => {
                             </p>
                         </div>
 
-                        {space.mine === true ?getDropDownMenu(index, space) : null}
+                        {space.mine === true ? getDropDownMenu(index, space) : null}
                     </div>
                 ))}
 
                 <div
-                    onClick={()=>{router.push("/create")}}
+                    onClick={() => {
+                        router.push("/create")
+                    }}
                     className="bg-white rounded-lg border border-dashed border-gray-300 p-4 shadow-sm hover:shadow-md hover:border-gray-400 transition-all duration-200 flex items-center justify-center min-h-[80px]">
                     <PlusCircleIcon className={"w-10"}></PlusCircleIcon>
                 </div>

@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from "react";
+import {useEffect, useState} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 import {Checkbox, Flex, Text, Theme} from "@radix-ui/themes";
 import axios from "axios";
-import {useEffect, useState} from "react";
 import {Space} from "@/types/channel";
 
 const SpaceEditPage = () => {

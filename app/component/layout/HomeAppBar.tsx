@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from 'react';
+import {useEffect} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -17,9 +18,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
-import { usePathname, useRouter } from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import axios from "axios";
-import { useEffect } from "react";
 
 export default function HomeAppBar() {
     const pathname = usePathname();
@@ -33,7 +33,7 @@ export default function HomeAppBar() {
     const [drawerOpen, setDrawerOpen] = React.useState(false);
 
     useEffect(() => {
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user`, { withCredentials: true })
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user`, {withCredentials: true})
             .then(response => {
                 if (response.status === 200) {
                     setIsLoggedIn(true);
@@ -51,7 +51,7 @@ export default function HomeAppBar() {
     }
 
     const logout = () => {
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/logout`, { withCredentials: true })
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/logout`, {withCredentials: true})
             .then(() => {
                 setIsLoggedIn(false);
                 router.push("/");
@@ -64,7 +64,7 @@ export default function HomeAppBar() {
 
     const drawerList = (
         <Box
-            sx={{ width: 250 }}
+            sx={{width: 250}}
             role="presentation"
             onClick={toggleDrawer(false)}
             onKeyDown={toggleDrawer(false)}
@@ -72,36 +72,36 @@ export default function HomeAppBar() {
             <List>
                 <ListItem disablePadding>
                     <ListItemButton onClick={() => router.push("/profile")}>
-                        <ListItemIcon><AccountCircleIcon /></ListItemIcon>
-                        <ListItemText primary="프로필" />
+                        <ListItemIcon><AccountCircleIcon/></ListItemIcon>
+                        <ListItemText primary="프로필"/>
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
                     <ListItemButton onClick={() => router.push("/feedback")}>
-                        <ListItemIcon><FeedbackIcon /></ListItemIcon>
-                        <ListItemText primary="피드백" />
+                        <ListItemIcon><FeedbackIcon/></ListItemIcon>
+                        <ListItemText primary="피드백"/>
                     </ListItemButton>
                 </ListItem>
             </List>
-            <Divider />
+            <Divider/>
         </Box>
     );
 
     return (
         <Box>
-            <AppBar position="static" style={{ background: "#f77915" }}>
+            <AppBar position="static" style={{background: "#f77915"}}>
                 <Toolbar>
                     <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
                         aria-label="menu"
-                        sx={{ mr: 2 }}
+                        sx={{mr: 2}}
                         onClick={toggleDrawer(true)}
                     >
-                        <MenuIcon />
+                        <MenuIcon/>
                     </IconButton>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         EliveChat
                     </Typography>
                     {isLogin

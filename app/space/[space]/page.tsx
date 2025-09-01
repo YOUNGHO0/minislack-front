@@ -2,7 +2,7 @@
 import {useEffect} from "react";
 import {usePathname, useRouter} from "next/navigation";
 
-export default ()=>{
+export default () => {
 
     const pathname = usePathname();
     const router = useRouter();

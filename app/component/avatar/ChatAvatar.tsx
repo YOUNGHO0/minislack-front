@@ -1,4 +1,4 @@
-import { Avatar } from "@radix-ui/themes";
+import {Avatar} from "@radix-ui/themes";
 
 // 🎨 사용할 Radix 컬러 팔레트
 const avatarColors = [

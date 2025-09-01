@@ -68,7 +68,7 @@ export default () => {
         const spaceIndex = index ?? activeSpaceNumber;
         return axios.get(
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${spaceList[spaceIndex].id}&inviteCode=${inviteCode}`
-            , { withCredentials: true }
+            , {withCredentials: true}
         ).then(response => {
             if (response.status === 200) {
                 router.push(`/space/${spaceList[spaceIndex].id}/join?inviteCode=${inviteCode !== "" ? inviteCode : ''}`);
@@ -85,7 +85,7 @@ export default () => {
                 <Heading className="flex-shrink-0 text-2xl font-semibold text-gray-900">
                     채팅방 찾기
                 </Heading>
-                <Button style={{background:"#f77915"}} onClick={() => {
+                <Button style={{background: "#f77915"}} onClick={() => {
                     router.push('/space')
                 }}
                         className="h-8 px-3 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 cursor-pointer">
@@ -94,11 +94,13 @@ export default () => {
                 </Button>
             </div>
 
-            <SpaceJoinDialog open={openCodeDialog} joinWithInviteCode={joinWithInviteCode} close={()=>{setOpenCodeDialog(false)}}/>
+            <SpaceJoinDialog open={openCodeDialog} joinWithInviteCode={joinWithInviteCode} close={() => {
+                setOpenCodeDialog(false)
+            }}/>
 
             {/* 반응형 그리드 레이아웃 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                {spaceList.map((channel: Channel,index : number) => (
+                {spaceList.map((channel: Channel, index: number) => (
                     <div
                         key={channel.id}
                         className="relative bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"

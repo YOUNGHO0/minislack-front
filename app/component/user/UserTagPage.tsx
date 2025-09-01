@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { User } from "@/types/type";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Avatar } from "@radix-ui/themes";
-import { useParams } from "next/navigation";
+import {useEffect, useState} from "react";
+import {User} from "@/types/type";
+import {Avatar} from "@radix-ui/themes";
+import {useParams} from "next/navigation";
 
-export default function UserTagPage({ onSelectUser, searchTerm }: { onSelectUser: (user: User) => void, searchTerm:string }) {
+export default function UserTagPage({onSelectUser, searchTerm}: {
+    onSelectUser: (user: User) => void,
+    searchTerm: string
+}) {
     const [userList, setUserList] = useState<User[]>([]);
-    const { space } = useParams();
+    const {space} = useParams();
 
     // useEffect(() => {
     //     axios
@@ -21,7 +22,7 @@ export default function UserTagPage({ onSelectUser, searchTerm }: { onSelectUser
 
     useEffect(() => {
         // 샘플 데이터 20개 생성
-        const sampleData: User[] = Array.from({ length: 20 }, (_, i) => ({
+        const sampleData: User[] = Array.from({length: 20}, (_, i) => ({
             id: i + 1,
             profile: i + 1,
             nickName: `사용자${i + 1}`,

@@ -1,5 +1,5 @@
 'use cline'
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from "next/navigation";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {ReceivedMessage, User} from "@/types/type";
@@ -15,7 +15,7 @@ export default ({
                     keyboardHeight,
                     setKeyboardHeight,
                 }: {
-    keyboardHeight:number,
+    keyboardHeight: number,
     setKeyboardHeight: React.Dispatch<React.SetStateAction<number>>,
     messages: ReceivedMessage[],
     replyMessageId: number | null,
@@ -27,14 +27,14 @@ export default ({
     const params = useParams();
     const space = params.space;
     const channelId = params.channel;
-    const { sendMessage } = useWebSocket();
-    const [mentionOpen,setMentionOpen] = useState(false);
+    const {sendMessage} = useWebSocket();
+    const [mentionOpen, setMentionOpen] = useState(false);
 
-    const [atValues,setAtValues] = useState<User[]>([]);
+    const [atValues, setAtValues] = useState<User[]>([]);
 
     const hashValues = [
-        { id: 3, value: "Fredrik Sundqvist 2" },
-        { id: 4, value: "Patrik Sjölin 2" }
+        {id: 3, value: "Fredrik Sundqvist 2"},
+        {id: 4, value: "Patrik Sjölin 2"}
     ];
 
     const [isQuillReady, setIsQuillReady] = useState(false);
@@ -44,14 +44,14 @@ export default ({
             try {
                 const res = await axios.get<User[]>(
                     `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`,
-                    { withCredentials: true }
+                    {withCredentials: true}
                 );
                 setAtValues(res.data);
 
                 // Quill 및 Mention 임포트
                 const QuillModule = (await import('quill')).default;
                 const MentionModule = await import('quill-mention');
-                const { Mention, MentionBlot } = MentionModule;
+                const {Mention, MentionBlot} = MentionModule;
 
                 // 한 번만 등록
                 if (!QuillModule.imports['blots/mention']) {
@@ -99,10 +99,10 @@ export default ({
                             source: function (
                                 searchTerm: string,
                                 renderList: (items: any[], searchTerm: string) => void,
-                                mentionChar: string){
+                                mentionChar: string) {
                                 let values =
                                     mentionChar === '@'
-                                        ? res.data.map(u => ({ ...u, value: u.nickName }))
+                                        ? res.data.map(u => ({...u, value: u.nickName}))
                                         : hashValues;
 
                                 if (searchTerm.length === 0) {
@@ -129,8 +129,6 @@ export default ({
     }, []);
 
 
-
-
     const createChat = () => {
         const plainText = quillRef.current?.getText().trim() || '';
 
@@ -143,7 +141,7 @@ export default ({
         const parent = replyMessageId
 
         const chatCreateSendEvent = {
-            message: { channelId: Number(channelId), parent, text: quillRef.current?.root.innerHTML || '' },
+            message: {channelId: Number(channelId), parent, text: quillRef.current?.root.innerHTML || ''},
             type: "chatCreate",
         };
 
@@ -186,7 +184,7 @@ export default ({
                         if (e.key === 'Enter' && !e.shiftKey) {
                             if (!mentionOpen) {
                                 createChat();
-                                if(quillRef.current){
+                                if (quillRef.current) {
                                     quillRef.current.focus();
                                 }
                             }

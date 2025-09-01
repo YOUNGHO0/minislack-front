@@ -1,13 +1,13 @@
 'use client'
 import {useParams, usePathname, useRouter, useSearchParams} from "next/navigation";
+import * as React from "react";
 import {useEffect, useState} from "react";
 import axios, {HttpStatusCode} from "axios";
 import {Space} from "@/types/channel";
 import {Button, Heading} from "@radix-ui/themes";
 import SpaceJoinDialog from "@/app/component/space/join/SpaceJoinDialog";
-import * as React from "react";
 
-export default  ()=> {
+export default () => {
     const {space} = useParams();
     const path = usePathname();
     const code = useSearchParams().get("code");
@@ -20,12 +20,12 @@ export default  ()=> {
         }
         return axios.get(
             `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/join?id=${userSpaceInfo.id}&inviteCode=${inviteCode}`
-            ,{withCredentials: true}).then(response => {
+            , {withCredentials: true}).then(response => {
             if (response.status === 200) {
                 router.push(`/space/${userSpaceInfo.id}/join?inviteCode=${inviteCode !== "" ? inviteCode : ''}`);
             }
         }).catch(error => {
-            if(error.response?.status == HttpStatusCode.Conflict){
+            if (error.response?.status == HttpStatusCode.Conflict) {
                 router.push(`/space/${userSpaceInfo.id}/main`);
                 return Promise.resolve();
             }
@@ -40,30 +40,27 @@ export default  ()=> {
                     setUserSpaceInfo(response.data);
                 }
             })
-            .catch((res)=>{
-                if(res.status == HttpStatusCode.Unauthorized) {
+            .catch((res) => {
+                if (res.status == HttpStatusCode.Unauthorized) {
                     const redirectUrl = `${path}${code ? `?code=${code}` : ""}`;
                     router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
-                }
-                else{
-                     router.push("/404")
+                } else {
+                    router.push("/404")
                 }
             })
 
     }, []);
 
-    const checkJoin = (space:Space|undefined)=>{
+    const checkJoin = (space: Space | undefined) => {
         if (!space) return; // space가 undefined면 아무 동작도 하지 않음
-        if(userSpaceInfo?.codeRequired){
-            if(code === null){
+        if (userSpaceInfo?.codeRequired) {
+            if (code === null) {
                 setOpenCodeDialog(true);
-            }
-            else{
+            } else {
                 joinWithInviteCode(code);
             }
 
-        }
-        else{
+        } else {
             joinWithInviteCode("");
         }
     }
@@ -85,7 +82,7 @@ export default  ()=> {
                     에 입장합니다
                 </div>
                 <div className="w-full flex mt-10">
-                    <Button style={{marginLeft:"auto" ,marginRight:"10px"}} onClick={() => checkJoin(userSpaceInfo)}>
+                    <Button style={{marginLeft: "auto", marginRight: "10px"}} onClick={() => checkJoin(userSpaceInfo)}>
                         입장하기
                     </Button>
                 </div>

@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
-import { Button, Card, TextField, Text, TextArea } from '@radix-ui/themes';
+import {useEffect, useRef, useState} from 'react';
+import {Button, Card, Text, TextArea, TextField} from '@radix-ui/themes';
 import CardContent from '@mui/material/CardContent';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import axios from 'axios';
 import {UserInfo} from "@/types/type";
 
@@ -21,14 +21,14 @@ export default function FeedbackPage() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const [isLoggedIn,setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-            axios.get<UserInfo>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/info`,{withCredentials:true}).then(res=>{
-                setEmail(res.data.email);
-                setIsLoggedIn(true);
-            })
+        axios.get<UserInfo>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/info`, {withCredentials: true}).then(res => {
+            setEmail(res.data.email);
+            setIsLoggedIn(true);
+        })
     }, []);
 
     useEffect(() => {
@@ -55,8 +55,8 @@ export default function FeedbackPage() {
         try {
             await axios.post(
                 `${process.env.NEXT_PUBLIC_API_URL}/api/v1/feedback`,
-                { email:email, content:content },
-                { withCredentials: true }
+                {email: email, content: content},
+                {withCredentials: true}
             );
 
             setSuccess(true);

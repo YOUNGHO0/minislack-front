@@ -1,8 +1,6 @@
-import {TextArea} from "@radix-ui/themes";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef} from "react";
 import DOMPurify from "dompurify";
 import {MessageEditSendEvent} from "@/types/events";
-import {channel} from "node:diagnostics_channel";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {ReceivedMessage} from "@/types/type";
 
@@ -16,17 +14,17 @@ export default (props: {
     const {sendMessage} = useWebSocket()
     // Quill 초기화
     useEffect(() => {
-        import('quill').then((QuillModule)=>{
+        import('quill').then((QuillModule) => {
             if (!editorRef.current) return;
             const quill = new QuillModule.default(editorRef.current, {
                 theme: 'bubble',
-                modules: { toolbar: false }
+                modules: {toolbar: false}
             });
             quillRef.current = quill;
 
             if (props.data.text) {
                 const safeHTML = DOMPurify.sanitize(props.data.text);
-                if(quillRef.current)
+                if (quillRef.current)
                     quillRef.current.clipboard.dangerouslyPasteHTML(safeHTML)
                 editorRef.current.focus()
                 // 마지막 글자에 커서 이동
@@ -38,8 +36,10 @@ export default (props: {
     }, []);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSaveEdit(); }
-        else if (e.key === 'Escape') handleCancelEdit();
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSaveEdit();
+        } else if (e.key === 'Escape') handleCancelEdit();
     };
 
 
@@ -48,13 +48,13 @@ export default (props: {
 
     const handleSaveEdit = () => {
         console.log("save")
-        if(!editorRef.current){
+        if (!editorRef.current) {
             props.setIsEditing(false);
             return;
         }
 
-        const message : MessageEditSendEvent = {
-            message: {channelId: Number(props.channel), chatId: props.data.id, text: editorRef.current?.innerHTML },
+        const message: MessageEditSendEvent = {
+            message: {channelId: Number(props.channel), chatId: props.data.id, text: editorRef.current?.innerHTML},
             type: "chatUpdate"
         };
         sendMessage(JSON.stringify(message));

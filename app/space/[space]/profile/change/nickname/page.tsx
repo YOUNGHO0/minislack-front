@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import { Button, TextField, Flex, Text } from '@radix-ui/themes';
+import {Button, Flex, Text, TextField} from '@radix-ui/themes';
 import {useParams, useRouter} from "next/navigation";
 import axios from "axios";
 import {UserInfo} from "@/types/type";
@@ -19,15 +19,15 @@ const NicknameEditPage = () => {
             return;
         }
 
-        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/userprofile/change/nickname?spaceId=${space}&nickName=${newNickname}`,{},{withCredentials:true})
-            .then(()=> window.location.href =`/space/${space}/main`)
-            .catch(()=> setError('닉네임은 공백일 수 없습니다.'))
+        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/userprofile/change/nickname?spaceId=${space}&nickName=${newNickname}`, {}, {withCredentials: true})
+            .then(() => window.location.href = `/space/${space}/main`)
+            .catch(() => setError('닉네임은 공백일 수 없습니다.'))
         // 실제 변경 처리 (API 호출 등)
         setCurrentNickname(newNickname);
     };
 
     useEffect(() => {
-        axios.get<UserInfo>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/userprofile/info?spaceId=${space}`,{withCredentials : true}).then((res)=>{
+        axios.get<UserInfo>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/userprofile/info?spaceId=${space}`, {withCredentials: true}).then((res) => {
             setCurrentNickname(res.data.nickName);
         })
     }, []);

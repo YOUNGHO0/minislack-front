@@ -1,6 +1,6 @@
 'use client'
-import { Channel } from "@/types/channel";
-import { usePathname, useRouter } from "next/navigation";
+import {Channel} from "@/types/channel";
+import {usePathname, useRouter} from "next/navigation";
 
 export default (props: { channel: Channel }) => {
     const channelInfo = props.channel;

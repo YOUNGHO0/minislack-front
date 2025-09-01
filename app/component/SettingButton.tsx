@@ -1,21 +1,21 @@
 'use client'
-import {redirect, usePathname, useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {Cog8ToothIcon} from "@heroicons/react/16/solid";
 
-export default ()=>{
+export default () => {
 
     const router = useRouter();
     const pathname = usePathname();
 
     const segments = pathname.split("/");
-    const basePath = segments.length >= 3  ? `/${segments[1]}/${segments[2]}` : "/";
+    const basePath = segments.length >= 3 ? `/${segments[1]}/${segments[2]}` : "/";
     const handleClick = () => {
         router.push(`${basePath}/setting`);
     };
 
-    return(
-    <>
-        <Cog8ToothIcon className="w-8" onClick={handleClick}/>
-    </>);
+    return (
+        <>
+            <Cog8ToothIcon className="w-8" onClick={handleClick}/>
+        </>);
 
 }

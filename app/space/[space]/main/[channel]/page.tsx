@@ -1,29 +1,13 @@
 'use client'
 import {useParams, useRouter} from "next/navigation";
-import MessageCard from "@/app/component/message/MessageCard";
-import {Box} from "@radix-ui/themes";
-import {useEffect, useLayoutEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import emitter from '@/WebSocket/Emitter'
-import {JsonReceivedMessageInfo} from "@/types/webSocketType";
-import {ChannelInfo, MessagePageResponse, ReceivedMessage} from "@/types/type";
+import {ChannelInfo, ReceivedMessage} from "@/types/type";
 import axios from "axios";
 import ChannelSetting from "@/app/component/channel/ChannelSetting";
-import {
-    ChannelDeleteReceiveEvent,
-    ChannelUpdateReceiveEvent,
-    ChatCreateReceiveEvent,
-    ChatCreateSendEvent,
-    ChatDeleteReceiveEvent,
-    ChatUpdateReceiveEvent
-} from "@/types/events";
-import {useWebSocket} from "@/WebSocket/WebSocketProvider";
-import JoinDialog from "@/app/component/channel/joindialog/JoinDialog";
-import MessageReplyBar from "@/app/component/message/MessageReplyBar";
-import Container from "@mui/material/Container";
+import {ChannelDeleteReceiveEvent, ChannelUpdateReceiveEvent} from "@/types/events";
 import './style.css'
-import {text} from "node:stream/consumers";
 import MessageList from "@/app/component/message/MessageList";
-import MessageInput from "@/app/component/message/MessageInput";
 import TextEditor from "@/app/component/message/quill/TextEditor";
 
 export default () => {
@@ -128,7 +112,6 @@ export default () => {
     }, []);
 
 
-
     return <div className="flex flex-col bg-white-100"
                 style={{
                     // height: `calc(100dvh - ${ keyboardHeight}px)`,
@@ -149,9 +132,12 @@ export default () => {
 
 
         {/* 메시지 영역 */}
-        <MessageList messages={messages} setMessages={setMessages} replyMessageId={replyMessageId} setReplyMessageId={(number)=>setReplyMessageId(number)}></MessageList>
+        <MessageList messages={messages} setMessages={setMessages} replyMessageId={replyMessageId}
+                     setReplyMessageId={(number) => setReplyMessageId(number)}></MessageList>
 
         {/* 입력창 영역 */}
-        <TextEditor setKeyboardHeight={setKeyboardHeight} keyboardHeight={keyboardHeight} replyMessageId={replyMessageId} setReplyMessageId={setReplyMessageId} messages={messages}></TextEditor>
+        <TextEditor setKeyboardHeight={setKeyboardHeight} keyboardHeight={keyboardHeight}
+                    replyMessageId={replyMessageId} setReplyMessageId={setReplyMessageId}
+                    messages={messages}></TextEditor>
     </div>
 }

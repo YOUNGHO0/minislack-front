@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { Home, User } from 'lucide-react';
+import {usePathname, useRouter} from 'next/navigation';
+import {Home, User} from 'lucide-react';
 
 const ImprovedNavbar = () => {
     const router = useRouter();
@@ -12,8 +12,8 @@ const ImprovedNavbar = () => {
     const basePath = segments.length >= 3 ? `/${segments[1]}/${segments[2]}` : "/";
 
     const menuItems = [
-        { id: 'home', icon: Home, label: '홈', path: '' },
-        { id: 'profile', icon: User, label: '프로필', path: 'profile' }
+        {id: 'home', icon: Home, label: '홈', path: ''},
+        {id: 'profile', icon: User, label: '프로필', path: 'profile'}
     ];
 
     // URL 기반으로 activeMenu 결정
@@ -27,9 +27,10 @@ const ImprovedNavbar = () => {
     return (
         <>
             {/* Desktop Navigation */}
-            <nav className="bg-orange-500 border-orange-500 lg:order-first hidden lg:flex lg:flex-col p-1 lg:left-0 lg:top-0 lg:h-full lg:w-15 border-r shadow-sm z-50">
+            <nav
+                className="bg-orange-500 border-orange-500 lg:order-first hidden lg:flex lg:flex-col p-1 lg:left-0 lg:top-0 lg:h-full lg:w-15 border-r shadow-sm z-50">
                 <div className="flex flex-col items-center pt-4 gap-3">
-                    {menuItems.map(({ id, icon: Icon }) => (
+                    {menuItems.map(({id, icon: Icon}) => (
                         <button
                             key={id}
                             onClick={() => handleClick(id, id === 'home' ? '' : id)}
@@ -47,14 +48,15 @@ const ImprovedNavbar = () => {
                         </button>
                     ))}
                 </div>
-                <div className="flex-1" />
+                <div className="flex-1"/>
             </nav>
 
             {/* Mobile Navigation */}
             {isExactDepth && (
-                <nav className="bg-orange-500 border-orange-500 lg:hidden fixed bottom-0 left-0 right-0 border-t border-gray-200 shadow-lg pt-1 z-30">
+                <nav
+                    className="bg-orange-500 border-orange-500 lg:hidden fixed bottom-0 left-0 right-0 border-t border-gray-200 shadow-lg pt-1 z-30">
                     <div className="flex items-center justify-around">
-                        {menuItems.map(({ id, icon: Icon }) => (
+                        {menuItems.map(({id, icon: Icon}) => (
                             <button
                                 key={id}
                                 onClick={() => handleClick(id, id === 'home' ? '' : id)}
@@ -75,7 +77,8 @@ const ImprovedNavbar = () => {
                                     }`}
                                 />
                                 {activeMenu === id && (
-                                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white rounded-full" />
+                                    <div
+                                        className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-white rounded-full"/>
                                 )}
                             </button>
                         ))}

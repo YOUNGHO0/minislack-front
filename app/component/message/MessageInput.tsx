@@ -16,7 +16,7 @@ export default ({
                 }:
                     {
                         messages: ReceivedMessage[],
-                        replyMessageId: number|null,
+                        replyMessageId: number | null,
                         setReplyMessageId: React.Dispatch<React.SetStateAction<number | null>>
                     }) => {
 
@@ -96,7 +96,6 @@ export default ({
     }, []);
 
 
-
     useEffect(() => {
         const textArea = textAreaRef.current;
         if (textArea) {
@@ -117,7 +116,6 @@ export default ({
     const createChat = () => {
         const inputValue = textAreaRef.current?.innerHTML || "";
         if (inputValue === "") return;
-
 
 
         let parent = 0;
@@ -161,7 +159,7 @@ export default ({
         if (e.key === '@') {
             const coords = getCaretCoordinates();
             if (!coords) return;
-            setUserListPosition({ x: coords.x, y: coords.y + coords.height });
+            setUserListPosition({x: coords.x, y: coords.y + coords.height});
             setMentionSearchTerm(""); // 새로 시작
             setShowUserList(true);
         } else if (showUserList) {
@@ -215,7 +213,7 @@ export default ({
         dummySpan.parentNode?.removeChild(dummySpan);
 
         // 커서 위치의 좌표 반환 (화면 기준)
-        return { x: rect.left, y: rect.top, height: rect.height };
+        return {x: rect.left, y: rect.top, height: rect.height};
     };
 
     const saveCaretPosition = (): Range | null => {
@@ -231,7 +229,7 @@ export default ({
         const selection = window.getSelection();
         if (!selection) return;
         selection.removeAllRanges();
-        console.log("saved : " , savedRange)
+        console.log("saved : ", savedRange)
         selection.addRange(savedRange);
     };
 
@@ -262,7 +260,7 @@ export default ({
                 range.setStart(textNode, atIndex);
                 range.setEnd(textNode, startOffset);
                 range.deleteContents();
-                console.log("start :" ,atIndex + "end : " + startOffset)
+                console.log("start :", atIndex + "end : " + startOffset)
                 // caret 위치를 @ 삭제한 지점으로 이동
                 range.setStart(textNode, atIndex);
                 range.collapse(true);
@@ -303,7 +301,7 @@ export default ({
             const textNode = startContainer as Text;
             const text = textNode.data;
             const cursorPos = range.startOffset;
-            console.log("cursorPod : " , range.startOffset)
+            console.log("cursorPod : ", range.startOffset)
             console.log("text : ", text);
             // 1) 커서 바로 왼쪽이 '@'인지
             console.log(cursorPos > 0 && text[cursorPos - 1] === '@')
@@ -312,16 +310,13 @@ export default ({
         return false;
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>)=>{
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
 
         if (e.key === 'Backspace' && removedCharacterWasSymbol()) {
             setShowUserList(false);
         }
         return;
     }
-
-
-
 
 
     return <div
@@ -337,12 +332,13 @@ export default ({
                     data-placeholder="여기에 입력하세요..."
                     className="placeholder relative flex-1 min-h-13 max-h-30 border-2 rounded focus:outline-none overflow-auto px-2 py-1"
                     ref={textAreaRef}
-                    onKeyDown={(event)=>{
+                    onKeyDown={(event) => {
                         handleKeyDown(event);
                     }}
-                    onKeyUp={(event)=>{
+                    onKeyUp={(event) => {
                         handleKeyUp(event);
-                        savedRangeRef.current = saveCaretPosition();}}
+                        savedRangeRef.current = saveCaretPosition();
+                    }}
                 />
                 {showUserList && userListPosition && (
                     <div

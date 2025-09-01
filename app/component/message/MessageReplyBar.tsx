@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react';
-import { ReceivedMessage } from "@/types/type";
-import { Cross2Icon } from "@radix-ui/react-icons";
+import React, {useEffect, useRef} from 'react';
+import {ReceivedMessage} from "@/types/type";
+import {Cross2Icon} from "@radix-ui/react-icons";
 import DOMPurify from 'dompurify';
 import Quill from "quill";
 
@@ -19,13 +19,13 @@ export default function MessageReplyBar({
     // Quill 초기화 (한 번만 실행)
     useEffect(() => {
 
-        import('quill').then((QuillModule)=>{
+        import('quill').then((QuillModule) => {
             if (!editorRef.current) return;
 
             const quill = new QuillModule.default(editorRef.current, {
                 theme: 'bubble',
                 readOnly: true,
-                modules: { toolbar: false }
+                modules: {toolbar: false}
             });
 
             quillRef.current = quill;
@@ -60,7 +60,7 @@ export default function MessageReplyBar({
                 />
             </div>
             <button onClick={onCancel}>
-                <Cross2Icon className="w-5 h-5 text-gray-600 hover:text-black" />
+                <Cross2Icon className="w-5 h-5 text-gray-600 hover:text-black"/>
             </button>
 
             <style jsx>{`

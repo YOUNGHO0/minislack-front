@@ -4,11 +4,11 @@ import QuestionScroll from "@/app/component/QuestionScroll";
 import {useState} from "react";
 import {Article} from "@/types/type";
 
-export default ()=>{
+export default () => {
 
-    let [question,setQuestion]=useState<Article>();
+    let [question, setQuestion] = useState<Article>();
 
-    const onClick = (question:Article)=>{
+    const onClick = (question: Article) => {
         setQuestion(question)
     }
 
@@ -18,7 +18,7 @@ export default ()=>{
             <div className={"flex-1 flex flex-col border-b h-full min-h-0"}>
                 <Heading className={"p-5 min-h-0"}>질문하기</Heading>
                 <div className={"p-5 flex flex-col space-y-5 min-h-0 h-full"}>
-                    <TextField.Root size="3" placeholder="제목" />
+                    <TextField.Root size="3" placeholder="제목"/>
                     <TextArea
                         placeholder={"내용"}
                         size="3"
@@ -31,7 +31,7 @@ export default ()=>{
                 </div>
             </div>
 
-            <div className={"flex-1 flex flex-col min-h-0"} >
+            <div className={"flex-1 flex flex-col min-h-0"}>
                 <div className={"flex-1 overflow-y-auto min-h-0"}>
                     <QuestionScroll onSelect={onClick}/>
                 </div>

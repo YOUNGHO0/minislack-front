@@ -1,9 +1,9 @@
 import {AlertDialog, Button, Flex} from "@radix-ui/themes";
 import * as React from "react";
 
-export default  ({alertState, closeWindow}: {alertState:boolean, closeWindow: ()=>void}) =>{
+export default ({alertState, closeWindow}: { alertState: boolean, closeWindow: () => void }) => {
 
-    return (        <AlertDialog.Root open={alertState} >
+    return (<AlertDialog.Root open={alertState}>
         <AlertDialog.Content maxWidth="450px">
             <AlertDialog.Title>관리자 변경 필요</AlertDialog.Title>
             <AlertDialog.Description size="2">

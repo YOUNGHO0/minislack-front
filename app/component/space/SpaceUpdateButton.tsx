@@ -1,13 +1,12 @@
 import * as React from "react";
 import {Dialog} from "radix-ui";
-import {Cross2Icon, Pencil1Icon} from "@radix-ui/react-icons";
+import {Cross2Icon} from "@radix-ui/react-icons";
 import axios from "axios";
 import {Checkbox, Flex, Text, Theme} from "@radix-ui/themes";
 import {PlusCircleIcon} from "@heroicons/react/24/outline";
 import {Channel, Space} from "@/types/channel";
-import {channel} from "node:diagnostics_channel";
 
-const SpaceUpdateButton = ({spaceInfo,fetchChannel,hideUpdate}: {
+const SpaceUpdateButton = ({spaceInfo, fetchChannel, hideUpdate}: {
     fetchChannel: () => void,
     spaceInfo: Space,
     hideUpdate: () => void
@@ -33,19 +32,18 @@ const SpaceUpdateButton = ({spaceInfo,fetchChannel,hideUpdate}: {
         setError("");
 
         axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space`,
-            {id: space.id, name: space.name, searchEnable:!searchDisable, codeRequired : codeRequired}, {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then((response) => {
+            {id: space.id, name: space.name, searchEnable: !searchDisable, codeRequired: codeRequired}, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then((response) => {
             if (response.status === 200) {
                 fetchChannel();
                 hideUpdate();
             }
         })
     };
-
 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

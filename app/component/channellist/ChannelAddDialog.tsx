@@ -17,17 +17,17 @@ const ChannelAddDialog = () => {
     const [isExternalBlocked, setIsExternalBlocked] = React.useState(false);
     const channelNameRef = React.useRef<HTMLInputElement>(null);
     const {sendMessage} = useWebSocket();
-    const { space } = useParams();
+    const {space} = useParams();
 
     const fetchUsers = () => {
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, { withCredentials: true })
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/users/without?spaceId=${space}`, {withCredentials: true})
             .then((res) => {
                 setUserList(res.data);
             });
     };
     // 검색어에 따라 사용자 필터링
     const filteredUsers = userList.filter(user =>
-        user.nickName.toLowerCase().includes(searchQuery.toLowerCase())
+            user.nickName.toLowerCase().includes(searchQuery.toLowerCase())
         // user.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -52,9 +52,9 @@ const ChannelAddDialog = () => {
         setSearchQuery("");
     };
 
-    const createChannel = ()=>{
+    const createChannel = () => {
 
-        const userIds:number[] = selectedUsers.map((user)=>(user.id));
+        const userIds: number[] = selectedUsers.map((user) => (user.id));
 
         if (channelNameRef.current && channelNameRef.current.value) {
             const channelCreateEvent: ChannelCreateSendEvent = {
@@ -67,7 +67,7 @@ const ChannelAddDialog = () => {
                 },
             };
             sendMessage(JSON.stringify(channelCreateEvent));
-            console.log("Creating channel:",channelCreateEvent);
+            console.log("Creating channel:", channelCreateEvent);
         } else {
             console.error("채널 이름이 비어있거나 null입니다.");
         }
@@ -84,13 +84,15 @@ const ChannelAddDialog = () => {
             }}
         >
             <Dialog.Trigger asChild>
-                <button className="inline-flex  items-center justify-center rounded font-medium leading-none  outline-none outline-offset-1 hover:bg-mauve3 focus-visible:outline-2 focus-visible:outline-violet6 select-none">
-                    <PlusIcon className={"w-6 "} />
+                <button
+                    className="inline-flex  items-center justify-center rounded font-medium leading-none  outline-none outline-offset-1 hover:bg-mauve3 focus-visible:outline-2 focus-visible:outline-violet6 select-none">
+                    <PlusIcon className={"w-6 "}/>
                 </button>
             </Dialog.Trigger>
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-gray-300/60 data-[state=open]:animate-overlayShow" />
-                <Dialog.Content className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray1 p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow">
+                <Dialog.Overlay className="fixed inset-0 bg-gray-300/60 data-[state=open]:animate-overlayShow"/>
+                <Dialog.Content
+                    className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-gray1 p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow">
                     <Dialog.Title className="m-0 text-[17px] font-medium text-mauve12">
                         Create New Channel
                     </Dialog.Title>
@@ -172,7 +174,7 @@ const ChannelAddDialog = () => {
                                             onClick={() => removeUser(user.id)}
                                             className="inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-violet10"
                                         >
-                                            <XMarkIcon className="w-3 h-3" />
+                                            <XMarkIcon className="w-3 h-3"/>
                                         </button>
                                     </span>
                                 ))}
@@ -194,7 +196,8 @@ const ChannelAddDialog = () => {
                                         <input
                                             type="checkbox"
                                             checked={isSelected}
-                                            onChange={() => {}}
+                                            onChange={() => {
+                                            }}
                                             className="w-4 h-4 accent-violet9"
                                         />
                                         <div className="flex-1">
@@ -219,7 +222,7 @@ const ChannelAddDialog = () => {
                     <div className="mt-[25px] flex justify-end">
                         <Dialog.Close asChild>
                             <button onClick={createChannel}
-                                className="inline-flex h-[35px] items-center justify-center rounded bg-green4 px-[15px] font-medium leading-none text-green11 outline-none outline-offset-1 hover:bg-green5 focus-visible:outline-2 focus-visible:outline-green6 select-none">
+                                    className="inline-flex h-[35px] items-center justify-center rounded bg-green4 px-[15px] font-medium leading-none text-green11 outline-none outline-offset-1 hover:bg-green5 focus-visible:outline-2 focus-visible:outline-green6 select-none">
                                 Create Channel
                             </button>
                         </Dialog.Close>
@@ -229,7 +232,7 @@ const ChannelAddDialog = () => {
                             className="absolute right-2.5 top-2.5 inline-flex size-[25px] appearance-none items-center justify-center rounded-full text-violet11 bg-gray3 hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 focus:outline-none"
                             aria-label="Close"
                         >
-                            <Cross2Icon />
+                            <Cross2Icon/>
                         </button>
                     </Dialog.Close>
                 </Dialog.Content>

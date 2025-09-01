@@ -1,21 +1,23 @@
 'use client'
-import {Button, Dialog, Flex, Text, TextField} from "@radix-ui/themes";
+import {Button, Dialog, Flex} from "@radix-ui/themes";
 import {useParams, useRouter} from "next/navigation";
-import axios from "axios";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {ChannelJoinSend} from "@/types/events";
 
-export default ({close, getMessage}: {getMessage:()=>void,close :()=> void }) => {
+export default ({close, getMessage}: { getMessage: () => void, close: () => void }) => {
 
     const router = useRouter();
-    const closeWindow = ()=>{close(); router.back();}
-    const {channel,space} = useParams();
+    const closeWindow = () => {
+        close();
+        router.back();
+    }
+    const {channel, space} = useParams();
     const {sendMessage} = useWebSocket()
     console.log("channel " + channel, "space :" + space);
 
-    const joinChannel = ()=>{
+    const joinChannel = () => {
         const joinSendMessage: ChannelJoinSend = {
-            message: { id: Number(channel) },
+            message: {id: Number(channel)},
             type: "channelJoin"
         };
 
@@ -45,7 +47,9 @@ export default ({close, getMessage}: {getMessage:()=>void,close :()=> void }) =>
                         </Button>
                     </Dialog.Close>
                     <Dialog.Close>
-                        <Button onClick={()=>{joinChannel()}}>입장</Button>
+                        <Button onClick={() => {
+                            joinChannel()
+                        }}>입장</Button>
                     </Dialog.Close>
                 </Flex>
             </Dialog.Content>

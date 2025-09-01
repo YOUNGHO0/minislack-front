@@ -5,7 +5,7 @@ import MarketingPage from "@/app/templates/marketing-page/MarketingPage";
 
 export default function Home() {
 
-    return  <div>
+    return <div>
         <MarketingPage></MarketingPage>
     </div>
 }

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default ()=>{
+export default () => {
     return (<div className={"w-full flex items-center justify-center"}>
             <button className="gsi-material-button">
                 <div className="gsi-material-button-state"></div>
@@ -118,5 +118,5 @@ export default ()=>{
                 }
             `}</style>
         </div>
-        )
+    )
 }

@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from "react";
+import {useEffect} from "react";
 import {useParams, useRouter, useSearchParams} from "next/navigation";
 import {Checkbox, Flex, Text, TextField, Theme} from "@radix-ui/themes";
 import axios, {HttpStatusCode} from "axios";
-import {useEffect} from "react";
 import {UserInfo} from "@/types/type";
 
 
@@ -24,7 +24,7 @@ const SpaceCreatePage = () => {
     const {space} = useParams();
     const searchParams = useSearchParams();
     useEffect(() => {
-        axios.get<UserInfo>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/info`, { withCredentials: true })
+        axios.get<UserInfo>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/info`, {withCredentials: true})
             .then(result => {
                 setDefaultNickName(result.data.nickName);
             });
@@ -50,7 +50,7 @@ const SpaceCreatePage = () => {
         setError("");
 
         axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/joinV2?id=${space}&`+searchParams.toString(),
+            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/space/joinV2?id=${space}&` + searchParams.toString(),
             {
                 useCustomProfile: !useDefaultProfile,
                 nickName: customNickName,
@@ -58,7 +58,7 @@ const SpaceCreatePage = () => {
             },
             {
                 withCredentials: true,
-                headers: { "Content-Type": "application/json" }
+                headers: {"Content-Type": "application/json"}
             }
         ).then((response) => {
             if (response.status === 200) {
@@ -68,7 +68,7 @@ const SpaceCreatePage = () => {
                 setError("입장중 문제가 발생했습니다");
             }
         }).catch((error) => {
-            if(error.response?.status == HttpStatusCode.Conflict){
+            if (error.response?.status == HttpStatusCode.Conflict) {
                 window.location.href = `/space/${space}/main`;
                 return;
             }

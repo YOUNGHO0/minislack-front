@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 
 export default function KeyboardSensor({
                                            children,
@@ -27,7 +27,7 @@ export default function KeyboardSensor({
             if (isKeyboardOpen && paddingRef.current) {
                 // padding이 보이게 스크롤하면 자연히 입력창이 위로 올라온다
                 setTimeout(() => {
-                    paddingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    paddingRef.current?.scrollIntoView({behavior: 'smooth', block: 'end'});
                 }, 50);
             }
         };

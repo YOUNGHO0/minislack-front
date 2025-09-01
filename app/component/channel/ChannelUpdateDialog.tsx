@@ -1,19 +1,30 @@
 import * as React from "react";
-import { Dialog } from "radix-ui";
-import { Cross2Icon } from "@radix-ui/react-icons";
+import {Dialog} from "radix-ui";
+import {Cross2Icon} from "@radix-ui/react-icons";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {ChannelUpdateSendEvent} from "@/types/events";
 
-const ChannelUpdateDialog = ({channelId,channelName,closeWindow} : {channelId :number,channelName:string ,closeWindow:()=>void}) => {
+const ChannelUpdateDialog = ({channelId, channelName, closeWindow}: {
+    channelId: number,
+    channelName: string,
+    closeWindow: () => void
+}) => {
 
 
     const {sendMessage} = useWebSocket();
     const [isPrivate, setIsPrivate] = React.useState(false);
     const [isExternalBlocked, setIsExternalBlocked] = React.useState(false);
-    const sendUpdateMessage = ()=>{
+    const sendUpdateMessage = () => {
         const newName = inputRef.current?.value.trim();
         if (newName) {
-            let channelUpdateSendEvent :ChannelUpdateSendEvent = {message: {id: channelId , channelName:newName,privateChannel:isPrivate,externalBlocked:isExternalBlocked}, type: "channelUpdate"}
+            let channelUpdateSendEvent: ChannelUpdateSendEvent = {
+                message: {
+                    id: channelId,
+                    channelName: newName,
+                    privateChannel: isPrivate,
+                    externalBlocked: isExternalBlocked
+                }, type: "channelUpdate"
+            }
             sendMessage(JSON.stringify(channelUpdateSendEvent))
             console.log(channelUpdateSendEvent)
         }

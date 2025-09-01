@@ -4,11 +4,11 @@ import dynamic from "next/dynamic";
 import Quill from "quill";
 import DOMPurify from "dompurify";
 
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill-new'), {ssr: false});
 
 export default function ({message, scroll}: {
     message: ReceivedMessage | undefined
-    scroll : (id:number)=> void
+    scroll: (id: number) => void
 }) {
     const editorRef = useRef<HTMLDivElement>(null);
     const quillRef = useRef<Quill>(null);
@@ -16,13 +16,13 @@ export default function ({message, scroll}: {
     // Quill 초기화 (한 번만 실행)
     useEffect(() => {
 
-        import('quill').then((QuillModule)=>{
+        import('quill').then((QuillModule) => {
             if (!editorRef.current) return;
 
             const quill = new QuillModule.default(editorRef.current, {
                 theme: 'bubble',
                 readOnly: true,
-                modules: { toolbar: false }
+                modules: {toolbar: false}
             });
 
             quillRef.current = quill;

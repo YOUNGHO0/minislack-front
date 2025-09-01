@@ -1,9 +1,8 @@
 import {User} from "@/types/type";
-import {Avatar} from "@radix-ui/themes";
 import React from "react";
 import ChatAvatar from "@/app/component/avatar/ChatAvatar";
 
-export default ({ userList }: { userList: User[] }) => {
+export default ({userList}: { userList: User[] }) => {
     return (
         <div className="flex flex-col gap-2 p-4 ">
             {userList.map((user) => (

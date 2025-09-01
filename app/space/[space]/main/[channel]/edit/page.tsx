@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from "react";
+import {useEffect, useRef, useState} from "react";
 import {useParams, useRouter} from "next/navigation";
 import {Checkbox, Flex, Text, Theme} from "@radix-ui/themes";
-import {useEffect, useRef, useState} from "react";
 import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 import {ChannelUpdateSendEvent} from "@/types/events";
 import axios from "axios";
@@ -72,7 +72,7 @@ const ChannelUpdatePage = () => {
                         disabled={loading}
                     />
 
-                    <Text  as="label" size="2">
+                    <Text as="label" size="2">
                         <Flex mt="2" mb="2" as="span" gap="2" className="mb-2">
                             <Checkbox
                                 variant="classic"

@@ -1,8 +1,8 @@
 "use client";
 
 import axios from "axios";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
 
 export default function DeleteAccountPage() {
     const [inputValue, setInputValue] = useState("");
@@ -18,7 +18,7 @@ export default function DeleteAccountPage() {
         try {
             await axios.delete(
                 `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user`,
-                { withCredentials: true }
+                {withCredentials: true}
             );
             window.location.href = "/";
         } catch (error) {
@@ -34,8 +34,8 @@ export default function DeleteAccountPage() {
 
                 {/* 안내 문구 */}
                 <p className="text-gray-700 mb-6 leading-relaxed">
-                    계정이 <span className="font-semibold">영구적으로 삭제</span>됩니다. <br />
-                    삭제 이후에는 해당 계정으로 더 이상 서비스를 이용할 수 없으며, 복구가 불가능합니다. <br />
+                    계정이 <span className="font-semibold">영구적으로 삭제</span>됩니다. <br/>
+                    삭제 이후에는 해당 계정으로 더 이상 서비스를 이용할 수 없으며, 복구가 불가능합니다. <br/>
                     계속 진행하시려면 아래 입력창에 <span className="font-semibold">"동의합니다"</span>를 입력해주세요.
                 </p>
 

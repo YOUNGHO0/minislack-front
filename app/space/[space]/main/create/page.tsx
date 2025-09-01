@@ -1,23 +1,13 @@
 'use client';
 
 import * as React from "react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { User } from "@/types/type";
+import {XMarkIcon} from "@heroicons/react/24/outline";
+import {User} from "@/types/type";
 import axios from "axios";
 import {useParams, usePathname, useRouter} from "next/navigation";
-import { useWebSocket } from "@/WebSocket/WebSocketProvider";
-import { ChannelCreateSendEvent } from "@/types/events";
+import {useWebSocket} from "@/WebSocket/WebSocketProvider";
 
-import {
-    Button,
-    Checkbox,
-    Flex,
-    Text,
-    Heading,
-    Box,
-    ScrollArea,
-    TextField,
-} from "@radix-ui/themes";
+import {Box, Button, Checkbox, Flex, Heading, ScrollArea, Text, TextField,} from "@radix-ui/themes";
 
 const ChannelCreatePage = () => {
     const router = useRouter();
@@ -28,8 +18,8 @@ const ChannelCreatePage = () => {
     const [isPrivate, setIsPrivate] = React.useState(false);
     const [isExternalBlocked, setIsExternalBlocked] = React.useState(false);
     const channelNameRef = React.useRef<HTMLInputElement>(null);
-    const { sendMessage } = useWebSocket();
-    const { space } = useParams();
+    const {sendMessage} = useWebSocket();
+    const {space} = useParams();
 
     React.useEffect(() => {
         axios
@@ -64,12 +54,14 @@ const ChannelCreatePage = () => {
         if (channelNameRef.current && channelNameRef.current.value) {
 
             axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/channel/create?spaceId=${space}`,
-                { name: channelNameRef.current.value,
-                userList: userIds,
-                privateChannel: isPrivate,
-                externalBlocked: isExternalBlocked},
-                {withCredentials : true})
-                .then(res =>{
+                {
+                    name: channelNameRef.current.value,
+                    userList: userIds,
+                    privateChannel: isPrivate,
+                    externalBlocked: isExternalBlocked
+                },
+                {withCredentials: true})
+                .then(res => {
                     const newPath = path.replace(/\/create$/, '') + "/" + res.data;
                     router.replace(newPath);
                 })
@@ -79,14 +71,21 @@ const ChannelCreatePage = () => {
     };
 
     return (
-        <div className={"flex flex-col"} style={{ maxWidth: '600px', margin: '0 auto', paddingTop: '40px', paddingBottom: '40px', paddingLeft: '16px', paddingRight: '16px' }}>
+        <div className={"flex flex-col"} style={{
+            maxWidth: '600px',
+            margin: '0 auto',
+            paddingTop: '40px',
+            paddingBottom: '40px',
+            paddingLeft: '16px',
+            paddingRight: '16px'
+        }}>
             <Heading as="h1" size="6" mb="5">
                 채널 생성
             </Heading>
 
             {/* 채널명 입력 */}
             <Box mb="4">
-                <TextField.Root ref={channelNameRef} placeholder="이름" />
+                <TextField.Root ref={channelNameRef} placeholder="이름"/>
             </Box>
 
             {/* 채널 옵션 */}
@@ -124,7 +123,7 @@ const ChannelCreatePage = () => {
 
             {/* 사용자 검색 */}
             <Box mb="4">
-                <h2 className="mt-3 mb-2 font-semibold"  style={{ display: 'block' }}>
+                <h2 className="mt-3 mb-2 font-semibold" style={{display: 'block'}}>
                     사용자 추가
                 </h2>
                 <TextField.Root
@@ -136,7 +135,7 @@ const ChannelCreatePage = () => {
 
             {/* 선택된 사용자 */}
             {selectedUsers.length > 0 && (
-                <Flex wrap="wrap" gap="2" p="2" mb="4" style={{ backgroundColor: 'var(--gray-2)', borderRadius: '6px' }}>
+                <Flex wrap="wrap" gap="2" p="2" mb="4" style={{backgroundColor: 'var(--gray-2)', borderRadius: '6px'}}>
                     {selectedUsers.map((user) => (
                         <Flex
                             key={user.id}
@@ -153,7 +152,7 @@ const ChannelCreatePage = () => {
                                 borderRadius: '9999px'
                             }}
                         >
-                            <Text style={{ color: 'white' }}>{user.nickName}</Text>
+                            <Text style={{color: 'white'}}>{user.nickName}</Text>
                             <Box
                                 asChild
                                 style={{
@@ -166,8 +165,8 @@ const ChannelCreatePage = () => {
                                 }}
                                 onClick={() => removeUser(user.id)}
                             >
-                                <button style={{ background: 'none', border: 'none', color: 'inherit' }}>
-                                    <XMarkIcon style={{ width: '12px', height: '12px' }} />
+                                <button style={{background: 'none', border: 'none', color: 'inherit'}}>
+                                    <XMarkIcon style={{width: '12px', height: '12px'}}/>
                                 </button>
                             </Box>
                         </Flex>
@@ -212,13 +211,13 @@ const ChannelCreatePage = () => {
                                         }
                                     }}
                                 >
-                                    <Checkbox checked={isSelected}  />
+                                    <Checkbox checked={isSelected}/>
                                     <Text size="2">{user.nickName}</Text>
                                 </Flex>
                             );
                         })
                     ) : (
-                        <Box style={{ color:"black", textAlign: 'center', padding: '12px 0' }}>
+                        <Box style={{color: "black", textAlign: 'center', padding: '12px 0'}}>
                             <Text>초대 가능한 사용자가 없습니다</Text>
                         </Box>
                     )}
@@ -226,7 +225,7 @@ const ChannelCreatePage = () => {
             </Box>
 
             {/* 생성 버튼 */}
-            <Button className={"w-full justify-end"} onClick={createChannel} >
+            <Button className={"w-full justify-end"} onClick={createChannel}>
                 채널 생성
             </Button>
         </div>
